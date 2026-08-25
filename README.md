@@ -42,6 +42,7 @@ for 2025/26). This takes the team ratings from ~14% fitted to ~71% fitted.
 Run these in order, before each deadline:
 
 ```bash
+python watch.py       --entry <YOUR_ID> --xp xp.csv --overrides overrides.json
 python ratings.py     --out ratings.json --fresh --results-csv E0.csv --history-weight 0.5
 python projections.py --horizon 5 --deep 600 --ratings ratings.json --overrides overrides.json --out xp.csv --top 30
 python backtest.py    snapshot --gw <N> --xp xp.csv
@@ -55,7 +56,9 @@ python backtest.py score --gw <N>
 python backtest.py report
 ```
 
-**Order matters.** Ratings feed projections feed the optimizer. Snapshot before
+**Order matters.** `watch.py` first — it reports what changed and who needs a
+look, using last week's `xp.csv`, so you can update `overrides.json` before
+regenerating. Then ratings feed projections feed the optimizer. Snapshot before
 you look at the optimizer output, so you're freezing a projection you haven't
 yet reacted to — but after you've settled on the parameters you'll actually act
 on. Never snapshot after kickoff.
@@ -261,6 +264,42 @@ decomposing a number that looked surprising, not by reading code.
 
 ---
 
+### `watch.py` — what changed, and who should I check?
+
+```bash
+python watch.py --entry <YOUR_ID> --xp xp.csv --overrides overrides.json
+```
+
+Run it first each week, before the rest of the pipeline.
+
+**Roster diff.** Caches the player list each run and reports what moved: club
+changes, players added or removed from the game, availability flips in both
+directions, and price moves. Squad members are marked.
+
+This matters most while the real transfer window is open (through 1 September).
+A player who leaves the league keeps his id and flips to status `u`. A player who
+changes club keeps his last-season rates — earned in a different system, under a
+different manager, in a different role — and **nothing else in the pipeline
+notices**. Coverage weighting won't catch it either: the sample is fine, it's
+just no longer applicable. A club change is the strongest signal that an override
+is needed.
+
+**Review queue.** Ranks players by how much a wrong assumption about them would
+cost — impact (horizon xP, or squad membership) times uncertainty (no prior
+season, status flag, news text, minutes without starts). Players with an override
+already set are demoted rather than dropped, so you still see them but lower.
+
+**Stale override detection.** Flags entries whose player now has 5+ starts or
+450+ minutes this season — at which point the model can see the situation itself
+and the override is doing harm. Also flags overrides for departed players and
+overrides asserting minutes for someone since flagged injured.
+
+Nothing here edits `overrides.json`. It tells you where to look; the judgement
+stays yours. That's deliberate — a tool that auto-wrote injury assumptions would
+go stale silently, which is the exact failure mode overrides are meant to fix.
+
+---
+
 ### `overrides.json` — context the API can't express
 
 FPL's `status` and `chance_of_playing_next_round` are blunt and lag the news. A
@@ -367,6 +406,22 @@ injuries ahead in the pecking order, transfers, or a new manager are invisible.
 **New signings and promoted-club players have no priors.** Roughly 270 of 610
 players fall back to the price heuristic, and a cheap player with a strong real
 rate stays underrated for four or five gameweeks before the data catches up.
+
+**Mid-season club changes invalidate priors silently.** A player's rates carry
+over from his old club even though role and system have changed. `watch.py`
+flags the move; the correction is manual.
+
+---
+
+## Status
+
+Live for the 2026/27 season. Projections are snapshotted before each deadline and
+scored afterwards, so `history/` accumulates a real out-of-sample record rather
+than an in-sample fit. The model constants below are currently judgement calls;
+the point of the backtest is to replace them with measured values.
+
+Anyone evaluating this should look at `history/` before the code. A model with a
+scorecard is a different thing from a model with claims.
 
 ---
 

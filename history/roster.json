@@ -1,0 +1,4272 @@
+{
+ "1": {
+  "name": "Raya",
+  "team": 1,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "2": {
+  "name": "Arrizabalaga",
+  "team": 1,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "3": {
+  "name": "Meslier",
+  "team": 1,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "4": {
+  "name": "Gabriel",
+  "team": 1,
+  "cost": 80,
+  "status": "a",
+  "news": ""
+ },
+ "5": {
+  "name": "J.Timber",
+  "team": 1,
+  "cost": 65,
+  "status": "i",
+  "news": "Groin injury - Unknown return date"
+ },
+ "6": {
+  "name": "Saliba",
+  "team": 1,
+  "cost": 60,
+  "status": "i",
+  "news": "Back injury - Unknown return date"
+ },
+ "7": {
+  "name": "Lewis-Skelly",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "8": {
+  "name": "Calafiori",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "9": {
+  "name": "Hincapie",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "10": {
+  "name": "White",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "11": {
+  "name": "Mosquera",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "12": {
+  "name": "Saka",
+  "team": 1,
+  "cost": 95,
+  "status": "a",
+  "news": ""
+ },
+ "13": {
+  "name": "Rice",
+  "team": 1,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "14": {
+  "name": "Eze",
+  "team": 1,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "15": {
+  "name": "Ødegaard",
+  "team": 1,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "16": {
+  "name": "Madueke",
+  "team": 1,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "17": {
+  "name": "Merino",
+  "team": 1,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "18": {
+  "name": "Martinelli",
+  "team": 1,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "19": {
+  "name": "Zubimendi",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "20": {
+  "name": "Dowman",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "22": {
+  "name": "Nwaneri",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "23": {
+  "name": "Fábio Vieira",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "24": {
+  "name": "Nelson",
+  "team": 1,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "25": {
+  "name": "Gyökeres",
+  "team": 1,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "26": {
+  "name": "Havertz",
+  "team": 1,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "27": {
+  "name": "G.Jesus",
+  "team": 1,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "31": {
+  "name": "Konsa",
+  "team": 1,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "452": {
+  "name": "Bruno G.",
+  "team": 1,
+  "cost": 70,
+  "status": "d",
+  "news": "Thigh injury - 75% chance of playing"
+ },
+ "557": {
+  "name": "Tzolis",
+  "team": 1,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "28": {
+  "name": "Martinez",
+  "team": 2,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "29": {
+  "name": "M.Bizot",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "30": {
+  "name": "Digne",
+  "team": 2,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Paris Saint-Germain permanently"
+ },
+ "32": {
+  "name": "Cash",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "33": {
+  "name": "Mings",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "34": {
+  "name": "Pau",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "35": {
+  "name": "Bogarde",
+  "team": 2,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "36": {
+  "name": "Maatsen",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "37": {
+  "name": "Lindelöf",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "38": {
+  "name": "A.García",
+  "team": 2,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "39": {
+  "name": "Nedeljkovic",
+  "team": 2,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined Rangers on loan for the rest of the season"
+ },
+ "41": {
+  "name": "Buendía",
+  "team": 2,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "44": {
+  "name": "Bailey",
+  "team": 2,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "45": {
+  "name": "McGinn",
+  "team": 2,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "46": {
+  "name": "Barkley",
+  "team": 2,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "47": {
+  "name": "Kamara",
+  "team": 2,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "48": {
+  "name": "Onana",
+  "team": 2,
+  "cost": 50,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "49": {
+  "name": "Iling Jr",
+  "team": 2,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Bolton Wanderers on loan for the rest of the season"
+ },
+ "50": {
+  "name": "Burrowes",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "51": {
+  "name": "George Hemmings",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "52": {
+  "name": "Alysson",
+  "team": 2,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "53": {
+  "name": "Manzambi",
+  "team": 2,
+  "cost": 60,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "54": {
+  "name": "Gomes",
+  "team": 2,
+  "cost": 55,
+  "status": "s",
+  "news": "Suspended until 19 Sep"
+ },
+ "55": {
+  "name": "Watkins",
+  "team": 2,
+  "cost": 80,
+  "status": "a",
+  "news": ""
+ },
+ "56": {
+  "name": "Abraham",
+  "team": 2,
+  "cost": 55,
+  "status": "d",
+  "news": "Knock - 75% chance of playing"
+ },
+ "160": {
+  "name": "Garnacho",
+  "team": 2,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "582": {
+  "name": "Madjo",
+  "team": 2,
+  "cost": 55,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "596": {
+  "name": "Ruggeri",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "597": {
+  "name": "Suzuki",
+  "team": 2,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "606": {
+  "name": "Rowe",
+  "team": 2,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "607": {
+  "name": "Lynch",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "57": {
+  "name": "Petrović",
+  "team": 3,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "58": {
+  "name": "Forster",
+  "team": 3,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "59": {
+  "name": "Dennis",
+  "team": 3,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "60": {
+  "name": "Hill",
+  "team": 3,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "61": {
+  "name": "Truffert",
+  "team": 3,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "62": {
+  "name": "Diakité",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "63": {
+  "name": "Milosavljević",
+  "team": 3,
+  "cost": 50,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "64": {
+  "name": "Smith",
+  "team": 3,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "65": {
+  "name": "J.Araujo",
+  "team": 3,
+  "cost": 45,
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
+ },
+ "66": {
+  "name": "Soler",
+  "team": 3,
+  "cost": 40,
+  "status": "d",
+  "news": "Hamstring injury - 75% chance of playing"
+ },
+ "67": {
+  "name": "Rayan",
+  "team": 3,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "68": {
+  "name": "Tavernier",
+  "team": 3,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "69": {
+  "name": "Scott",
+  "team": 3,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "70": {
+  "name": "Kluivert",
+  "team": 3,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "71": {
+  "name": "Cook",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "72": {
+  "name": "Gannon-Doak",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "73": {
+  "name": "Adams",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "74": {
+  "name": "Brooks",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "75": {
+  "name": "Christie",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "76": {
+  "name": "Tóth.A",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "77": {
+  "name": "Adli",
+  "team": 3,
+  "cost": 50,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "78": {
+  "name": "Kroupi.Jr",
+  "team": 3,
+  "cost": 75,
+  "status": "i",
+  "news": "Foot injury - Unknown return date"
+ },
+ "79": {
+  "name": "Evanilson",
+  "team": 3,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "80": {
+  "name": "Enes Ünal",
+  "team": 3,
+  "cost": 55,
+  "status": "u",
+  "news": "Has joined Getafe permanently"
+ },
+ "81": {
+  "name": "Rodríguez",
+  "team": 3,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "566": {
+  "name": "Silva",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "573": {
+  "name": "Sanchez",
+  "team": 3,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "608": {
+  "name": "Jebbison",
+  "team": 3,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "82": {
+  "name": "Kelleher",
+  "team": 4,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "83": {
+  "name": "Valdimarsson",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "84": {
+  "name": "Collins",
+  "team": 4,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "85": {
+  "name": "Van den Berg",
+  "team": 4,
+  "cost": 50,
+  "status": "i",
+  "news": "Groin injury - Unknown return date"
+ },
+ "86": {
+  "name": "Lewis-Potter",
+  "team": 4,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "87": {
+  "name": "Ajer",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "88": {
+  "name": "Kayode",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "89": {
+  "name": "Henry",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "90": {
+  "name": "Hickey",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "91": {
+  "name": "Pinnock",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "92": {
+  "name": "Ji-soo",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "93": {
+  "name": "Schuster",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "94": {
+  "name": "Schade",
+  "team": 4,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "95": {
+  "name": "O.Dango",
+  "team": 4,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "96": {
+  "name": "Damsgaard",
+  "team": 4,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "97": {
+  "name": "Jensen",
+  "team": 4,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "98": {
+  "name": "Janelt",
+  "team": 4,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "99": {
+  "name": "Milambo",
+  "team": 4,
+  "cost": 50,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "100": {
+  "name": "Carvalho",
+  "team": 4,
+  "cost": 50,
+  "status": "d",
+  "news": "Lack of match fitness - 75% chance of playing"
+ },
+ "102": {
+  "name": "Yarmoliuk",
+  "team": 4,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "103": {
+  "name": "Dasilva",
+  "team": 4,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "105": {
+  "name": "Anthony",
+  "team": 4,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "106": {
+  "name": "Thiago",
+  "team": 4,
+  "cost": 80,
+  "status": "a",
+  "news": ""
+ },
+ "107": {
+  "name": "Furo",
+  "team": 4,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "108": {
+  "name": "Wilson",
+  "team": 4,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "565": {
+  "name": "M.Sangaré",
+  "team": 4,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "109": {
+  "name": "Verbruggen",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "111": {
+  "name": "Steele",
+  "team": 5,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "113": {
+  "name": "F.Kadıoğlu",
+  "team": 5,
+  "cost": 45,
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
+ },
+ "114": {
+  "name": "Boscagli",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "115": {
+  "name": "De Cuyper",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "116": {
+  "name": "Dunk",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "117": {
+  "name": "Coppola",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "118": {
+  "name": "Igor",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "119": {
+  "name": "Costinha",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "120": {
+  "name": "Svoboda",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "121": {
+  "name": "Mitoma",
+  "team": 5,
+  "cost": 60,
+  "status": "i",
+  "news": "Hamstring injury - Unknown return date"
+ },
+ "122": {
+  "name": "Minteh",
+  "team": 5,
+  "cost": 60,
+  "status": "i",
+  "news": "Leg injury - Expected back 28 Nov"
+ },
+ "123": {
+  "name": "Hinshelwood",
+  "team": 5,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "124": {
+  "name": "Groß",
+  "team": 5,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "125": {
+  "name": "Georginio",
+  "team": 5,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "126": {
+  "name": "O'Riley",
+  "team": 5,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "127": {
+  "name": "Gomez",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "128": {
+  "name": "Buonanotte",
+  "team": 5,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Elche on loan for the rest of the season"
+ },
+ "129": {
+  "name": "Ayari",
+  "team": 5,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "130": {
+  "name": "Wieffer",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "131": {
+  "name": "Baleba",
+  "team": 5,
+  "cost": 50,
+  "status": "i",
+  "news": "Ankle injury - Unknown return date"
+ },
+ "132": {
+  "name": "Howell",
+  "team": 5,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Leicester City on loan for the rest of the season"
+ },
+ "133": {
+  "name": "Watson",
+  "team": 5,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Leicester City on loan for the rest of the season"
+ },
+ "134": {
+  "name": "Oriola",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "135": {
+  "name": "Yohanna",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "137": {
+  "name": "Tzimas",
+  "team": 5,
+  "cost": 55,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "138": {
+  "name": "Kostoulas",
+  "team": 5,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "139": {
+  "name": "Ferguson",
+  "team": 5,
+  "cost": 50,
+  "status": "i",
+  "news": "Ankle injury - Expected back 10 Oct"
+ },
+ "328": {
+  "name": "Struijk",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "504": {
+  "name": "Vuskovic",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "594": {
+  "name": "David",
+  "team": 5,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "600": {
+  "name": "Osman",
+  "team": 5,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "605": {
+  "name": "Yalcouyé",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "40": {
+  "name": "Rogers",
+  "team": 6,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "101": {
+  "name": "Henderson",
+  "team": 6,
+  "cost": 50,
+  "status": "d",
+  "news": "Wrist injury - 75% chance of playing"
+ },
+ "136": {
+  "name": "Welbeck",
+  "team": 6,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "140": {
+  "name": "Sánchez",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "141": {
+  "name": "Jörgensen",
+  "team": 6,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined RC Strasbourg on loan for the rest of the season"
+ },
+ "142": {
+  "name": "James",
+  "team": 6,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "143": {
+  "name": "Chalobah",
+  "team": 6,
+  "cost": 55,
+  "status": "u",
+  "news": "Has joined Como permanently"
+ },
+ "144": {
+  "name": "Gusto",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "145": {
+  "name": "Fofana",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "146": {
+  "name": "B.Badiashile",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "147": {
+  "name": "Tosin",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "148": {
+  "name": "Hato",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "149": {
+  "name": "Colwill",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "150": {
+  "name": "M.Sarr",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "151": {
+  "name": "Acheampong",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "152": {
+  "name": "Palestra",
+  "team": 6,
+  "cost": 55,
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
+ },
+ "153": {
+  "name": "Disasi",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "154": {
+  "name": "Palmer",
+  "team": 6,
+  "cost": 95,
+  "status": "d",
+  "news": "Calf injury - 75% chance of playing"
+ },
+ "155": {
+  "name": "Enzo",
+  "team": 6,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "156": {
+  "name": "Neto",
+  "team": 6,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "157": {
+  "name": "Estêvão",
+  "team": 6,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "158": {
+  "name": "Gittens",
+  "team": 6,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "159": {
+  "name": "Caicedo",
+  "team": 6,
+  "cost": 55,
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
+ },
+ "161": {
+  "name": "Lavia",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "163": {
+  "name": "D.Essugo",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "164": {
+  "name": "Quenda",
+  "team": 6,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "165": {
+  "name": "João Pedro",
+  "team": 6,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "166": {
+  "name": "N.Jackson",
+  "team": 6,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "167": {
+  "name": "Delap",
+  "team": 6,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "168": {
+  "name": "Marc Guiu",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "169": {
+  "name": "Mheuka",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "170": {
+  "name": "Emegha",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "200": {
+  "name": "Lacroix",
+  "team": 6,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "560": {
+  "name": "Penders",
+  "team": 6,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "561": {
+  "name": "Anselmino",
+  "team": 6,
+  "cost": 45,
+  "status": "d",
+  "news": "Hamstring injury - 25% chance of playing"
+ },
+ "568": {
+  "name": "Barco",
+  "team": 6,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "578": {
+  "name": "Mudryk",
+  "team": 6,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "583": {
+  "name": "Chavarria",
+  "team": 6,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "104": {
+  "name": "Onyeka",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "110": {
+  "name": "Rushworth",
+  "team": 7,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "171": {
+  "name": "Dovin",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "172": {
+  "name": "Wilson",
+  "team": 7,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "173": {
+  "name": "Thomas",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "174": {
+  "name": "Kitching",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "175": {
+  "name": "van Ewijk",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "176": {
+  "name": "Dasilva",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "177": {
+  "name": "Kesler-Hayden",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "178": {
+  "name": "Bidwell",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "179": {
+  "name": "Latibeaudiere",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "180": {
+  "name": "Woolfenden",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "181": {
+  "name": "Brau",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "182": {
+  "name": "Amenda",
+  "team": 7,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "183": {
+  "name": "Rudoni",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "184": {
+  "name": "Grimes",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "185": {
+  "name": "Sakamoto",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "186": {
+  "name": "Mason-Clark",
+  "team": 7,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "187": {
+  "name": "Eccles",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "188": {
+  "name": "Torp",
+  "team": 7,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "189": {
+  "name": "Shepherd",
+  "team": 7,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "190": {
+  "name": "Tchaouna",
+  "team": 7,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "191": {
+  "name": "Borges Rodrigues",
+  "team": 7,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "192": {
+  "name": "Andrews",
+  "team": 7,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "193": {
+  "name": "Wright",
+  "team": 7,
+  "cost": 55,
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
+ },
+ "194": {
+  "name": "Thomas-Asante",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "195": {
+  "name": "Simms",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "196": {
+  "name": "Markelo",
+  "team": 7,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Shabab Al-Ahli Dubai permanently"
+ },
+ "197": {
+  "name": "Bassette",
+  "team": 7,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined KVC Westerlo on loan for the rest of the season"
+ },
+ "492": {
+  "name": "Awoniyi",
+  "team": 7,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "575": {
+  "name": "Yirenkyi",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "584": {
+  "name": "Hamer",
+  "team": 7,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "599": {
+  "name": "Cherif",
+  "team": 7,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "42": {
+  "name": "Guessand",
+  "team": 8,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "198": {
+  "name": "Henderson",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "199": {
+  "name": "Benitez",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "201": {
+  "name": "Muñoz",
+  "team": 8,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "202": {
+  "name": "Richards",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "203": {
+  "name": "Canvot",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "204": {
+  "name": "Mitchell",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "205": {
+  "name": "Sosa",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "206": {
+  "name": "Chadi Riad",
+  "team": 8,
+  "cost": 45,
+  "status": "d",
+  "news": "Knee injury - 50% chance of playing"
+ },
+ "207": {
+  "name": "Mingueza",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "208": {
+  "name": "Sarr",
+  "team": 8,
+  "cost": 65,
+  "status": "d",
+  "news": "Groin injury - 75% chance of playing"
+ },
+ "210": {
+  "name": "Wharton",
+  "team": 8,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "211": {
+  "name": "Yeremy",
+  "team": 8,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "212": {
+  "name": "Hughes",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "213": {
+  "name": "Lerma",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "214": {
+  "name": "Kamada",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "215": {
+  "name": "Devenny",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "216": {
+  "name": "Esse",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "217": {
+  "name": "M.França",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "218": {
+  "name": "Doucouré",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "219": {
+  "name": "J.Rak-Sakyi",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "220": {
+  "name": "Cardines",
+  "team": 8,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Bristol City on loan for the rest of the season"
+ },
+ "221": {
+  "name": "Drakes-Thomas",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "222": {
+  "name": "Strand Larsen",
+  "team": 8,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "223": {
+  "name": "Mateta",
+  "team": 8,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "224": {
+  "name": "Nketiah",
+  "team": 8,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "225": {
+  "name": "Uche",
+  "team": 8,
+  "cost": 50,
+  "status": "u",
+  "news": "has returned to Getafe CF"
+ },
+ "241": {
+  "name": "McNeil",
+  "team": 8,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "555": {
+  "name": "Matthews",
+  "team": 8,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "577": {
+  "name": "Tomiyasu",
+  "team": 8,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "588": {
+  "name": "Khalaili",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "595": {
+  "name": "Gozo",
+  "team": 8,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "21": {
+  "name": "Nørgaard",
+  "team": 9,
+  "cost": 50,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "209": {
+  "name": "Johnson",
+  "team": 9,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "226": {
+  "name": "Pickford",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "227": {
+  "name": "Travers",
+  "team": 9,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "228": {
+  "name": "King",
+  "team": 9,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "229": {
+  "name": "Tarkowski",
+  "team": 9,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "230": {
+  "name": "Branthwaite",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "231": {
+  "name": "Keane",
+  "team": 9,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "232": {
+  "name": "O'Brien",
+  "team": 9,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "233": {
+  "name": "Mykolenko",
+  "team": 9,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "234": {
+  "name": "Patterson",
+  "team": 9,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "235": {
+  "name": "Aznou",
+  "team": 9,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "236": {
+  "name": "Dewsbury-Hall",
+  "team": 9,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "237": {
+  "name": "Ndiaye",
+  "team": 9,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "239": {
+  "name": "Garner",
+  "team": 9,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "240": {
+  "name": "Iroegbunam",
+  "team": 9,
+  "cost": 50,
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
+ },
+ "242": {
+  "name": "George",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "243": {
+  "name": "Alcaraz",
+  "team": 9,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "244": {
+  "name": "Armstrong",
+  "team": 9,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "245": {
+  "name": "Dibling",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "246": {
+  "name": "Röhl",
+  "team": 9,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "247": {
+  "name": "Hackney",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "248": {
+  "name": "Beto",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "249": {
+  "name": "Barry",
+  "team": 9,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "250": {
+  "name": "Leno",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "251": {
+  "name": "Lecomte",
+  "team": 10,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "252": {
+  "name": "McNally",
+  "team": 10,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "253": {
+  "name": "Andersen",
+  "team": 10,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "254": {
+  "name": "Robinson",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "255": {
+  "name": "J.Cuenca",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "256": {
+  "name": "Tete",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "257": {
+  "name": "Bassey",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "258": {
+  "name": "Castagne",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "261": {
+  "name": "Iwobi",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "262": {
+  "name": "Smith Rowe",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "263": {
+  "name": "Kevin",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "264": {
+  "name": "Bobb",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "265": {
+  "name": "Berge",
+  "team": 10,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "266": {
+  "name": "Cairney",
+  "team": 10,
+  "cost": 50,
+  "status": "i",
+  "news": "Knee injury - Expected back 10 Oct"
+ },
+ "268": {
+  "name": "King",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "269": {
+  "name": "Sessegnon",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "270": {
+  "name": "Reed",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "271": {
+  "name": "Muniz",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "272": {
+  "name": "Kusi-Asare",
+  "team": 10,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "569": {
+  "name": "Gonzalo",
+  "team": 10,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "570": {
+  "name": "Palacios",
+  "team": 10,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "580": {
+  "name": "Charles",
+  "team": 10,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "610": {
+  "name": "De Fougerolles",
+  "team": 10,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "273": {
+  "name": "Phillips",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "274": {
+  "name": "Butland",
+  "team": 11,
+  "cost": 45,
+  "status": "i",
+  "news": "Arm injury - Unknown return date"
+ },
+ "275": {
+  "name": "Cartwright",
+  "team": 11,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined Grimsby Town on loan for the rest of the season"
+ },
+ "276": {
+  "name": "Lo-Tutala",
+  "team": 11,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined Colchester United on loan for the rest of the season"
+ },
+ "277": {
+  "name": "Egan",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "278": {
+  "name": "Hughes",
+  "team": 11,
+  "cost": 40,
+  "status": "i",
+  "news": "Groin injury - Unknown return date"
+ },
+ "279": {
+  "name": "Ajayi",
+  "team": 11,
+  "cost": 40,
+  "status": "d",
+  "news": "Hamstring injury - 75% chance of playing"
+ },
+ "280": {
+  "name": "Coyle",
+  "team": 11,
+  "cost": 40,
+  "status": "d",
+  "news": "Ankle injury - 75% chance of playing"
+ },
+ "281": {
+  "name": "Drameh",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "282": {
+  "name": "Giles",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "283": {
+  "name": "Jacob",
+  "team": 11,
+  "cost": 40,
+  "status": "i",
+  "news": "Hip injury - Expected back 5 Sep"
+ },
+ "284": {
+  "name": "McCarthy",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "285": {
+  "name": "McNair",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "286": {
+  "name": "Belloumi",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "287": {
+  "name": "Millar",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "288": {
+  "name": "Dowell",
+  "team": 11,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "289": {
+  "name": "Crooks",
+  "team": 11,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "290": {
+  "name": "Slater",
+  "team": 11,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "291": {
+  "name": "Matazo",
+  "team": 11,
+  "cost": 45,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "292": {
+  "name": "Ömür",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "293": {
+  "name": "Kamara",
+  "team": 11,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Portsmouth permanently"
+ },
+ "294": {
+  "name": "Zambrano",
+  "team": 11,
+  "cost": 45,
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
+ },
+ "295": {
+  "name": "McBurnie",
+  "team": 11,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "296": {
+  "name": "Akintola",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "297": {
+  "name": "Gyabi",
+  "team": 11,
+  "cost": 45,
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
+ },
+ "298": {
+  "name": "Destan",
+  "team": 11,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Konyaspor permanently"
+ },
+ "299": {
+  "name": "Burstow",
+  "team": 11,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Sheffield Wednesday on loan for the rest of the season"
+ },
+ "340": {
+  "name": "Gelhardt",
+  "team": 11,
+  "cost": 50,
+  "status": "i",
+  "news": "Ankle injury - Expected back 5 Sep"
+ },
+ "556": {
+  "name": "Targett",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "563": {
+  "name": "Morita",
+  "team": 11,
+  "cost": 50,
+  "status": "d",
+  "news": "Calf injury - 50% chance of playing"
+ },
+ "572": {
+  "name": "Tzolakis",
+  "team": 11,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "574": {
+  "name": "Hjertø-Dahl",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "576": {
+  "name": "Stroud",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "585": {
+  "name": "Herrington",
+  "team": 11,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "586": {
+  "name": "Mendy",
+  "team": 11,
+  "cost": 40,
+  "status": "d",
+  "news": "Thigh injury - 75% chance of playing"
+ },
+ "589": {
+  "name": "Gourna-Douath",
+  "team": 11,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "259": {
+  "name": "Diop",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "267": {
+  "name": "Lukić",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "300": {
+  "name": "Walton",
+  "team": 12,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "301": {
+  "name": "Palmer",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "302": {
+  "name": "Button",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "303": {
+  "name": "Kipré",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "304": {
+  "name": "O'Shea",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "305": {
+  "name": "Davis",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "306": {
+  "name": "Greaves",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "307": {
+  "name": "Johnson",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "308": {
+  "name": "Furlong",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "309": {
+  "name": "Núñez",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "310": {
+  "name": "Matusiwa",
+  "team": 12,
+  "cost": 50,
+  "status": "i",
+  "news": "Muscular injury - Unknown return date"
+ },
+ "311": {
+  "name": "Burns",
+  "team": 12,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Leicester City permanently"
+ },
+ "312": {
+  "name": "Taylor",
+  "team": 12,
+  "cost": 45,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "313": {
+  "name": "Clarke",
+  "team": 12,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "314": {
+  "name": "Ogbene",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "315": {
+  "name": "Fatawu",
+  "team": 12,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "316": {
+  "name": "Emersonn",
+  "team": 12,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "317": {
+  "name": "Hirst",
+  "team": 12,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Stoke City permanently"
+ },
+ "318": {
+  "name": "Philogene",
+  "team": 12,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "319": {
+  "name": "Szmodics",
+  "team": 12,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Derby County on loan for the rest of the season"
+ },
+ "320": {
+  "name": "Akpom",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "321": {
+  "name": "Walle Egeli",
+  "team": 12,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "322": {
+  "name": "Al-Hamadi",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "323": {
+  "name": "McAteer",
+  "team": 12,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "324": {
+  "name": "Mehmeti",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "554": {
+  "name": "Van Oevelen",
+  "team": 12,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "562": {
+  "name": "Maeda",
+  "team": 12,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "564": {
+  "name": "Scherpen",
+  "team": 12,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "571": {
+  "name": "Florentino",
+  "team": 12,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "591": {
+  "name": "Enciso",
+  "team": 12,
+  "cost": 55,
+  "status": "d",
+  "news": "Muscular injury - 75% chance of playing"
+ },
+ "592": {
+  "name": "Ouattara",
+  "team": 12,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "602": {
+  "name": "Humphreys",
+  "team": 12,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "260": {
+  "name": "Wilson",
+  "team": 13,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "326": {
+  "name": "Perri",
+  "team": 13,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "327": {
+  "name": "Bijol",
+  "team": 13,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "329": {
+  "name": "Rodon",
+  "team": 13,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "330": {
+  "name": "Bogle",
+  "team": 13,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "331": {
+  "name": "Gudmundsson",
+  "team": 13,
+  "cost": 45,
+  "status": "i",
+  "news": "Hamstring injury - Unknown return date"
+ },
+ "332": {
+  "name": "Justin",
+  "team": 13,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "333": {
+  "name": "Bornauw",
+  "team": 13,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Hamburg SV on loan for the rest of the season"
+ },
+ "334": {
+  "name": "Muharemović",
+  "team": 13,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "335": {
+  "name": "Stach",
+  "team": 13,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "336": {
+  "name": "Okafor",
+  "team": 13,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "337": {
+  "name": "Aaronson",
+  "team": 13,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "338": {
+  "name": "Ampadu",
+  "team": 13,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "339": {
+  "name": "Longstaff",
+  "team": 13,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "341": {
+  "name": "Gnonto",
+  "team": 13,
+  "cost": 50,
+  "status": "i",
+  "news": "Hamstring injury - Unknown return date"
+ },
+ "342": {
+  "name": "Harrison",
+  "team": 13,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined New England Revolution permanently"
+ },
+ "343": {
+  "name": "James",
+  "team": 13,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "344": {
+  "name": "Gruev",
+  "team": 13,
+  "cost": 50,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "345": {
+  "name": "Tanaka",
+  "team": 13,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "346": {
+  "name": "Calvert-Lewin",
+  "team": 13,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "347": {
+  "name": "Nmecha",
+  "team": 13,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "348": {
+  "name": "Piroe",
+  "team": 13,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined West Ham United on loan for the rest of the season"
+ },
+ "349": {
+  "name": "Mateo Joseph",
+  "team": 13,
+  "cost": 45,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "385": {
+  "name": "Trafford",
+  "team": 13,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "598": {
+  "name": "Elvedi",
+  "team": 13,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "603": {
+  "name": "Lienou",
+  "team": 13,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "604": {
+  "name": "Cresswell",
+  "team": 13,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "350": {
+  "name": "A.Becker",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "351": {
+  "name": "Mamardashvili",
+  "team": 14,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "352": {
+  "name": "Woodman",
+  "team": 14,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "353": {
+  "name": "Pecsi",
+  "team": 14,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined TSV Hartberg on loan for the rest of the season"
+ },
+ "354": {
+  "name": "Jaros",
+  "team": 14,
+  "cost": 40,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "355": {
+  "name": "Davies",
+  "team": 14,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "356": {
+  "name": "Virgil",
+  "team": 14,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "357": {
+  "name": "Frimpong",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "358": {
+  "name": "Kerkez",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "359": {
+  "name": "Gomez",
+  "team": 14,
+  "cost": 50,
+  "status": "i",
+  "news": "Muscular injury - Unknown return date"
+ },
+ "360": {
+  "name": "Bradley",
+  "team": 14,
+  "cost": 50,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "361": {
+  "name": "Lucky",
+  "team": 14,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "362": {
+  "name": "Jacquet",
+  "team": 14,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "363": {
+  "name": "Leoni",
+  "team": 14,
+  "cost": 40,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "364": {
+  "name": "Tsimikas",
+  "team": 14,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "365": {
+  "name": "Ramsay",
+  "team": 14,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "366": {
+  "name": "Wirtz",
+  "team": 14,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "367": {
+  "name": "Gakpo",
+  "team": 14,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "368": {
+  "name": "Szoboszlai",
+  "team": 14,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "369": {
+  "name": "Ngumoha",
+  "team": 14,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "370": {
+  "name": "Chiesa",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "371": {
+  "name": "Gravenberch",
+  "team": 14,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "372": {
+  "name": "Mac Allister",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "373": {
+  "name": "C.Jones",
+  "team": 14,
+  "cost": 55,
+  "status": "d",
+  "news": "Hip injury - 75% chance of playing"
+ },
+ "374": {
+  "name": "Endo",
+  "team": 14,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "375": {
+  "name": "Nyoni",
+  "team": 14,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "376": {
+  "name": "Bajcetic",
+  "team": 14,
+  "cost": 50,
+  "status": "i",
+  "news": "Hamstring injury - Unknown return date"
+ },
+ "377": {
+  "name": "Munoz",
+  "team": 14,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "378": {
+  "name": "McConnell",
+  "team": 14,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "379": {
+  "name": "Isak",
+  "team": 14,
+  "cost": 90,
+  "status": "a",
+  "news": ""
+ },
+ "380": {
+  "name": "Ekitiké",
+  "team": 14,
+  "cost": 75,
+  "status": "i",
+  "news": "Achilles injury - Unknown return date"
+ },
+ "381": {
+  "name": "Koumas",
+  "team": 14,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "382": {
+  "name": "Danns",
+  "team": 14,
+  "cost": 45,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "383": {
+  "name": "Elliott",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "579": {
+  "name": "Araujo",
+  "team": 14,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "238": {
+  "name": "Grealish",
+  "team": 15,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "384": {
+  "name": "Donnarumma",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "386": {
+  "name": "Bettinelli",
+  "team": 15,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "387": {
+  "name": "O'Reilly",
+  "team": 15,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "388": {
+  "name": "Guéhi",
+  "team": 15,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "389": {
+  "name": "Matheus N.",
+  "team": 15,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "390": {
+  "name": "Rúben",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "391": {
+  "name": "Gvardiol",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "392": {
+  "name": "Aït-Nouri",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "393": {
+  "name": "Khusanov",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "394": {
+  "name": "Alleyne",
+  "team": 15,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Burnley on loan for the rest of the season"
+ },
+ "395": {
+  "name": "Lewis",
+  "team": 15,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "396": {
+  "name": "Vitor Reis",
+  "team": 15,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "397": {
+  "name": "Semenyo",
+  "team": 15,
+  "cost": 85,
+  "status": "a",
+  "news": ""
+ },
+ "398": {
+  "name": "Foden",
+  "team": 15,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "399": {
+  "name": "Cherki",
+  "team": 15,
+  "cost": 75,
+  "status": "a",
+  "news": ""
+ },
+ "400": {
+  "name": "Doku",
+  "team": 15,
+  "cost": 75,
+  "status": "i",
+  "news": "Calf injury - Expected back 5 Sep"
+ },
+ "401": {
+  "name": "Marmoush",
+  "team": 15,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "402": {
+  "name": "Rodrigo",
+  "team": 15,
+  "cost": 65,
+  "status": "u",
+  "news": "Has joined Barcelona permanently"
+ },
+ "403": {
+  "name": "Savinho",
+  "team": 15,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "404": {
+  "name": "Reijnders",
+  "team": 15,
+  "cost": 60,
+  "status": "u",
+  "news": "Has joined Al Qadsiah permanently"
+ },
+ "405": {
+  "name": "N.Gonzalez",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "406": {
+  "name": "Kovačić",
+  "team": 15,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "407": {
+  "name": "Echeverri",
+  "team": 15,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "408": {
+  "name": "Phillips",
+  "team": 15,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Sheffield United on loan for the rest of the season"
+ },
+ "409": {
+  "name": "Mukasa",
+  "team": 15,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "410": {
+  "name": "Monga",
+  "team": 15,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "411": {
+  "name": "Haaland",
+  "team": 15,
+  "cost": 155,
+  "status": "a",
+  "news": ""
+ },
+ "481": {
+  "name": "Anderson",
+  "team": 15,
+  "cost": 65,
+  "status": "d",
+  "news": "Knock - 75% chance of playing"
+ },
+ "587": {
+  "name": "Rulli",
+  "team": 15,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "43": {
+  "name": "Tielemans",
+  "team": 16,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "162": {
+  "name": "Andrey Santos",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "325": {
+  "name": "Darlow",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "412": {
+  "name": "Lammens",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "413": {
+  "name": "Bayindir",
+  "team": 16,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Celta Vigo on loan for the rest of the season"
+ },
+ "414": {
+  "name": "Heaton",
+  "team": 16,
+  "cost": 40,
+  "status": "i",
+  "news": "Hamstring injury - Unknown return date"
+ },
+ "415": {
+  "name": "Dorgu",
+  "team": 16,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "416": {
+  "name": "De Ligt",
+  "team": 16,
+  "cost": 50,
+  "status": "i",
+  "news": "Back injury - Unknown return date"
+ },
+ "417": {
+  "name": "Dalot",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "418": {
+  "name": "Maguire",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "419": {
+  "name": "Martinez",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "420": {
+  "name": "Yoro",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "421": {
+  "name": "Heaven",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "422": {
+  "name": "Mazraoui",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "423": {
+  "name": "Shaw",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "424": {
+  "name": "Amass",
+  "team": 16,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "425": {
+  "name": "Fredricson",
+  "team": 16,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined Lausanne-Sport permanently"
+ },
+ "426": {
+  "name": "B.Fernandes",
+  "team": 16,
+  "cost": 120,
+  "status": "a",
+  "news": ""
+ },
+ "427": {
+  "name": "Mbeumo",
+  "team": 16,
+  "cost": 80,
+  "status": "a",
+  "news": ""
+ },
+ "428": {
+  "name": "Cunha",
+  "team": 16,
+  "cost": 80,
+  "status": "a",
+  "news": ""
+ },
+ "429": {
+  "name": "Rashford",
+  "team": 16,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "430": {
+  "name": "Mount",
+  "team": 16,
+  "cost": 55,
+  "status": "d",
+  "news": "Foot injury - 75% chance of playing"
+ },
+ "431": {
+  "name": "Amad",
+  "team": 16,
+  "cost": 60,
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
+ },
+ "432": {
+  "name": "Mainoo",
+  "team": 16,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "433": {
+  "name": "Ugarte",
+  "team": 16,
+  "cost": 50,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "434": {
+  "name": "J.Fletcher",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "435": {
+  "name": "Lacey",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "436": {
+  "name": "Collyer",
+  "team": 16,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "437": {
+  "name": "Bendito Mantato",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "438": {
+  "name": "Fletcher",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "439": {
+  "name": "Šeško",
+  "team": 16,
+  "cost": 70,
+  "status": "a",
+  "news": ""
+ },
+ "440": {
+  "name": "Zirkzee",
+  "team": 16,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "441": {
+  "name": "Obi",
+  "team": 16,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "442": {
+  "name": "Pope",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "443": {
+  "name": "Gillespie",
+  "team": 17,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "444": {
+  "name": "Jaouen",
+  "team": 17,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "445": {
+  "name": "Thiaw",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "446": {
+  "name": "Schär",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "447": {
+  "name": "Botman",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "448": {
+  "name": "Burn",
+  "team": 17,
+  "cost": 50,
+  "status": "i",
+  "news": "Ankle injury - Expected back 14 Sep"
+ },
+ "449": {
+  "name": "Hall",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "450": {
+  "name": "Livramento",
+  "team": 17,
+  "cost": 50,
+  "status": "i",
+  "news": "Calf injury - Unknown return date"
+ },
+ "451": {
+  "name": "A.Murphy",
+  "team": 17,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined FC Kaiserslautern on loan for the rest of the season"
+ },
+ "453": {
+  "name": "Barnes",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "454": {
+  "name": "Elanga",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "456": {
+  "name": "J.Ramsey",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "457": {
+  "name": "J.Murphy",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "458": {
+  "name": "Joelinton",
+  "team": 17,
+  "cost": 55,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "459": {
+  "name": "L.Miley",
+  "team": 17,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "460": {
+  "name": "Willock",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "461": {
+  "name": "Touré",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "462": {
+  "name": "Steur",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "463": {
+  "name": "Woltemade",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "464": {
+  "name": "Wissa",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "465": {
+  "name": "Osula",
+  "team": 17,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "466": {
+  "name": "Neave",
+  "team": 17,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "559": {
+  "name": "Bamba",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "567": {
+  "name": "Horníček",
+  "team": 17,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "593": {
+  "name": "Dedić",
+  "team": 17,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "609": {
+  "name": "Shahar",
+  "team": 17,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "467": {
+  "name": "Sels",
+  "team": 18,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "468": {
+  "name": "John",
+  "team": 18,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "469": {
+  "name": "N.Williams",
+  "team": 18,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "470": {
+  "name": "Morato",
+  "team": 18,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "471": {
+  "name": "Milenković",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "472": {
+  "name": "Murillo",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "473": {
+  "name": "Aina",
+  "team": 18,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "474": {
+  "name": "Jair Cunha",
+  "team": 18,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "475": {
+  "name": "Savona",
+  "team": 18,
+  "cost": 45,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "476": {
+  "name": "O.Richards",
+  "team": 18,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "477": {
+  "name": "Abbott",
+  "team": 18,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "478": {
+  "name": "Netz",
+  "team": 18,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "479": {
+  "name": "Bindon",
+  "team": 18,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "480": {
+  "name": "Gibbs-White",
+  "team": 18,
+  "cost": 80,
+  "status": "d",
+  "news": "Knee injury - 75% chance of playing"
+ },
+ "482": {
+  "name": "Hudson-Odoi",
+  "team": 18,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "483": {
+  "name": "Ndoye",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "484": {
+  "name": "Hutchinson",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "485": {
+  "name": "Bakwa",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "486": {
+  "name": "McAtee",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "487": {
+  "name": "Dominguez",
+  "team": 18,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "488": {
+  "name": "I.Sangaré",
+  "team": 18,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "489": {
+  "name": "Yates",
+  "team": 18,
+  "cost": 45,
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
+ },
+ "490": {
+  "name": "Wood",
+  "team": 18,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "491": {
+  "name": "Igor Jesus",
+  "team": 18,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "493": {
+  "name": "Kalimuendo",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "558": {
+  "name": "Schlager",
+  "team": 18,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "581": {
+  "name": "Diomande",
+  "team": 18,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "590": {
+  "name": "Benda",
+  "team": 18,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "112": {
+  "name": "Van Hecke",
+  "team": 19,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "455": {
+  "name": "Tonali",
+  "team": 19,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "494": {
+  "name": "Vicario",
+  "team": 19,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Juventus on loan for the rest of the season"
+ },
+ "495": {
+  "name": "Austin",
+  "team": 19,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "496": {
+  "name": "Kinsky",
+  "team": 19,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "497": {
+  "name": "Dubravka",
+  "team": 19,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "498": {
+  "name": "Senesi",
+  "team": 19,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "499": {
+  "name": "Pedro Porro",
+  "team": 19,
+  "cost": 55,
+  "status": "d",
+  "news": "Lack of match fitness - 75% chance of playing"
+ },
+ "500": {
+  "name": "Romero",
+  "team": 19,
+  "cost": 50,
+  "status": "u",
+  "news": "Has joined Atletico Madrid permanently"
+ },
+ "501": {
+  "name": "Danso",
+  "team": 19,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "502": {
+  "name": "Robertson",
+  "team": 19,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "503": {
+  "name": "Van de Ven",
+  "team": 19,
+  "cost": 50,
+  "status": "d",
+  "news": "Unspecified injury - 50% chance of playing"
+ },
+ "505": {
+  "name": "Spence",
+  "team": 19,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Internazionale permanently"
+ },
+ "506": {
+  "name": "Udogie",
+  "team": 19,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "507": {
+  "name": "Phillips",
+  "team": 19,
+  "cost": 45,
+  "status": "u",
+  "news": "Has joined Middlesbrough permanently"
+ },
+ "508": {
+  "name": "Davies",
+  "team": 19,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "509": {
+  "name": "Byfield",
+  "team": 19,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "510": {
+  "name": "Rowswell",
+  "team": 19,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "511": {
+  "name": "Souza",
+  "team": 19,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "512": {
+  "name": "Kudus",
+  "team": 19,
+  "cost": 65,
+  "status": "d",
+  "news": "Thigh injury - 50% chance of playing"
+ },
+ "513": {
+  "name": "Xavi",
+  "team": 19,
+  "cost": 60,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "514": {
+  "name": "Tel",
+  "team": 19,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "515": {
+  "name": "Maddison",
+  "team": 19,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
+ "516": {
+  "name": "Bentancur",
+  "team": 19,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "517": {
+  "name": "Odobert",
+  "team": 19,
+  "cost": 55,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "518": {
+  "name": "P.M.Sarr",
+  "team": 19,
+  "cost": 50,
+  "status": "i",
+  "news": "Hamstring injury - Unknown return date"
+ },
+ "519": {
+  "name": "Gallagher",
+  "team": 19,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "520": {
+  "name": "Bergvall",
+  "team": 19,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "521": {
+  "name": "Kulusevski",
+  "team": 19,
+  "cost": 65,
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
+ },
+ "522": {
+  "name": "Gray",
+  "team": 19,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "523": {
+  "name": "Moore",
+  "team": 19,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "524": {
+  "name": "Olusesi",
+  "team": 19,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "525": {
+  "name": "Fernandes",
+  "team": 19,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "526": {
+  "name": "Solanke",
+  "team": 19,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "527": {
+  "name": "Richarlison",
+  "team": 19,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "528": {
+  "name": "Scarlett",
+  "team": 19,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "601": {
+  "name": "Williams-Barnett",
+  "team": 19,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "529": {
+  "name": "Roefs",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "530": {
+  "name": "Patterson",
+  "team": 20,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined Wrexham permanently"
+ },
+ "531": {
+  "name": "Ellborg",
+  "team": 20,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "532": {
+  "name": "Ballard",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "533": {
+  "name": "Mukiele",
+  "team": 20,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "534": {
+  "name": "Hume",
+  "team": 20,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "535": {
+  "name": "Alderete",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "536": {
+  "name": "Reinildo",
+  "team": 20,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "537": {
+  "name": "Seelt",
+  "team": 20,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "538": {
+  "name": "Hjelde",
+  "team": 20,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined KV Mechelen on loan for the rest of the season"
+ },
+ "539": {
+  "name": "O'Nien",
+  "team": 20,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "540": {
+  "name": "Masuaku",
+  "team": 20,
+  "cost": 40,
+  "status": "u",
+  "news": "Has joined Konyaspor permanently"
+ },
+ "541": {
+  "name": "Meunier",
+  "team": 20,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "542": {
+  "name": "E.Le Fée",
+  "team": 20,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "543": {
+  "name": "Diarra",
+  "team": 20,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "544": {
+  "name": "Xhaka",
+  "team": 20,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "545": {
+  "name": "Sadiki",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "546": {
+  "name": "Adingra",
+  "team": 20,
+  "cost": 50,
+  "status": "i",
+  "news": "Ankle injury - Unknown return date"
+ },
+ "547": {
+  "name": "Mundle",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "548": {
+  "name": "Rigg",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "549": {
+  "name": "Talbi",
+  "team": 20,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "550": {
+  "name": "Jocelin.T",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "551": {
+  "name": "Angulo",
+  "team": 20,
+  "cost": 50,
+  "status": "a",
+  "news": ""
+ },
+ "552": {
+  "name": "Brobbey",
+  "team": 20,
+  "cost": 60,
+  "status": "a",
+  "news": ""
+ },
+ "553": {
+  "name": "Isidor",
+  "team": 20,
+  "cost": 55,
+  "status": "a",
+  "news": ""
+ }
+}
