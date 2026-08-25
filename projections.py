@@ -678,6 +678,8 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
         mins = minutes_model(e, games_played, last_rates.get(e["id"]),
                              gk_rank.get(e["id"]))
 
+        ramp = list(ov.get("minutes_ramp", [])) if ov else []
+
         if ov:
             for key, field in (("xg90", "xg"), ("xa90", "xa"),
                                ("defcon90", "defcon"), ("bps90", "bps")):
@@ -701,11 +703,31 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
                     exp_minutes=ps * mis + p_cameo * mins.cameo_mins,
                     p_start=ps, mins_if_start=mis,
                     p_cameo=p_cameo, cameo_mins=mins.cameo_mins)
-            applied.append(f"{e['web_name']}: E[min] {mins.exp_minutes:.0f}"
-                           + (f" — {ov['note']}" if ov.get("note") else ""))
-        for g in gws:
+            desc = f"{e['web_name']}: E[min] {mins.exp_minutes:.0f}"
+            if ramp:
+                path = ", ".join(
+                    f"{mins.p_start * float(ramp[min(i, len(ramp)-1)]):.2f}"
+                    for i in range(len(gws)))
+                desc += f"  p_start by GW: [{path}]"
+            applied.append(desc + (f" — {ov['note']}" if ov.get("note") else ""))
+        for gi, g in enumerate(gws):
+            # A returning player isn't a fixed probability — he's benched now
+            # and starting in three weeks. minutes_ramp expresses that as a
+            # multiplier per horizon week; the last value carries forward.
+            m_g = mins
+            if ramp:
+                mult = float(ramp[min(gi, len(ramp) - 1)])
+                ps = max(0.0, min(1.0, mins.p_start * mult))
+                mis = mins.mins_if_start
+                pc = mins.p_cameo
+                m_g = Minutes(
+                    p_appear=min(1.0, ps + pc),
+                    p_60=ps * min(1.0, max(0.35, (mis - 12) / 70.0)),
+                    exp_minutes=ps * mis + pc * mins.cameo_mins,
+                    p_start=ps, mins_if_start=mis,
+                    p_cameo=pc, cameo_mins=mins.cameo_mins)
             ep = sum(
-                score_fixture(e, rates, mins, lf, la, team_avg_for[e["team"]])
+                score_fixture(e, rates, m_g, lf, la, team_avg_for[e["team"]])
                 for lf, la in sched[e["team"]][g]
             )
             rows.append({"id": e["id"], "gw": g, "ep": round(ep, 3),

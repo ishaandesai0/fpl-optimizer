@@ -324,6 +324,7 @@ backup minutes. None of that is visible in the data.
 | `avail` | scales the chance of featuring at all |
 | `p_start` | replaces the start probability outright |
 | `minutes_mult` | scales minutes **per start** (a managed return plays 55 minutes, not 55% of matches) |
+| `minutes_ramp` | list of multipliers on `p_start`, one per horizon gameweek; the last value carries forward. For players easing back to fitness: `[0.5, 0.7, 0.9, 1.0]` |
 | `xg90` `xa90` `defcon90` `bps90` | override a per-90 rate |
 | `note` | free text, echoed when applied |
 
@@ -340,6 +341,11 @@ with for the same squad slot and make sure that comparison is still fair.
 
 **Delete entries once stale.** An override that outlives its situation is worse
 than none. Review weekly.
+
+**Returning players are a ramp, not a probability.** Someone back from injury or
+a deep tournament run is benched now and starting in three weeks. A flat
+`p_start` gets both ends wrong. `minutes_ramp` expresses the path; the applied-
+overrides block prints the resulting `p_start` per gameweek so you can check it.
 
 ---
 
@@ -402,6 +408,17 @@ Negative binomial is the right family; Poisson understates the tails.
 **The minutes prior takes last season's role at face value.** Role changes from
 injuries ahead in the pecking order, transfers, or a new manager are invisible.
 `overrides.json` is the only fix.
+
+**No concept of pre-season disruption.** After a major tournament, players from
+nations that went deep return late and are eased in through August, but their
+priors come from a full season at full fitness. The model over-projects all of
+them for the first few gameweeks. It self-corrects by ~GW5 as real minutes
+accumulate; until then, `minutes_ramp` is the workaround.
+
+**`mins_if_start` can't fully separate substitute minutes.** `bootstrap-static`
+has no appearance count, so start-minutes are bounded above by `starts * 90`.
+Exact when a player has no starts; caps rather than eliminates the error
+otherwise.
 
 **New signings and promoted-club players have no priors.** Roughly 270 of 610
 players fall back to the price heuristic, and a cheap player with a strong real
