@@ -36,6 +36,13 @@ import projections as P
 HIST_DIR = "history"
 ROSTER = os.path.join(HIST_DIR, "roster.json")
 
+# Roughly what share of each position's xP comes from the player's own measured
+# rates, as opposed to team-level inputs (appearance, clean sheet, conceded)
+# that the model knows without any player history. Used to weight how much a
+# missing prior season actually matters. Heuristic, not fitted — worth
+# revisiting once the backtest has per-position calibration.
+RATE_DEPENDENCE = {1: 0.25, 2: 0.55, 3: 0.85, 4: 0.95}
+
 
 def load_xp(path: str | None) -> dict[int, float]:
     """Horizon totals per player, so 'impact' means something."""
@@ -152,10 +159,20 @@ def review_queue(elements, teams, xp, squad, overrides, deep_ids, top_n):
 
         reasons = []
         weight = 0.0
+        pos = e["element_type"]
 
         if pid not in deep_ids:
-            reasons.append("no prior season — rates inferred from price")
-            weight += 3.0
+            # "No prior season" matters in proportion to how much of a
+            # player's xP depends on his PERSONAL rates rather than on
+            # team-level inputs. A first-choice keeper's projection is mostly
+            # appearance points plus his team's clean-sheet probability —
+            # both known without him. A forward's is mostly his own xG.
+            # Without this, every promoted-club keeper crowds out the players
+            # whose ratings are actually uncertain.
+            rate_dep = RATE_DEPENDENCE[pos]
+            reasons.append(f"no prior season — rates inferred from price "
+                           f"({int(rate_dep*100)}% of his xP depends on them)")
+            weight += 3.0 * rate_dep
         if e.get("status", "a") != "a":
             chance = e.get("chance_of_playing_next_round")
             reasons.append(f"status '{e.get('status')}'"
@@ -232,18 +249,22 @@ def main():
     xp = load_xp(args.xp)
     squad: set[int] = set()
     if args.entry:
-        try:
-            summary = P._get(f"entry/{args.entry}/", f"entry_{args.entry}.json")
-            for gw in range(40, 0, -1):
-                try:
-                    picks = P._get(f"entry/{args.entry}/event/{gw}/picks/",
-                                   f"picks_{args.entry}_{gw}.json")
-                except Exception:
-                    continue
-                squad = {p["element"] for p in picks["picks"]}
-                break
-        except Exception as exc:
-            print(f"(couldn't load your squad: {exc})")
+        # walk back from the most recent gameweek, not from 40 — picks only
+        # exist for deadlines that have passed, and 404s aren't cached, so
+        # starting high means dozens of wasted requests every run
+        next_gw = next((ev["id"] for ev in boot["events"] if ev.get("is_next")), 1)
+        for gw in range(next_gw - 1, 0, -1):
+            try:
+                picks = P._get(f"entry/{args.entry}/event/{gw}/picks/",
+                               f"picks_{args.entry}_{gw}.json")
+            except Exception:
+                continue
+            squad = {p["element"] for p in picks["picks"]}
+            print(f"Loaded your GW{gw} squad ({len(squad)} players).")
+            break
+        if not squad:
+            print("! Could not load your squad — squad flags below will be "
+                  "missing. Check the entry id.")
 
     overrides = P.load_overrides(args.overrides) \
         if os.path.exists(args.overrides) else {}
