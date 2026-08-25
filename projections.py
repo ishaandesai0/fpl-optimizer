@@ -372,7 +372,14 @@ def minutes_model(e: dict, games_played: int, last: dict | None = None,
     if last and last.get("_starts", 0) > 0:
         prior_mins_if_start = max(45.0, min(90.0,
                                             last["_minutes"] / last["_starts"]))
-    mins_if_start = (mins + prior_mins_if_start * k_games) / (starts + k_games)
+    # Minutes played as a substitute say nothing about how long he lasts when
+    # he STARTS, so they must not enter this estimate. Bootstrap has no
+    # appearance count, so bound start-minutes above by starts * 90: with zero
+    # starts this correctly contributes nothing, and elsewhere it caps the
+    # error rather than letting cameos inflate the numerator without limit.
+    start_minutes = min(mins, starts * 90.0)
+    mins_if_start = ((start_minutes + prior_mins_if_start * k_games)
+                     / (starts + k_games))
     mins_if_start = max(20.0, min(90.0, mins_if_start))
 
     # cameo appearances off the bench
