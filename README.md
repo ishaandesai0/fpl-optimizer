@@ -100,7 +100,14 @@ results accumulate.
 | `--results-csv` | football-data.co.uk style CSV of past results |
 | `--history-weight` | weight on historical matches vs this season (default 0.5) |
 | `--prior-weight` | pseudo-matches of tier prior per team (default 6.0) |
+| `--red-weight` | multiplier on matches containing a red card (default 0.45); 1.0 disables |
 | `--results` | JSON list of `{h,a,hg,ag}` with FPL team ids |
+
+**Matches with red cards are downweighted.** A dismissal makes the scoreline a
+poor sample of eleven-a-side football — Brighton 4-0 Villa in GW1 2026/27 had all
+four goals inside 31 minutes after a red. Detected from FPL's fixture stats for
+the current season and from `HR`/`AR` columns in a historical CSV. Downweighted,
+not discarded.
 
 **Read the fitted-on line.** `"71% data, 29% prior"` tells you how much to trust
 the table. Below ~40%, the ordering is mostly the prior wearing a continuous coat.
@@ -283,6 +290,13 @@ different manager, in a different role — and **nothing else in the pipeline
 notices**. Coverage weighting won't catch it either: the sample is fine, it's
 just no longer applicable. A club change is the strongest signal that an override
 is needed.
+
+**Arrivals threatening incumbents.** When a player joins a club, everyone already
+at that club in that position gets flagged — squad members and anyone carrying an
+override especially. This is the gap that let Arsenal's Konsa signing past: he
+appears only as "new to the game", and the incumbent's own row is completely
+unchanged — same status, same news, same history. A signing is the most common
+reason a minutes assumption goes stale and the least visible.
 
 **Review queue.** Ranks players by how much a wrong assumption about them would
 cost — impact (horizon xP, or squad membership) times uncertainty (no prior

@@ -55,6 +55,13 @@ API = "https://fantasy.premierleague.com/api"
 GAMMA_PRIOR = 1.25
 GAMMA_PRIOR_MATCHES = 200.0
 GAMMA_BAND = (1.02, 1.45)
+
+# A match with a red card is a poor sample of eleven-a-side football: the
+# scoreline reflects a numerical advantage that won't recur. Brighton 4-0 Villa
+# in GW1 2026/27 is the archetype — all four goals inside 31 minutes after a
+# dismissal. Downweight rather than discard: the result still carries signal,
+# just less of it.
+RED_CARD_WEIGHT = 0.45
 CACHE_DIR = os.path.expanduser("~/.fpl_cache")
 
 
@@ -128,8 +135,13 @@ def map_teams(names: set[str], teams: dict) -> dict[str, int]:
     return out
 
 
-def load_results_csv(path: str, teams: dict, weight: float) -> list[dict]:
-    """Read a football-data.co.uk style CSV (HomeTeam/AwayTeam/FTHG/FTAG)."""
+def load_results_csv(path: str, teams: dict, weight: float,
+                     red_weight: float = RED_CARD_WEIGHT) -> list[dict]:
+    """Read a football-data.co.uk style CSV (HomeTeam/AwayTeam/FTHG/FTAG).
+
+    Uses the HR/AR red-card columns when present to downweight contaminated
+    matches.
+    """
     rows = list(csv.DictReader(open(path, encoding="utf-8-sig")))
     if not rows:
         return []
@@ -150,17 +162,29 @@ def load_results_csv(path: str, teams: dict, weight: float) -> list[dict]:
         print("  ^ relegated/promoted sides are expected here; anything else "
               "needs a manual fix.")
 
-    out = []
+    hr, ar = cols.get("hr"), cols.get("ar")
+    out, reds = [], 0
     for r in rows:
         if r[h] not in mapping or r[a] not in mapping:
             continue
         try:
+            w = weight
+            if hr and ar:
+                sent_off = int(float(r[hr] or 0)) + int(float(r[ar] or 0))
+                if sent_off:
+                    w *= red_weight
+                    reds += 1
             out.append({"h": mapping[r[h]], "a": mapping[r[a]],
                         "hg": int(float(r[hg])), "ag": int(float(r[ag])),
-                        "w": weight})
+                        "w": w})
         except (ValueError, TypeError):
             continue
-    print(f"  loaded {len(out)} historical matches at weight {weight}")
+    msg = f"  loaded {len(out)} historical matches at weight {weight}"
+    if reds:
+        msg += f" ({reds} with red cards downweighted x{red_weight})"
+    elif not (hr and ar):
+        msg += " (no HR/AR columns — red cards not detected)"
+    print(msg)
     return out
 
 
@@ -274,6 +298,9 @@ def main():
                                           "FTHG,FTAG)")
     ap.add_argument("--history-weight", type=float, default=0.5,
                     help="weight on historical matches vs this season's")
+    ap.add_argument("--red-weight", type=float, default=RED_CARD_WEIGHT,
+                    help="multiplier on matches containing a red card; 1.0 "
+                         "disables the adjustment")
     args = ap.parse_args()
 
     ttl = 0 if args.fresh else 900
@@ -284,12 +311,26 @@ def main():
 
     # a fixture counts once it has a scoreline; the `finished` flag lags and
     # `finished_provisional` flips earlier, so trust the scores themselves
-    results = [
-        {"h": f["team_h"], "a": f["team_a"],
-         "hg": f["team_h_score"], "ag": f["team_a_score"]}
-        for f in fixtures
-        if f.get("team_h_score") is not None and f.get("team_a_score") is not None
-    ]
+    def had_red(f) -> bool:
+        for st in (f.get("stats") or []):
+            if st.get("identifier") == "red_cards":
+                if st.get("h") or st.get("a"):
+                    return True
+        return False
+
+    results, reds_now = [], 0
+    for f in fixtures:
+        if f.get("team_h_score") is None or f.get("team_a_score") is None:
+            continue
+        w = 1.0
+        if had_red(f):
+            w = args.red_weight
+            reds_now += 1
+        results.append({"h": f["team_h"], "a": f["team_a"],
+                        "hg": f["team_h_score"], "ag": f["team_a_score"], "w": w})
+    if reds_now:
+        print(f"  {reds_now} of this season's matches had a red card — "
+              f"downweighted x{args.red_weight}")
     with_flag = sum(1 for f in fixtures if f.get("finished"))
     if len(results) != with_flag:
         print(f"note: {len(results)} fixtures have scores, {with_flag} carry the "
@@ -308,7 +349,8 @@ def main():
         print(f"Added {len(extra)} historical results.")
     if args.results_csv:
         results = load_results_csv(args.results_csv, teams,
-                                   args.history_weight) + results
+                                   args.history_weight,
+                                   args.red_weight) + results
 
     prior = tier_prior(teams)
     atk, dfn, mu, gamma = fit(results, list(teams), prior, args.prior_weight)

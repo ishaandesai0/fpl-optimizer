@@ -62,6 +62,51 @@ def snapshot_roster(elements: list[dict], teams: dict) -> dict:
             for e in elements}
 
 
+def threatened_incumbents(old: dict, new: dict, elements: list[dict], teams: dict,
+                          squad: set, overrides: dict, xp: dict) -> list[str]:
+    """A signing threatens whoever already plays that position at that club.
+
+    This is the gap that let the Konsa signing slip past: he shows up only as
+    "new to the game", with nothing connecting him to the Arsenal defender you
+    hold an override on. A new arrival is the single most common reason a
+    minutes assumption goes stale, and it is invisible from the incumbent's own
+    row in the API — his status, news and history are all unchanged.
+    """
+    by_id = {e["id"]: e for e in elements}
+    arrivals = [k for k in new if k not in old]
+    if not arrivals:
+        return []
+
+    lines = []
+    for k in arrivals:
+        a = by_id.get(int(k))
+        if not a:
+            continue
+        pos, team = a["element_type"], a["team"]
+        rivals = [e for e in elements
+                  if e["element_type"] == pos and e["team"] == team
+                  and e["id"] != a["id"]
+                  and (e["id"] in squad or str(e["id"]) in overrides
+                       or xp.get(e["id"], 0) >= 8.0)]
+        if not rivals:
+            continue
+        club = teams.get(team, {}).get("short_name", "???")
+        lines.append(f"\n  {a['web_name']} (£{a['now_cost']/10:.1f}m "
+                     f"{P.POS[pos]}, {club}) may take minutes from:")
+        for e in sorted(rivals, key=lambda e: -xp.get(e["id"], 0)):
+            tags = []
+            if e["id"] in squad:
+                tags.append("IN YOUR SQUAD")
+            if str(e["id"]) in overrides:
+                tags.append("HAS AN OVERRIDE — recheck it")
+            tag = ("  [" + ", ".join(tags) + "]") if tags else ""
+            lines.append(f"      {e['web_name']:<20} "
+                         f"{xp.get(e['id'], 0):>5.1f} xP{tag}")
+    if lines:
+        return ["\nARRIVALS THREATENING INCUMBENTS"] + lines
+    return []
+
+
 def diff_roster(old: dict, new: dict, teams: dict, xp: dict, squad: set) -> list[str]:
     lines = []
 
@@ -286,6 +331,8 @@ def main():
         with open(ROSTER, encoding="utf-8") as f:
             old = json.load(f)
         lines = diff_roster(old, new_roster, teams, xp, squad)
+        lines += threatened_incumbents(old, new_roster, elements, teams,
+                                       squad, overrides, xp)
         if lines:
             print("\n" + "=" * 66)
             print("ROSTER CHANGES SINCE LAST RUN")
