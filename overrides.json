@@ -1,0 +1,39 @@
+{
+  "_readme": [
+    "Manual context the FPL API can't express.",
+    "",
+    "PREFER PLAYER IDS. A name key that matches more than one player is",
+    "REFUSED, not guessed at — 'Sangare' matches both M.Sangare and",
+    "I.Sangare, who play for different clubs. Find an id with:",
+    "    python diagnose.py <name>",
+    "",
+    "Fields:",
+    "  exclude       true  -> drop from the pool entirely",
+    "  avail         0..1  -> scales the chance of featuring at all",
+    "  p_start       0..1  -> replaces the start probability outright",
+    "  minutes_mult  0..1+ -> scales minutes PER START (a managed return plays",
+    "                         55 minutes, not 55% of matches)",
+    "  xg90 / xa90 / defcon90 / bps90 -> override a per-90 rate directly",
+    "  note          free text, echoed when applied",
+    "",
+    "The three minutes knobs act on different things and compose without",
+    "compounding. Every applied override is printed with resulting E[min], so",
+    "check that block each run.",
+    "",
+    "",
+    "The minutes prior takes LAST SEASON'S ROLE at face value. When a player's role has changed — injuries ahead of him, a transfer, a new manager — that is invisible to the model and this file is the only fix.",
+    "Delete entries once stale. An override that outlives its situation is",
+    "worse than none."
+  ],
+  "players": {
+    "565": {
+      "defcon90": 13.0,
+      "p_start": 0.75,
+      "note": "M.Sangare (BRE). No prior season, so price heuristic has him at 6.5 defcon/90 and p_start 0.43. GW1: started, 75 min, 13 CBIRT. REMOVE once ~5 games of real data exist."
+    },
+    "11": {
+      "p_start": 0.85,
+      "note": "Mosquera (ARS). Last season 9 starts / 986 min as a backup, so the minutes prior has him at p_start 0.41 — but Saliba is out for months and Timber is not back in first-team training, and he started GW1 for 90. Role changed; the API cannot see it. REVIEW when Saliba or Timber returns, or if Konsa signs."
+    }
+  }
+}

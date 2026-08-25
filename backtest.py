@@ -1,0 +1,325 @@
+#!/usr/bin/env python3
+"""
+backtest.py — is the model actually any good?
+
+Point-in-time backtesting isn't possible from the FPL API: `bootstrap-static`
+is a live snapshot with no history, so you cannot reconstruct what the model
+would have said in GW3 once GW9 has been played. The rates, prices and
+availability flags have all moved.
+
+So this works forward instead. Before each deadline you snapshot the
+projections; after the gameweek resolves you score them against what actually
+happened. From GW2 onward you accumulate a real out-of-sample record.
+
+    # before the deadline
+    python backtest.py snapshot --gw 2 --xp xp.csv
+
+    # after the gameweek finishes
+    python backtest.py score --gw 2
+
+    # once a few weeks have accumulated
+    python backtest.py report
+
+Metrics
+-------
+Correlation (Pearson and Spearman) against realized points; MAE and RMSE;
+calibration by decile — do players projected at 5 xP actually average 5? — and
+a head-to-head against FPL's own `ep_next`, which is the free alternative and
+therefore the bar this model has to clear.
+
+The decision-relevant subset is the top ~60 players by xP, since those are the
+only ones you'd ever pick. A model can look great overall purely by correctly
+predicting that 400 fringe players will score nothing.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import math
+import os
+import sys
+
+try:
+    import requests
+except ImportError:
+    sys.exit("pip install requests")
+
+import projections as P
+
+HIST_DIR = "history"
+
+
+# ---------------------------------------------------------------------------
+# stats helpers (no scipy)
+# ---------------------------------------------------------------------------
+def pearson(x: list[float], y: list[float]) -> float:
+    n = len(x)
+    if n < 3:
+        return float("nan")
+    mx, my = sum(x) / n, sum(y) / n
+    cov = sum((a - mx) * (b - my) for a, b in zip(x, y))
+    sx = math.sqrt(sum((a - mx) ** 2 for a in x))
+    sy = math.sqrt(sum((b - my) ** 2 for b in y))
+    return cov / (sx * sy) if sx and sy else float("nan")
+
+
+def rank(vals: list[float]) -> list[float]:
+    """Average ranks, so ties don't distort Spearman."""
+    order = sorted(range(len(vals)), key=lambda i: vals[i])
+    out = [0.0] * len(vals)
+    i = 0
+    while i < len(order):
+        j = i
+        while j + 1 < len(order) and vals[order[j + 1]] == vals[order[i]]:
+            j += 1
+        avg = (i + j) / 2.0 + 1
+        for k in range(i, j + 1):
+            out[order[k]] = avg
+        i = j + 1
+    return out
+
+
+def spearman(x: list[float], y: list[float]) -> float:
+    return pearson(rank(x), rank(y))
+
+
+# ---------------------------------------------------------------------------
+# snapshot
+# ---------------------------------------------------------------------------
+def snapshot(gw: int, xp_file: str):
+    """Freeze this week's projections plus FPL's own ep_next as a baseline."""
+    os.makedirs(HIST_DIR, exist_ok=True)
+    boot = P._get("bootstrap-static/", "bootstrap.json")
+
+    mine: dict[int, float] = {}
+    with open(xp_file, encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            if int(row.get("gw", gw)) == gw:
+                mine[int(row["id"])] = float(row["ep"])
+    if not mine:
+        sys.exit(f"No rows for GW{gw} in {xp_file}")
+
+    rows = []
+    for e in boot["elements"]:
+        rows.append({
+            "id": e["id"],
+            "name": e["web_name"],
+            "pos": P.POS[e["element_type"]],
+            "cost": e["now_cost"] / 10.0,
+            "xp": round(mine.get(e["id"], 0.0), 3),
+            # the baseline: FPL's own estimate, frozen at the same moment
+            "ep_next": P.fnum(e, "ep_next"),
+            "selected": P.fnum(e, "selected_by_percent"),
+            "status": e.get("status", "a"),
+        })
+
+    path = os.path.join(HIST_DIR, f"gw{gw:02d}_snapshot.csv")
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    live = sum(1 for r in rows if r["xp"] > 0)
+    print(f"Snapshotted GW{gw}: {len(rows)} players ({live} with non-zero xP) "
+          f"-> {path}")
+    print("Run `backtest.py score --gw %d` once the gameweek finishes." % gw)
+
+
+# ---------------------------------------------------------------------------
+# score
+# ---------------------------------------------------------------------------
+def actual_points(gw: int) -> dict[int, dict]:
+    """One call gets every player's realized stats for a gameweek."""
+    live = P._get(f"event/{gw}/live/", f"live_{gw}.json", ttl=3600)
+    out = {}
+    for el in live.get("elements", []):
+        s = el.get("stats", {})
+        out[el["id"]] = {
+            "points": s.get("total_points", 0),
+            "minutes": s.get("minutes", 0),
+            "defcon": s.get("defensive_contribution", 0),
+            "bonus": s.get("bonus", 0),
+            "goals": s.get("goals_scored", 0),
+            "assists": s.get("assists", 0),
+        }
+    return out
+
+
+def score(gw: int, min_price: float = 0.0):
+    path = os.path.join(HIST_DIR, f"gw{gw:02d}_snapshot.csv")
+    if not os.path.exists(path):
+        sys.exit(f"No snapshot for GW{gw}. You must snapshot before the deadline.")
+
+    snap = list(csv.DictReader(open(path, encoding="utf-8")))
+    real = actual_points(gw)
+    if not real:
+        sys.exit(f"No live data for GW{gw} yet.")
+
+    rows = []
+    for r in snap:
+        pid = int(r["id"])
+        if pid not in real:
+            continue
+        rows.append({
+            "id": pid, "name": r["name"], "pos": r["pos"],
+            "cost": float(r["cost"]),
+            "xp": float(r["xp"]), "ep_next": float(r["ep_next"]),
+            "actual": real[pid]["points"],
+            "minutes": real[pid]["minutes"],
+            "defcon": real[pid]["defcon"],
+        })
+
+    out = os.path.join(HIST_DIR, f"gw{gw:02d}_scored.csv")
+    with open(out, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+
+    print(f"\n{'='*64}\nGW{gw} — {len(rows)} players scored\n{'='*64}")
+    report_gw(rows)
+    print(f"\nWrote {out}")
+
+
+def metrics(rows: list[dict], key: str = "xp") -> dict:
+    x = [r[key] for r in rows]
+    y = [float(r["actual"]) for r in rows]
+    n = len(rows)
+    return {
+        "n": n,
+        "pearson": pearson(x, y),
+        "spearman": spearman(x, y),
+        "mae": sum(abs(a - b) for a, b in zip(x, y)) / n,
+        "rmse": math.sqrt(sum((a - b) ** 2 for a, b in zip(x, y)) / n),
+        "bias": sum(a - b for a, b in zip(x, y)) / n,
+    }
+
+
+def line(label: str, m: dict) -> str:
+    return (f"{label:<22}{m['n']:>6}{m['pearson']:>9.3f}{m['spearman']:>10.3f}"
+            f"{m['mae']:>8.2f}{m['rmse']:>8.2f}{m['bias']:>+8.2f}")
+
+
+def report_gw(rows: list[dict]):
+    hdr = (f"{'SUBSET':<22}{'N':>6}{'PEARSON':>9}{'SPEARMAN':>10}"
+           f"{'MAE':>8}{'RMSE':>8}{'BIAS':>8}")
+    print(hdr)
+    print("-" * len(hdr))
+
+    played = [r for r in rows if r["minutes"] > 0]
+    top = sorted(rows, key=lambda r: -r["xp"])[:60]
+
+    print(line("all players", metrics(rows)))
+    print(line("played only", metrics(played)))
+    print(line("top 60 by xP", metrics(top)))
+    print(line("  [baseline ep_next]", metrics(top, "ep_next")))
+
+    print(f"\n{'POSITION':<22}{'N':>6}{'PEARSON':>9}{'SPEARMAN':>10}"
+          f"{'MAE':>8}{'RMSE':>8}{'BIAS':>8}")
+    print("-" * len(hdr))
+    for pos in ("GKP", "DEF", "MID", "FWD"):
+        sub = [r for r in played if r["pos"] == pos]
+        if len(sub) > 5:
+            print(line(pos, metrics(sub)))
+
+    # calibration: bucket by projection, compare mean xP to mean actual
+    print(f"\nCALIBRATION (played only)")
+    print(f"{'xP BUCKET':<14}{'N':>6}{'MEAN xP':>10}{'MEAN ACTUAL':>13}{'GAP':>8}")
+    print("-" * 51)
+    buckets = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 99)]
+    for lo, hi in buckets:
+        sub = [r for r in played if lo <= r["xp"] < hi]
+        if not sub:
+            continue
+        mx = sum(r["xp"] for r in sub) / len(sub)
+        ma = sum(r["actual"] for r in sub) / len(sub)
+        label = f"{lo}-{hi}" if hi < 99 else f"{lo}+"
+        print(f"{label:<14}{len(sub):>6}{mx:>10.2f}{ma:>13.2f}{ma-mx:>+8.2f}")
+
+    # biggest misses, both directions — these are where to look for bugs
+    played.sort(key=lambda r: r["actual"] - r["xp"])
+    print(f"\n{'BIGGEST OVER-PROJECTIONS':<26}{'xP':>7}{'ACTUAL':>8}{'MIN':>6}")
+    for r in played[:6]:
+        print(f"  {r['name']:<24}{r['xp']:>7.2f}{r['actual']:>8}{r['minutes']:>6}")
+    print(f"\n{'BIGGEST UNDER-PROJECTIONS':<26}{'xP':>7}{'ACTUAL':>8}{'MIN':>6}")
+    for r in played[-6:][::-1]:
+        print(f"  {r['name']:<24}{r['xp']:>7.2f}{r['actual']:>8}{r['minutes']:>6}")
+
+
+# ---------------------------------------------------------------------------
+# multi-week report
+# ---------------------------------------------------------------------------
+def report():
+    files = sorted(f for f in os.listdir(HIST_DIR) if f.endswith("_scored.csv")) \
+        if os.path.isdir(HIST_DIR) else []
+    if not files:
+        sys.exit("No scored gameweeks yet.")
+
+    allrows = []
+    hdr = (f"{'GAMEWEEK':<22}{'N':>6}{'PEARSON':>9}{'SPEARMAN':>10}"
+           f"{'MAE':>8}{'RMSE':>8}{'BIAS':>8}")
+    print(hdr)
+    print("-" * len(hdr))
+    for fn in files:
+        rows = [dict(r, xp=float(r["xp"]), ep_next=float(r["ep_next"]),
+                     actual=float(r["actual"]), minutes=int(r["minutes"]),
+                     cost=float(r["cost"]))
+                for r in csv.DictReader(open(os.path.join(HIST_DIR, fn),
+                                          encoding="utf-8"))]
+        played = [r for r in rows if r["minutes"] > 0]
+        gw = fn[2:4]
+        print(line(f"GW{gw}", metrics(played)))
+        allrows += played
+
+    print("-" * len(hdr))
+    print(line("POOLED", metrics(allrows)))
+    top = sorted(allrows, key=lambda r: -r["xp"])[:60 * len(files)]
+    print(line("POOLED top-60/wk", metrics(top)))
+    print(line("  [baseline ep_next]", metrics(top, "ep_next")))
+
+    m_model, m_base = metrics(top), metrics(top, "ep_next")
+    delta = m_model["spearman"] - m_base["spearman"]
+    print(f"\nModel beats FPL's ep_next by {delta:+.3f} Spearman on the "
+          f"decision-relevant subset.")
+    if delta < 0.02:
+        print("  That's not a meaningful edge yet. The extra machinery isn't "
+              "earning its keep — check calibration and the biggest misses.")
+
+    print("\nPOOLED CALIBRATION")
+    print(f"{'xP BUCKET':<14}{'N':>6}{'MEAN xP':>10}{'MEAN ACTUAL':>13}{'GAP':>8}")
+    print("-" * 51)
+    for lo, hi in [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 99)]:
+        sub = [r for r in allrows if lo <= r["xp"] < hi]
+        if not sub:
+            continue
+        mx = sum(r["xp"] for r in sub) / len(sub)
+        ma = sum(r["actual"] for r in sub) / len(sub)
+        print(f"{(f'{lo}-{hi}' if hi<99 else f'{lo}+'):<14}{len(sub):>6}"
+              f"{mx:>10.2f}{ma:>13.2f}{ma-mx:>+8.2f}")
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("snapshot", help="freeze projections before a deadline")
+    s.add_argument("--gw", type=int, required=True)
+    s.add_argument("--xp", default="xp.csv")
+
+    c = sub.add_parser("score", help="score a finished gameweek")
+    c.add_argument("--gw", type=int, required=True)
+
+    sub.add_parser("report", help="pooled results across all scored gameweeks")
+
+    args = ap.parse_args()
+    if args.cmd == "snapshot":
+        snapshot(args.gw, args.xp)
+    elif args.cmd == "score":
+        score(args.gw)
+    else:
+        report()
+
+
+if __name__ == "__main__":
+    main()
