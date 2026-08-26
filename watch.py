@@ -83,16 +83,22 @@ def threatened_incumbents(old: dict, new: dict, elements: list[dict], teams: dic
         if not a:
             continue
         pos, team = a["element_type"], a["team"]
+        # Only players you actually hold or have made an assumption about.
+        # The xP threshold that used to be here caught every squad player in
+        # the league and turned this into a scouting report. Note also that
+        # FPL prices new signings low regardless of real fee — Konsa cost £51m
+        # and lists at £4.5m — so the arrival's price says nothing about
+        # whether he's a threat. Judgement stays with you; this just makes
+        # sure the question reaches you.
         rivals = [e for e in elements
                   if e["element_type"] == pos and e["team"] == team
                   and e["id"] != a["id"]
-                  and (e["id"] in squad or str(e["id"]) in overrides
-                       or xp.get(e["id"], 0) >= 8.0)]
+                  and (e["id"] in squad or str(e["id"]) in overrides)]
         if not rivals:
             continue
         club = teams.get(team, {}).get("short_name", "???")
-        lines.append(f"\n  {a['web_name']} (£{a['now_cost']/10:.1f}m "
-                     f"{P.POS[pos]}, {club}) may take minutes from:")
+        lines.append(f"\n  {a['web_name']} ({P.POS[pos]}, {club}) has arrived — "
+                     f"recheck your assumptions on:")
         for e in sorted(rivals, key=lambda e: -xp.get(e["id"], 0)):
             tags = []
             if e["id"] in squad:

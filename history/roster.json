@@ -121,7 +121,7 @@
  "18": {
   "name": "Martinelli",
   "team": 1,
-  "cost": 65,
+  "cost": 64,
   "status": "a",
   "news": ""
  },
@@ -163,7 +163,7 @@
  "25": {
   "name": "Gyökeres",
   "team": 1,
-  "cost": 75,
+  "cost": 74,
   "status": "a",
   "news": ""
  },
@@ -414,6 +414,13 @@
  },
  "607": {
   "name": "Lynch",
+  "team": 2,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "611": {
+  "name": "Wan-Bissaka",
   "team": 2,
   "cost": 45,
   "status": "a",
@@ -745,8 +752,8 @@
   "name": "Carvalho",
   "team": 4,
   "cost": 50,
-  "status": "d",
-  "news": "Lack of match fitness - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "102": {
   "name": "Yarmoliuk",
@@ -793,7 +800,7 @@
  "565": {
   "name": "M.Sangaré",
   "team": 4,
-  "cost": 55,
+  "cost": 56,
   "status": "a",
   "news": ""
  },
@@ -828,7 +835,7 @@
  "115": {
   "name": "De Cuyper",
   "team": 5,
-  "cost": 45,
+  "cost": 46,
   "status": "a",
   "news": ""
  },
@@ -899,8 +906,8 @@
   "name": "Georginio",
   "team": 5,
   "cost": 55,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
  },
  "126": {
   "name": "O'Riley",
@@ -936,13 +943,6 @@
   "cost": 50,
   "status": "a",
   "news": ""
- },
- "131": {
-  "name": "Baleba",
-  "team": 5,
-  "cost": 50,
-  "status": "i",
-  "news": "Ankle injury - Unknown return date"
  },
  "132": {
   "name": "Howell",
@@ -1028,6 +1028,13 @@
   "status": "a",
   "news": ""
  },
+ "614": {
+  "name": "Hadjam",
+  "team": 5,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
  "40": {
   "name": "Rogers",
   "team": 6,
@@ -1095,8 +1102,8 @@
   "name": "B.Badiashile",
   "team": 6,
   "cost": 45,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined Napoli on loan for the rest of the season"
  },
  "147": {
   "name": "Tosin",
@@ -1151,8 +1158,8 @@
   "name": "Palmer",
   "team": 6,
   "cost": 95,
-  "status": "d",
-  "news": "Calf injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "155": {
   "name": "Enzo",
@@ -1585,8 +1592,8 @@
   "name": "Chadi Riad",
   "team": 8,
   "cost": 45,
-  "status": "d",
-  "news": "Knee injury - 50% chance of playing"
+  "status": "i",
+  "news": "Knee injury - Unknown return date"
  },
  "207": {
   "name": "Mingueza",
@@ -1599,8 +1606,8 @@
   "name": "Sarr",
   "team": 8,
   "cost": 65,
-  "status": "d",
-  "news": "Groin injury - 75% chance of playing"
+  "status": "i",
+  "news": "Groin injury - Unknown return date"
  },
  "210": {
   "name": "Wharton",
@@ -2292,8 +2299,8 @@
   "name": "Morita",
   "team": 11,
   "cost": 50,
-  "status": "d",
-  "news": "Calf injury - 50% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "572": {
   "name": "Tzolakis",
@@ -2327,8 +2334,8 @@
   "name": "Mendy",
   "team": 11,
   "cost": 40,
-  "status": "d",
-  "news": "Thigh injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "589": {
   "name": "Gourna-Douath",
@@ -2481,8 +2488,8 @@
   "name": "Philogene",
   "team": 12,
   "cost": 55,
-  "status": "a",
-  "news": ""
+  "status": "i",
+  "news": "Ankle injury - Unknown return date"
  },
  "319": {
   "name": "Szmodics",
@@ -2530,8 +2537,8 @@
   "name": "Van Oevelen",
   "team": 12,
   "cost": 45,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined Valencia on loan for the rest of the season"
  },
  "562": {
   "name": "Maeda",
@@ -2551,15 +2558,15 @@
   "name": "Florentino",
   "team": 12,
   "cost": 50,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Calf injury - 75% chance of playing"
  },
  "591": {
   "name": "Enciso",
   "team": 12,
   "cost": 55,
-  "status": "d",
-  "news": "Muscular injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "592": {
   "name": "Ouattara",
@@ -2873,8 +2880,8 @@
   "name": "Ramsay",
   "team": 14,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined St Mirren on loan for the rest of the season"
  },
  "366": {
   "name": "Wirtz",
@@ -3142,13 +3149,6 @@
   "status": "u",
   "news": "Has joined Barcelona permanently"
  },
- "403": {
-  "name": "Savinho",
-  "team": 15,
-  "cost": 65,
-  "status": "a",
-  "news": ""
- },
  "404": {
   "name": "Reijnders",
   "team": 15,
@@ -3225,6 +3225,13 @@
   "cost": 60,
   "status": "a",
   "news": ""
+ },
+ "131": {
+  "name": "Baleba",
+  "team": 16,
+  "cost": 50,
+  "status": "i",
+  "news": "Ankle injury - Unknown return date"
  },
  "162": {
   "name": "Andrey Santos",
@@ -3601,8 +3608,8 @@
   "name": "Osula",
   "team": 17,
   "cost": 60,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Knock - 50% chance of playing"
  },
  "466": {
   "name": "Neave",
@@ -3842,6 +3849,13 @@
   "status": "a",
   "news": ""
  },
+ "403": {
+  "name": "Sávio",
+  "team": 19,
+  "cost": 65,
+  "status": "a",
+  "news": ""
+ },
  "455": {
   "name": "Tonali",
   "team": 19,
@@ -3888,8 +3902,8 @@
   "name": "Pedro Porro",
   "team": 19,
   "cost": 55,
-  "status": "d",
-  "news": "Lack of match fitness - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "500": {
   "name": "Romero",
@@ -3916,8 +3930,8 @@
   "name": "Van de Ven",
   "team": 19,
   "cost": 50,
-  "status": "d",
-  "news": "Unspecified injury - 50% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "505": {
   "name": "Spence",
@@ -3993,8 +4007,8 @@
   "name": "Maddison",
   "team": 19,
   "cost": 65,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Shoulder injury - 75% chance of playing"
  },
  "516": {
   "name": "Bentancur",
@@ -4266,6 +4280,20 @@
   "name": "Isidor",
   "team": 20,
   "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "612": {
+  "name": "Methalie",
+  "team": 20,
+  "cost": 45,
+  "status": "a",
+  "news": ""
+ },
+ "613": {
+  "name": "Ahoka",
+  "team": 20,
+  "cost": 45,
   "status": "a",
   "news": ""
  }
