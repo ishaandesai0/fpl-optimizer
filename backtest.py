@@ -139,6 +139,10 @@ def actual_points(gw: int) -> dict[int, dict]:
             "points": s.get("total_points", 0),
             "minutes": s.get("minutes", 0),
             "defcon": s.get("defensive_contribution", 0),
+            # bps and bonus are recorded so the hand-fit bonus curve in
+            # projections.expected_bonus can eventually be replaced by a
+            # regression on what actually happened
+            "bps": s.get("bps", 0),
             "bonus": s.get("bonus", 0),
             "goals": s.get("goals_scored", 0),
             "assists": s.get("assists", 0),
@@ -146,7 +150,23 @@ def actual_points(gw: int) -> dict[int, dict]:
     return out
 
 
-def score(gw: int, min_price: float = 0.0):
+def unfinished_teams(gw: int) -> tuple[set[int], int, int]:
+    """Teams whose GW fixture hasn't produced a scoreline yet.
+
+    Scoring a gameweek mid-flight is silently wrong: the live endpoint reports
+    0 minutes and 0 points for anyone who hasn't kicked off, so they land in
+    the metrics as enormous over-projections. Exclude them rather than let
+    them poison the calibration.
+    """
+    fixtures = P._get("fixtures/", "fixtures.json", ttl=300)
+    this_gw = [f for f in fixtures if f.get("event") == gw]
+    pending = {f["team_h"] for f in this_gw if f.get("team_h_score") is None} | \
+              {f["team_a"] for f in this_gw if f.get("team_a_score") is None}
+    done = sum(1 for f in this_gw if f.get("team_h_score") is not None)
+    return pending, done, len(this_gw)
+
+
+def score(gw: int, min_price: float = 0.0, partial: bool = False):
     path = os.path.join(HIST_DIR, f"gw{gw:02d}_snapshot.csv")
     if not os.path.exists(path):
         sys.exit(f"No snapshot for GW{gw}. You must snapshot before the deadline.")
@@ -156,10 +176,25 @@ def score(gw: int, min_price: float = 0.0):
     if not real:
         sys.exit(f"No live data for GW{gw} yet.")
 
+    pending, done, total = unfinished_teams(gw)
+    if pending and not partial:
+        sys.exit(f"GW{gw} is still in progress — {done}/{total} fixtures have "
+                 f"scorelines.\nPlayers who haven't kicked off report 0 points, "
+                 f"which would land in the metrics as huge over-projections.\n"
+                 f"Wait for the last match, or pass --partial to score only the "
+                 f"{total-len(pending)//2 if total else 0} finished fixtures.")
+
+    boot = P._get("bootstrap-static/", "bootstrap.json")
+    team_of = {e["id"]: e["team"] for e in boot["elements"]}
+    excluded = 0
+
     rows = []
     for r in snap:
         pid = int(r["id"])
         if pid not in real:
+            continue
+        if team_of.get(pid) in pending:
+            excluded += 1
             continue
         rows.append({
             "id": pid, "name": r["name"], "pos": r["pos"],
@@ -168,6 +203,8 @@ def score(gw: int, min_price: float = 0.0):
             "actual": real[pid]["points"],
             "minutes": real[pid]["minutes"],
             "defcon": real[pid]["defcon"],
+            "bps": real[pid]["bps"],
+            "bonus": real[pid]["bonus"],
         })
 
     out = os.path.join(HIST_DIR, f"gw{gw:02d}_scored.csv")
@@ -177,6 +214,10 @@ def score(gw: int, min_price: float = 0.0):
         w.writerows(rows)
 
     print(f"\n{'='*64}\nGW{gw} — {len(rows)} players scored\n{'='*64}")
+    if excluded:
+        print(f"PARTIAL: {done}/{total} fixtures complete. Excluded {excluded} "
+              f"players whose match hasn't finished.\nRe-run without --partial "
+              f"once the gameweek closes to overwrite with the full result.\n")
     report_gw(rows)
     print(f"\nWrote {out}")
 
@@ -309,6 +350,8 @@ def main():
 
     c = sub.add_parser("score", help="score a finished gameweek")
     c.add_argument("--gw", type=int, required=True)
+    c.add_argument("--partial", action="store_true",
+                   help="score only the fixtures that have finished")
 
     sub.add_parser("report", help="pooled results across all scored gameweeks")
 
@@ -316,7 +359,7 @@ def main():
     if args.cmd == "snapshot":
         snapshot(args.gw, args.xp)
     elif args.cmd == "score":
-        score(args.gw)
+        score(args.gw, partial=args.partial)
     else:
         report()
 

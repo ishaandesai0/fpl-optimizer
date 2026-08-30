@@ -63,6 +63,13 @@ AVG_HOME_GOALS = 1.55
 AVG_AWAY_GOALS = 1.25
 SOT_PER_GOAL = 3.2  # shots on target faced per goal conceded, for save volume
 
+# Bonus curve: BPS-per-start mapped to expected bonus points. A player around
+# 18 BPS rarely places top-3; one around 32 usually does. Hand-fit — the
+# backtest records actual bonus so this can be regressed properly later.
+BONUS_FLOOR = 17.0
+BONUS_SLOPE = 0.16
+BONUS_CAP = 2.6
+
 # ---------------------------------------------------------------------------
 # priors: what we believe about a player before we've seen them play.
 # Rates are per 90 and describe a *median-priced* player in that position.
@@ -519,14 +526,26 @@ def expected_save_points(lam_against: float, saves90: float,
     return sum((k // 3) * pois_pmf(k, exp_saves) for k in range(cap))
 
 
-def expected_bonus(bps90: float, minutes_frac: float) -> float:
-    """Crude. Bonus needs a top-3-in-match finish, which depends on teammates
-    as much as the player. This maps a per-90 BPS rate onto an average bonus
-    haul; it is the weakest component of the model."""
-    per_match = bps90 * minutes_frac
-    if per_match < 16:
+def expected_bonus(bps90: float, mins: "Minutes") -> float:
+    """Bonus needs a top-3 BPS finish IN A MATCH, so it must be conditioned on
+    starting — averaging in the weeks a player doesn't feature pushes his
+    per-match BPS below the threshold and zeroes the component entirely.
+
+    Still the weakest part of the model: bonus depends on teammates' BPS as
+    much as the player's own, and the 2026/27 BPS changes (no penalty for being
+    tackled, CBI now one point per three actions) make historical rates biased
+    for full-backs and wingers. The curve below is hand-fit and should be
+    replaced by a regression on actual bonus once the backtest has enough
+    gameweeks — `bps` and `bonus` are recorded in the scored output for exactly
+    that purpose.
+    """
+    if mins.p_start <= 0:
         return 0.0
-    return min(1.6, 0.055 * (per_match - 16))
+    per_start = bps90 * (mins.mins_if_start / 90.0)
+    if per_start < BONUS_FLOOR:
+        return 0.0
+    haul = min(BONUS_CAP, BONUS_SLOPE * (per_start - BONUS_FLOOR))
+    return mins.p_start * haul
 
 
 # ---------------------------------------------------------------------------
@@ -579,7 +598,7 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
     if pos in DEFCON_THRESHOLD:
         pts += defcon_points(rates["defcon"], DEFCON_THRESHOLD[pos], mins)
 
-    pts += expected_bonus(rates["bps"], frac)
+    pts += expected_bonus(rates["bps"], mins)
     pts += rates["yellow"] * frac * YELLOW_PTS
     return max(0.0, pts)
 

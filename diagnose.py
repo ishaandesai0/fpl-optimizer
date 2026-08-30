@@ -226,7 +226,7 @@ def main():
                          if pos in (P.GKP, P.DEF) else 0.0),
             "saves": (P.expected_save_points(lam_against, rates["saves"], frac)
                       if pos == P.GKP else 0.0),
-            "bonus": P.expected_bonus(rates["bps"], frac),
+            "bonus": P.expected_bonus(rates["bps"], mm),
             "cards": rates["yellow"] * frac * P.YELLOW_PTS,
         }
         if pos in P.DEFCON_THRESHOLD:
