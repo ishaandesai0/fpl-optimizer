@@ -143,21 +143,28 @@ def load_xp_horizon(path: str, gw: int, horizon: int) -> dict[int, float]:
 # ---------------------------------------------------------------------------
 # variance
 # ---------------------------------------------------------------------------
+# Levels anchored on measured GW1-2 spread of actual points for 60+ minute
+# appearances: GKP 2.73, DEF 3.47, MID 3.57, FWD 3.19. The previous hand-fit
+# values ran 31% high for defenders and over 100% high for forwards, which
+# inflated team variance and dragged every head-to-head P(win) toward 50% —
+# precisely blunting the favoured/underdog advice this exists to give.
+#
+# The SLOPE is still unfitted. Separating "how does spread grow with expected
+# points" from the pooled level needs projections paired with outcomes, which
+# only `*_scored.csv` provides. Kept deliberately shallow so the data-anchored
+# level dominates until there's enough to fit it.
+# Re-check with: python backtest.py calibrate-variance
+SD_BASE = {1: 1.95, 2: 2.28, 3: 1.85, 4: 1.35}
+SD_SLOPE = {1: 0.25, 2: 0.35, 3: 0.40, 4: 0.45}
+
+
 def player_sd(xp: float, pos: int) -> float:
     """Standard deviation of a player's gameweek score.
 
-    Crude by design. FPL points are a mixture of a near-certain appearance
-    floor and lumpy returns on top, so spread grows with expected points but
-    not proportionally. Attackers carry more variance per point than defenders
-    (goals vs clean sheets), and everyone has a floor of uncertainty from
-    minutes risk.
-
-    This is the piece most worth replacing with an empirical estimate once the
-    backtest has enough gameweeks — `history/gw*_scored.csv` has the residuals.
+    FPL points are a near-certain appearance floor plus lumpy returns, so
+    spread grows with expected points but far less than proportionally.
     """
-    base = {1: 1.6, 2: 2.0, 3: 1.8, 4: 1.9}[pos]
-    slope = {1: 0.45, 2: 0.75, 3: 1.05, 4: 1.20}[pos]
-    return base + slope * max(0.0, xp)
+    return SD_BASE[pos] + SD_SLOPE[pos] * max(0.0, xp)
 
 
 def win_probability(my_xp: float, my_var: float,

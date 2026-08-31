@@ -166,6 +166,53 @@ def unfinished_teams(gw: int) -> tuple[set[int], int, int]:
     return pending, done, len(this_gw)
 
 
+def record(gw: int):
+    """Write a gameweek's OUTCOMES with no projection attached.
+
+    Two different jobs get confused here. Scoring a projection needs it frozen
+    before kickoff — otherwise the model has read the answer sheet. But
+    calibrating a component (what bonus does a 30-BPS performance actually
+    earn? how much do points vary by position?) needs only outcomes, and works
+    on any gameweek regardless of whether a projection was ever saved.
+
+    GW1 2026/27 has no snapshot, so it can never be scored. Its results are
+    still perfectly good calibration data, and are already feeding the model's
+    priors. This makes them available to the calibration tools without letting
+    them near `report`, which reads only *_scored.csv.
+    """
+    os.makedirs(HIST_DIR, exist_ok=True)
+    real = actual_points(gw)
+    if not real:
+        sys.exit(f"No live data for GW{gw}.")
+    pending, done, total = unfinished_teams(gw)
+    if pending:
+        sys.exit(f"GW{gw} is still in progress ({done}/{total} fixtures).")
+
+    boot = P._get("bootstrap-static/", "bootstrap.json")
+    teams = {t["id"]: t for t in boot["teams"]}
+    rows = []
+    for e in boot["elements"]:
+        r = real.get(e["id"])
+        if not r or r["minutes"] == 0:
+            continue
+        rows.append({"id": e["id"], "name": e["web_name"],
+                     "pos": P.POS[e["element_type"]],
+                     "team": teams[e["team"]]["short_name"],
+                     "actual": r["points"], "minutes": r["minutes"],
+                     "defcon": r["defcon"], "bps": r["bps"],
+                     "bonus": r["bonus"], "goals": r["goals"],
+                     "assists": r["assists"]})
+
+    path = os.path.join(HIST_DIR, f"gw{gw:02d}_outcomes.csv")
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    print(f"Recorded {len(rows)} appearances from GW{gw} -> {path}")
+    print("Outcomes only — no projection attached, so this feeds calibration "
+          "but never `report`.")
+
+
 def score(gw: int, min_price: float = 0.0, partial: bool = False):
     path = os.path.join(HIST_DIR, f"gw{gw:02d}_snapshot.csv")
     if not os.path.exists(path):
@@ -290,6 +337,34 @@ def report_gw(rows: list[dict]):
 # ---------------------------------------------------------------------------
 # multi-week report
 # ---------------------------------------------------------------------------
+def bootstrap_gap(rows: list[dict], trials: int = 2000, seed: int = 0):
+    """Confidence interval on (model Spearman - baseline Spearman).
+
+    A single gameweek's comparison on ~60 players is mostly noise: a model
+    with no edge whatsoever produces gaps of +/-0.15 by chance. Resampling the
+    scored appearances gives an honest interval, so a positive-looking number
+    isn't mistaken for evidence before there's enough of it.
+    """
+    import random
+    rng = random.Random(seed)
+    n = len(rows)
+    gaps = []
+    for _ in range(trials):
+        sample = [rows[rng.randrange(n)] for _ in range(n)]
+        try:
+            g = (metrics(sample)["spearman"]
+                 - metrics(sample, "ep_next")["spearman"])
+        except Exception:
+            continue
+        if g == g:  # skip nan
+            gaps.append(g)
+    if len(gaps) < 100:
+        return None
+    gaps.sort()
+    return (gaps[int(0.025 * len(gaps))], gaps[int(0.5 * len(gaps))],
+            gaps[int(0.975 * len(gaps))])
+
+
 def report():
     files = sorted(f for f in os.listdir(HIST_DIR) if f.endswith("_scored.csv")) \
         if os.path.isdir(HIST_DIR) else []
@@ -320,11 +395,32 @@ def report():
 
     m_model, m_base = metrics(top), metrics(top, "ep_next")
     delta = m_model["spearman"] - m_base["spearman"]
-    print(f"\nModel beats FPL's ep_next by {delta:+.3f} Spearman on the "
-          f"decision-relevant subset.")
-    if delta < 0.02:
-        print("  That's not a meaningful edge yet. The extra machinery isn't "
-              "earning its keep — check calibration and the biggest misses.")
+    print(f"\nModel vs FPL's ep_next on the decision-relevant subset: "
+          f"{delta:+.3f} Spearman")
+
+    ci = bootstrap_gap(top)
+    if ci:
+        lo, mid, hi = ci
+        print(f"  95% CI [{lo:+.3f}, {hi:+.3f}] from {len(top)} appearances "
+              f"across {len(files)} gameweek(s)")
+        if lo > 0:
+            print("  -> The edge is distinguishable from noise. The model is "
+                  "beating the free baseline.")
+        elif hi < 0:
+            print("  -> The baseline is beating the model. Something is "
+                  "wrong; check calibration and the biggest misses.")
+        else:
+            need = max(0, 5 - len(files))
+            print(f"  -> Interval spans zero: this is NOT yet evidence of an "
+                  f"edge either way.\n     A model with no edge at all "
+                  f"produces gaps this size by chance at this sample size.\n"
+                  f"     Roughly {need or 'a few'} more gameweek(s) before the "
+                  f"comparison means anything.")
+
+    print(f"\nCalibration bias (all scored players): "
+          f"{metrics(allrows)['bias']:+.3f} — this one IS meaningful at small "
+          f"n,\nsince it averages over every player rather than resting on a "
+          f"rank ordering.")
 
     print("\nPOOLED CALIBRATION")
     print(f"{'xP BUCKET':<14}{'N':>6}{'MEAN xP':>10}{'MEAN ACTUAL':>13}{'GAP':>8}")
@@ -348,10 +444,22 @@ def calibrate_bonus():
     values are reasoned from the format's physical limits (6 bonus points per
     match across ~22 starters), not fitted.
     """
-    files = sorted(f for f in os.listdir(HIST_DIR) if f.endswith("_scored.csv")) \
+    # calibration needs outcomes, not projections, so it reads both kinds
+    files = sorted(f for f in os.listdir(HIST_DIR)
+                   if f.endswith("_scored.csv") or f.endswith("_outcomes.csv")) \
         if os.path.isdir(HIST_DIR) else []
     if not files:
-        sys.exit("No scored gameweeks yet.")
+        sys.exit("No gameweek data yet. Run `score` or `record` first.")
+    # if a gameweek has both, prefer the scored file and don't double-count
+    seen_gw = set()
+    keep = []
+    for fn in sorted(files, key=lambda f: (f[2:4], not f.endswith("_scored.csv"))):
+        gw = fn[2:4]
+        if gw in seen_gw:
+            continue
+        seen_gw.add(gw)
+        keep.append(fn)
+    files = keep
 
     rows = []
     for fn in files:
@@ -366,7 +474,7 @@ def calibrate_bonus():
                  "updating backtest.py.")
 
     print(f"{len(rows)} appearances of 45+ minutes across {len(files)} "
-          f"gameweek(s).")
+          f"gameweek(s): {', '.join(sorted(seen_gw))}")
     overall = sum(b for _, b in rows) / len(rows)
     print(f"Mean bonus per appearance: {overall:.3f} "
           f"(format implies ~0.27 across all starters)\n")
@@ -390,6 +498,48 @@ def calibrate_bonus():
           "hundred appearances is enough to fit this properly.")
 
 
+def calibrate_variance():
+    """Observed spread of gameweek points by position.
+
+    `draft.player_sd` is a hand-fit base-plus-slope guess that feeds P(win) in
+    head-to-head matchups directly — an inflated value makes every fixture look
+    like a coin flip and blunts the favoured/underdog advice. This measures it
+    instead. Uses outcomes only, so every gameweek counts.
+    """
+    files = sorted(f for f in os.listdir(HIST_DIR)
+                   if f.endswith("_scored.csv") or f.endswith("_outcomes.csv")) \
+        if os.path.isdir(HIST_DIR) else []
+    if not files:
+        sys.exit("No gameweek data yet.")
+    seen, keep = set(), []
+    for fn in sorted(files, key=lambda f: (f[2:4], not f.endswith("_scored.csv"))):
+        if fn[2:4] in seen:
+            continue
+        seen.add(fn[2:4]); keep.append(fn)
+
+    by_pos: dict[str, list[float]] = {}
+    for fn in keep:
+        for r in csv.DictReader(open(os.path.join(HIST_DIR, fn), encoding="utf-8")):
+            if int(r.get("minutes", 0)) < 60:
+                continue
+            by_pos.setdefault(r["pos"], []).append(float(r["actual"]))
+
+    print(f"Appearances of 60+ minutes across gameweeks {', '.join(sorted(seen))}\n")
+    print(f"{'POS':<6}{'N':>6}{'MEAN':>8}{'SD':>8}{'P90':>7}{'MAX':>6}")
+    print("-" * 41)
+    for pos in ("GKP", "DEF", "MID", "FWD"):
+        v = sorted(by_pos.get(pos, []))
+        if len(v) < 10:
+            continue
+        n = len(v)
+        mean = sum(v) / n
+        sd = math.sqrt(sum((x - mean) ** 2 for x in v) / max(n - 1, 1))
+        print(f"{pos:<6}{n:>6}{mean:>8.2f}{sd:>8.2f}{v[int(.9*n)]:>7.0f}{v[-1]:>6.0f}")
+    print("\nCompare SD here against draft.player_sd(mean_xp, pos). If the "
+          "model's sd is much\nlarger, P(win) is being pulled toward 50% and "
+          "the H2H advice is too timid.")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -405,16 +555,27 @@ def main():
                    help="score only the fixtures that have finished")
 
     sub.add_parser("report", help="pooled results across all scored gameweeks")
+    rec = sub.add_parser("record",
+                         help="save a gameweek's outcomes with no projection "
+                              "attached — for calibration, never for scoring")
+    rec.add_argument("--gw", type=int, required=True)
+
     sub.add_parser("calibrate-bonus",
                    help="fit the bonus curve against recorded bps/bonus")
+    sub.add_parser("calibrate-variance",
+                   help="per-position points variance, for draft.player_sd")
 
     args = ap.parse_args()
     if args.cmd == "snapshot":
         snapshot(args.gw, args.xp)
     elif args.cmd == "score":
         score(args.gw, partial=args.partial)
+    elif args.cmd == "record":
+        record(args.gw)
     elif args.cmd == "calibrate-bonus":
         calibrate_bonus()
+    elif args.cmd == "calibrate-variance":
+        calibrate_variance()
     else:
         report()
 
