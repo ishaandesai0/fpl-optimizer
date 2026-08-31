@@ -314,6 +314,72 @@ go stale silently, which is the exact failure mode overrides are meant to fix.
 
 ---
 
+### `draft.py` — FPL Draft companion
+
+```bash
+python draft.py lineup  --entry <ID> --xp xp.csv
+python draft.py waivers --entry <ID> --xp xp.csv --horizon 5
+python draft.py matchup --entry <ID> --xp xp.csv
+```
+
+Reuses `xp.csv` but solves a different problem. Draft has no budget, no prices,
+no 3-per-club limit and no captain, so `fpl_opt.py` is enforcing constraints that
+don't exist. Element ids mostly match the classic game but not always — they're
+remapped by name, team and position, since a silent mismatch would attribute one
+player's projection to another.
+
+**`lineup`** — highest-xP legal XI. A pure sort once there's no captain.
+
+**`waivers`** — ranks add/drop pairs by their effect on your **starting XI**, not
+by raw xP difference against the worst player in your squad. Upgrading a bench
+defender who never starts changes nothing; comparing against him inflates every
+gain. Reports both the weekly gain and a decayed horizon gain, and the horizon
+one is what matters: transactions are unlimited, so you keep whoever you claim
+and the player you drop is gone. The two columns routinely disagree.
+
+Also flags **dead squad slots** — long-term injuries returning nothing. These
+never appear in the ranking, because a benched player doesn't affect your XI so
+swapping him scores zero gain, but they're the cheapest move available.
+
+**`matchup`** — projects your opponent's XI too and reports P(win) under a normal
+approximation. With 3 points for a win, a 40-point loss and a 1-point loss cost
+the same, so expected points is the wrong objective at the tails:
+
+| P(win) | play for |
+|---|---|
+| ≥ 60% | the floor — nailed starters, don't chase ceiling you don't need |
+| ≤ 40% | variance — a volatile pick at lower xP can raise P(win) above a steady one |
+| 40-60% | just field the best XI |
+
+It lists bench swaps that *lower* expected points but *raise* P(win).
+
+`player_sd` is the crudest thing in the project — a hand-fit base and slope per
+position. It feeds P(win) directly, so an inflated value makes every matchup look
+closer to a coin flip than it is. The residuals in `history/gw*_scored.csv` are
+what should replace it.
+
+Not modelled: positional scarcity. A mediocre goalkeeper is worth more when every
+other keeper is rostered than his xP suggests, and pricing that needs a
+replacement-level calculation per position across the league.
+
+---
+
+### `draft_probe.py` — endpoint discovery
+
+The Draft API isn't documented and differs from the classic game's. This tries the
+plausible paths and reports which respond, with their top-level keys. Useful when
+something 404s.
+
+```bash
+python draft_probe.py --entry <ID> --gw <a gameweek whose deadline has passed>
+```
+
+Confirmed working: `entry/{id}/event/{gw}` for picks (note `.../picks` 404s),
+`entry/{id}/public` with `league_set` nested inside the `entry` object,
+`league/{id}/details`, `league/{id}/element-status`. `watchlist/{id}` is 403.
+
+---
+
 ### `overrides.json` — context the API can't express
 
 FPL's `status` and `chance_of_playing_next_round` are blunt and lag the news. A
@@ -366,10 +432,17 @@ overrides block prints the resulting `p_start` per gameweek so you can check it.
 ### Tests
 
 ```bash
-for t in test_proj test_minutes test_priors test_ratings test_backtest test_fpl; do python $t.py; done
+for t in test_proj test_minutes test_priors test_ratings test_backtest test_fpl test_watch test_draft; do python $t.py; done
 ```
 
-`test_ratings.py` is the most useful: it simulates seasons from known attack and
+On Windows PowerShell:
+
+```powershell
+foreach ($t in "test_proj","test_minutes","test_priors","test_ratings","test_backtest","test_fpl","test_watch","test_draft") { python "$t.py" > $null; if ($?) { "$t PASS" } else { "$t FAIL" } }
+```
+
+`test_draft.py` checks that variance helps when you're the underdog and hurts
+when you're favoured — the core H2H claim. `test_ratings.py` is the most useful: it simulates seasons from known attack and
 defence coefficients and checks the fitter recovers them (r ≈ 0.88 attack, 0.93
 defence over a full season, from a deliberately flat prior). `test_backtest.py`
 verifies a null model scores Spearman ≈ 0, so the harness can't flatter a broken
