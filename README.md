@@ -42,9 +42,9 @@ for 2025/26). This takes the team ratings from ~14% fitted to ~71% fitted.
 Run these in order, before each deadline:
 
 ```bash
-python watch.py       --entry <YOUR_ID> --xp xp.csv --overrides overrides.json
+python watch.py       --entry <YOUR_ID> --xp xp.csv
 python ratings.py     --out ratings.json --fresh --results-csv E0.csv --history-weight 0.5
-python projections.py --horizon 5 --deep 600 --ratings ratings.json --overrides overrides.json --out xp.csv --top 30
+python projections.py --horizon 5 --deep 600 --ratings ratings.json --out xp.csv --top 30
 python backtest.py    snapshot --gw <N> --xp xp.csv
 python fpl_opt.py     --entry <YOUR_ID> --projections xp.csv --horizon 5
 ```
@@ -56,9 +56,9 @@ python backtest.py score --gw <N>
 python backtest.py report
 ```
 
-**Order matters.** `watch.py` first — it reports what changed and who needs a
-look, using last week's `xp.csv`, so you can update `overrides.json` before
-regenerating. Then ratings feed projections feed the optimizer. Snapshot before
+**Order matters.** `watch.py` first — it reports what changed and who the model
+is guessing about, using last week's `xp.csv`. Then ratings feed projections feed
+the optimizer. Snapshot before
 you look at the optimizer output, so you're freezing a projection you haven't
 yet reacted to — but after you've settled on the parameters you'll actually act
 on. Never snapshot after kickoff.
@@ -136,6 +136,17 @@ Writes `id,gw,ep` — one row per player per gameweek.
 of observed evidence growing as minutes accumulate. `PRIOR_MINUTES = 810` means
 one 90-minute game carries ~10% weight.
 
+*Prior strength scales with prior quality.* A measured season is real evidence
+and should resist a couple of noisy games; a price-derived guess is a placeholder
+and should surrender to actual data fast. Giving both the same shrinkage constant
+held ~280 players with no Premier League history at their price prior for months
+while evidence piled up against it — a midfielder who started both opening games
+and led his position in defensive contributions still read as a 53% starter.
+`NO_PRIOR_STRENGTH = 0.35` scales the shrinkage constant by how much the prior is
+worth, interpolating for partial seasons. It cuts both ways: a no-prior player
+with no starts drops faster too. The goalkeeper depth chart is exempt — it's a
+structural signal about role, not a price guess, so it keeps full weight.
+
 *Exposure-scaled shrinkage for rare events.* Holding the prior's *minutes*
 constant is wrong for low-rate stats: a defender's 0.12 xG/90 prior carries only
 ~1 pseudo-event over 810 minutes, so one freak set-piece header swamps it, while
@@ -165,7 +176,6 @@ discarded.
 | `--horizon` | gameweeks to project (default 5) |
 | `--deep N` | fetch last-season rates for the N priciest players. **Use 600** — a smaller N corrects expensive players only, biasing mid-price comparisons |
 | `--ratings` | `ratings.json` from `ratings.py`; replaces the coarse tiers |
-| `--overrides` | manual context (see below) |
 | `--prior-minutes` | evidence weight; lower trusts this season sooner |
 | `--top N` | how many players to print as a sanity check |
 
@@ -248,8 +258,8 @@ record.
 ### `diagnose.py` — why is this player rated like that?
 
 ```bash
-python diagnose.py Sangare --ratings ratings.json --overrides overrides.json
-python diagnose.py 565 --ratings ratings.json --overrides overrides.json
+python diagnose.py Sangare --ratings ratings.json
+python diagnose.py 565 --ratings ratings.json
 ```
 
 Prints raw season inputs, which prior source fired, price prior vs last season vs
@@ -260,11 +270,9 @@ and hit probability conditional on starting.
 Name lookup is accent-insensitive (`Sangare` finds `M.Sangaré`, `Sesko` finds
 `Šeško`). Ambiguous names list the candidates with ids.
 
-**Always pass `--overrides` if you use them.** Without it the tool explains a
-model you aren't running — it will warn you, but the warning exists because this
-already caused one wrong decision. The total is also cross-checked against
-`score_fixture` directly and prints `MISMATCH` if the display breakdown has
-drifted from the model.
+The total is cross-checked against `score_fixture` directly and prints
+`MISMATCH` if the display breakdown has drifted from the model — a diagnostic
+that silently disagrees with the model it explains is worse than none.
 
 This is the most useful tool here. Every real bug found so far was caught by
 decomposing a number that looked surprising, not by reading code.
@@ -274,7 +282,7 @@ decomposing a number that looked surprising, not by reading code.
 ### `watch.py` — what changed, and who should I check?
 
 ```bash
-python watch.py --entry <YOUR_ID> --xp xp.csv --overrides overrides.json
+python watch.py --entry <YOUR_ID> --xp xp.csv
 ```
 
 Run it first each week, before the rest of the pipeline.
@@ -303,14 +311,10 @@ cost — impact (horizon xP, or squad membership) times uncertainty (no prior
 season, status flag, news text, minutes without starts). Players with an override
 already set are demoted rather than dropped, so you still see them but lower.
 
-**Stale override detection.** Flags entries whose player now has 5+ starts or
-450+ minutes this season — at which point the model can see the situation itself
-and the override is doing harm. Also flags overrides for departed players and
-overrides asserting minutes for someone since flagged injured.
-
-Nothing here edits `overrides.json`. It tells you where to look; the judgement
-stays yours. That's deliberate — a tool that auto-wrote injury assumptions would
-go stale silently, which is the exact failure mode overrides are meant to fix.
+This reports; it doesn't act. There is no mechanism for feeding a correction back
+into the model — see "Why there are no manual overrides" below. What it gives you
+is a list of players whose projections rest on thin evidence, so you can weigh
+them accordingly.
 
 ---
 
@@ -380,52 +384,41 @@ Confirmed working: `entry/{id}/event/{gw}` for picks (note `.../picks` 404s),
 
 ---
 
-### `overrides.json` — context the API can't express
+### Why there are no manual overrides
 
-FPL's `status` and `chance_of_playing_next_round` are blunt and lag the news. A
-player back from a long lay-off is flagged available long before he's playing 90
-minutes. A defender promoted by injuries ahead of him carries last season's
-backup minutes. None of that is visible in the data.
+An earlier version let you hand-correct a player's minutes or rates through an
+`overrides.json` file, for cases the API can't express — a defender promoted by
+injuries ahead of him, a striker easing back from a lay-off, a new signing with
+no prior season.
 
-```json
-{
-  "players": {
-    "11": {
-      "p_start": 0.85,
-      "note": "Saliba out for months, Timber not back. Role changed."
-    }
-  }
-}
-```
+It was removed. Not because the inputs were wrong, but because the mechanism
+produced four bugs in a week, three of which returned confident wrong answers
+rather than errors:
 
-| Field | Effect |
-|---|---|
-| `exclude` | drop from the pool entirely |
-| `avail` | scales the chance of featuring at all |
-| `p_start` | replaces the start probability outright |
-| `minutes_mult` | scales minutes **per start** (a managed return plays 55 minutes, not 55% of matches) |
-| `minutes_ramp` | list of multipliers on `p_start`, one per horizon gameweek; the last value carries forward. For players easing back to fitness: `[0.5, 0.7, 0.9, 1.0]` |
-| `xg90` `xa90` `defcon90` `bps90` | override a per-90 rate |
-| `note` | free text, echoed when applied |
+- Overriding one player's minutes and not his direct competitor's silently
+  rebalanced every comparison between them, and made the optimizer recommend
+  selling the wrong one of two players at the same club.
+- A name key bound to two different players at two different clubs.
+- `minutes_mult` compounded through `p_start`, so a 0.6 multiplier produced 0.36
+  of the minutes.
+- `diagnose.py` reported the unoverridden model while `xp.csv` held the
+  overridden one, and the two disagreed with nothing to flag it.
 
-The three minutes knobs act on different things and compose without compounding.
+The underlying problem is that "the model is wrong about this player" isn't
+checkable, while "the model has no data on this player" is. An override encodes
+a belief; nothing downstream can tell whether it was justified, and it goes
+stale silently.
 
-**Prefer ids.** A name key matching more than one player is *refused*, not guessed
-at — `Sangare` matches two players at different clubs, and binding to the wrong
-one is silent and worse than not binding at all.
+What replaced it: nothing, deliberately. The model is allowed to be wrong about
+players it has thin evidence on, and `watch.py` reports who those are so you can
+discount accordingly. New signings are underrated for roughly four or five
+gameweeks until real minutes accumulate — a known, bounded cost, and a smaller
+one than a mechanism that can quietly corrupt comparisons you didn't know it
+touched.
 
-**An override rebalances every comparison involving that player.** Correcting one
-Arsenal defender's minutes and not his direct competitor's made the model
-recommend selling the wrong one. When you override someone, check who he competes
-with for the same squad slot and make sure that comparison is still fair.
-
-**Delete entries once stale.** An override that outlives its situation is worse
-than none. Review weekly.
-
-**Returning players are a ramp, not a probability.** Someone back from injury or
-a deep tournament run is benched now and starting in three weeks. A flat
-`p_start` gets both ends wrong. `minutes_ramp` expresses the path; the applied-
-overrides block prints the resulting `p_start` per gameweek so you can check it.
+If this comes back, the defensible version is narrow: permit a correction *only*
+where no prior season exists, and refuse it on any player the model already has
+measured data for. That's enforceable in code rather than resting on discipline.
 
 ---
 
@@ -459,6 +452,8 @@ values.
 |---|---|---|---|
 | `PRIOR_MINUTES` | projections | 810 | one game ≈ 10% weight |
 | `PRIOR_EVENTS` | projections | 4.0 | pseudo-events for rare-rate shrinkage |
+| `NO_PRIOR_STRENGTH` | projections | 0.35 | weight of a price guess vs a measured season |
+| `BONUS_SLOPE` / `BONUS_CAP` | projections | 0.075 / 1.40 | bonus curve; run `backtest.py calibrate-bonus` |
 | `FULL_SEASON_MINUTES` | projections | 2400 | yardstick for prior coverage |
 | `PRICE_ELASTICITY` | projections | xg 0.85, defcon −0.35 | how price informs each prior |
 | `k_games` | projections | 4.0 | matches of prior on start probability |
@@ -493,23 +488,26 @@ game state drives them, and a centre-back in a team chasing a lead gets far fewe
 Negative binomial is the right family; Poisson understates the tails.
 
 **The minutes prior takes last season's role at face value.** Role changes from
-injuries ahead in the pecking order, transfers, or a new manager are invisible.
-`overrides.json` is the only fix.
+injuries ahead in the pecking order, transfers, or a new manager are invisible
+until real minutes accumulate. `k_games = 4`, so each start moves the estimate
+meaningfully and it self-corrects within a few gameweeks.
 
 **No concept of pre-season disruption.** After a major tournament, players from
 nations that went deep return late and are eased in through August, but their
 priors come from a full season at full fitness. The model over-projects all of
 them for the first few gameweeks. It self-corrects by ~GW5 as real minutes
-accumulate; until then, `minutes_ramp` is the workaround.
+accumulate. There is no workaround; discount those players yourself.
 
 **`mins_if_start` can't fully separate substitute minutes.** `bootstrap-static`
 has no appearance count, so start-minutes are bounded above by `starts * 90`.
 Exact when a player has no starts; caps rather than eliminates the error
 otherwise.
 
-**New signings and promoted-club players have no priors.** Roughly 270 of 610
-players fall back to the price heuristic, and a cheap player with a strong real
-rate stays underrated for four or five gameweeks before the data catches up.
+**New signings and promoted-club players have no priors.** Roughly 280 of 626
+players fall back to the price heuristic. `NO_PRIOR_STRENGTH` makes that prior
+yield quickly to real minutes, so the underrating now clears in two or three
+gameweeks rather than lingering — but a player with no history and no minutes is
+genuinely unknowable and the model says so.
 
 **Mid-season club changes invalidate priors silently.** A player's rates carry
 over from his old club even though role and system have changed. `watch.py`

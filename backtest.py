@@ -339,6 +339,57 @@ def report():
               f"{mx:>10.2f}{ma:>13.2f}{ma-mx:>+8.2f}")
 
 
+def calibrate_bonus():
+    """Fit the bonus curve to what actually happened.
+
+    Reads every scored gameweek, buckets appearances by BPS, and reports mean
+    actual bonus per bucket alongside what projections.expected_bonus predicts.
+    This is what should set BONUS_FLOOR / BONUS_SLOPE / BONUS_CAP — the current
+    values are reasoned from the format's physical limits (6 bonus points per
+    match across ~22 starters), not fitted.
+    """
+    files = sorted(f for f in os.listdir(HIST_DIR) if f.endswith("_scored.csv")) \
+        if os.path.isdir(HIST_DIR) else []
+    if not files:
+        sys.exit("No scored gameweeks yet.")
+
+    rows = []
+    for fn in files:
+        for r in csv.DictReader(open(os.path.join(HIST_DIR, fn), encoding="utf-8")):
+            if int(r.get("minutes", 0)) < 45:
+                continue
+            if "bps" not in r or "bonus" not in r:
+                continue
+            rows.append((float(r["bps"]), float(r["bonus"])))
+    if not rows:
+        sys.exit("Scored files have no bps/bonus columns — re-score after "
+                 "updating backtest.py.")
+
+    print(f"{len(rows)} appearances of 45+ minutes across {len(files)} "
+          f"gameweek(s).")
+    overall = sum(b for _, b in rows) / len(rows)
+    print(f"Mean bonus per appearance: {overall:.3f} "
+          f"(format implies ~0.27 across all starters)\n")
+
+    print(f"{'BPS BUCKET':<14}{'N':>6}{'MEAN BPS':>10}{'ACTUAL':>9}{'MODEL':>8}")
+    print("-" * 47)
+    edges = [(0, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 45), (45, 999)]
+    for lo, hi in edges:
+        sub = [(b, bo) for b, bo in rows if lo <= b < hi]
+        if not sub:
+            continue
+        mb = sum(b for b, _ in sub) / len(sub)
+        ma = sum(bo for _, bo in sub) / len(sub)
+        pred = P.expected_bonus(mb, P.Minutes(1.0, 1.0, 90.0, 1.0, 90.0, 0.0, 18.0))
+        label = f"{lo}-{hi}" if hi < 999 else f"{lo}+"
+        print(f"{label:<14}{len(sub):>6}{mb:>10.1f}{ma:>9.2f}{pred:>8.2f}")
+
+    print("\nMODEL is expected_bonus() at that bucket's mean BPS, assuming a "
+          "start.\nIf ACTUAL sits consistently above or below, adjust "
+          "BONUS_FLOOR / BONUS_SLOPE / BONUS_CAP\nin projections.py. A few "
+          "hundred appearances is enough to fit this properly.")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -354,12 +405,16 @@ def main():
                    help="score only the fixtures that have finished")
 
     sub.add_parser("report", help="pooled results across all scored gameweeks")
+    sub.add_parser("calibrate-bonus",
+                   help="fit the bonus curve against recorded bps/bonus")
 
     args = ap.parse_args()
     if args.cmd == "snapshot":
         snapshot(args.gw, args.xp)
     elif args.cmd == "score":
         score(args.gw, partial=args.partial)
+    elif args.cmd == "calibrate-bonus":
+        calibrate_bonus()
     else:
         report()
 

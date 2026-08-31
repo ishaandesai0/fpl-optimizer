@@ -72,9 +72,6 @@ def main():
     ap.add_argument("player", help="name fragment or FPL element id")
     ap.add_argument("--ratings", help="ratings.json from ratings.py")
     ap.add_argument("--gw", type=int, help="gameweek to decompose (default: next)")
-    ap.add_argument("--overrides", help="overrides.json — MUST match what you "
-                                        "pass to projections.py, or this tool "
-                                        "explains a model you aren't using")
     args = ap.parse_args()
 
     boot = P._get("bootstrap-static/", "bootstrap.json")
@@ -84,20 +81,6 @@ def main():
     e = find(boot["elements"], args.player)
     if not e:
         sys.exit(f"No player matching {args.player!r}")
-
-    ov = None
-    if args.overrides:
-        raw = P.load_overrides(args.overrides)
-        ov = P.resolve_overrides(boot["elements"], raw).get(e["id"])
-    else:
-        # Silent divergence between this tool and xp.csv is exactly how the
-        # Mosquera/Calafiori comparison went wrong: 1.74 here, 3.47 there.
-        raw = P.load_overrides("overrides.json") \
-            if os.path.exists("overrides.json") else {}
-        if raw and P.resolve_overrides(boot["elements"], raw).get(e["id"]):
-            print("\n  ! overrides.json contains an entry for this player but "
-                  "--overrides was not passed.\n    This output will NOT match "
-                  "xp.csv. Re-run with --overrides overrides.json.")
 
     pos = e["element_type"]
     games_played = len({f["event"] for f in fixtures
@@ -135,11 +118,6 @@ def main():
 
     price_pri = P.price_priors(pos, e["now_cost"] / 10.0, med)
     rates = P.player_rates(e, med, P.PRIOR_MINUTES, last)
-    if ov:
-        for key, field in (("xg90", "xg"), ("xa90", "xa"),
-                           ("defcon90", "defcon"), ("bps90", "bps")):
-            if key in ov:
-                rates[field] = float(ov[key])
     print(f"\n{'RATE (per 90)':<18}{'PRICE PRIOR':>13}{'LAST SEASON':>13}{'POSTERIOR':>12}")
     print("-" * 56)
     for k in ("xg", "xa", "defcon", "bps", "yellow"):
@@ -158,22 +136,6 @@ def main():
               f"({'first choice' if gk_rank == 0 else 'backup'})")
 
     mm = P.minutes_model(e, games_played, last, gk_rank)
-    if ov and ("p_start" in ov or "minutes_mult" in ov or "avail" in ov):
-        ps = float(ov.get("p_start", mm.p_start))
-        ps = max(0.0, min(1.0, ps * float(ov.get("avail", 1.0))))
-        mis = max(10.0, min(90.0,
-                            mm.mins_if_start * float(ov.get("minutes_mult", 1.0))))
-        p_cameo = mm.p_cameo * float(ov.get("avail", 1.0))
-        mm = P.Minutes(
-            p_appear=min(1.0, ps + p_cameo),
-            p_60=ps * min(1.0, max(0.35, (mis - 12) / 70.0)),
-            exp_minutes=ps * mis + p_cameo * mm.cameo_mins,
-            p_start=ps, mins_if_start=mis,
-            p_cameo=p_cameo, cameo_mins=mm.cameo_mins)
-    if ov:
-        print(f"\nOVERRIDE APPLIED: {', '.join(f'{k}={v}' for k, v in ov.items() if k != 'note')}")
-        if ov.get("note"):
-            print(f"  note: {ov['note']}")
     p_app, p_60, exp_min = mm.p_appear, mm.p_60, mm.exp_minutes
     if P.fnum(e, "minutes") > 45 and P.fnum(e, "bps") == 0:
         print("\n  ! bps is 0 despite real minutes — likely a stale field in "

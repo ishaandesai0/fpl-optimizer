@@ -171,16 +171,22 @@ def load_players(proj_file: str | None) -> tuple[dict[int, Player], dict[int, di
     boot = _get("bootstrap-static/", "bootstrap.json")
     teams = {t["id"]: t for t in boot["teams"]}
 
+    # `finished` lags on both events and fixtures, so the fallback keys off
+    # scorelines instead — see projections.next_gameweek
     next_gw = None
     for ev in boot["events"]:
         if ev.get("is_next"):
             next_gw = ev["id"]
     if next_gw is None:
-        for ev in boot["events"]:
-            if not ev.get("finished"):
-                next_gw = ev["id"]
-                break
-    next_gw = next_gw or 1
+        try:
+            fx = _get("fixtures/", "fixtures.json")
+            played = {x["event"] for x in fx
+                      if x.get("event") and x.get("team_h_score") is not None}
+            upcoming = [ev["id"] for ev in boot["events"]
+                        if ev["id"] not in played]
+            next_gw = min(upcoming) if upcoming else 1
+        except Exception:
+            next_gw = 1
 
     override: dict[int, float] = {}
     by_name: dict[str, float] = {}

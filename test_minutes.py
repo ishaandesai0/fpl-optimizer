@@ -18,14 +18,25 @@ def show(label, e, games=1, last=None, rank=None):
 gk = mk(P.GKP, 45, 90, 1)
 _, _, m_price = show("GK £4.5m, price prior only", gk)
 _, p60_rank, m_rank = show("GK £4.5m, depth-chart rank 0", gk, rank=0)
-_, _, m_bkp = show("GK £4.5m, backup rank 1", gk, rank=1)
+# a realistic backup: on the bench all season, no starts
+gk_bench = mk(P.GKP, 45, 0, 0)
+_, _, m_bkp = show("GK £4.5m, backup rank 1 (0 starts)", gk_bench, games=3, rank=1)
 _, p60_last, m_last = show("GK £4.5m, 38 starts last season", gk,
                            last={"_minutes": 3420, "_starts": 38})
 
 assert m_rank > 70, f"nailed keeper should project ~full minutes, got {m_rank:.0f}"
 assert m_last > 80
-assert m_bkp < 30, "backup keeper must project low"
-assert m_rank > m_price * 2, "depth chart must fix the price underestimate"
+assert m_bkp < 30, f"backup keeper must project low, got {m_bkp:.1f}"
+# and a rank-1 keeper who HAS been starting should still read high — the
+# depth chart is a prior, not a veto
+_, _, m_bkp_playing = show("GK £4.5m, rank 1 but 3 starts",
+                           mk(P.GKP, 45, 270, 3), games=3, rank=1)
+assert m_bkp_playing > 45, f"actual starts must move the depth chart, got {m_bkp_playing:.1f}"
+# The depth chart should still beat the price guess, but by less than it used
+# to: weakening the price prior means an observed start now counts for more on
+# its own, which is the point.
+assert m_rank > m_price * 1.25, \
+    f"depth chart should still lead the price prior: {m_rank:.1f} vs {m_price:.1f}"
 
 print()
 # budget defender who played every week last season

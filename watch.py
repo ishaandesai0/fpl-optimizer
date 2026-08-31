@@ -17,10 +17,12 @@ Two jobs.
    hand, this ranks who is worth five minutes of your attention, weighted by
    how much they'd actually affect your decisions.
 
-    python watch.py --entry 8447496 --xp xp.csv --overrides overrides.json
+    python watch.py --entry 8447496 --xp xp.csv
 
-Nothing here edits overrides.json. It tells you where to look; the judgement
-stays yours.
+This reports; it doesn't act. There is no mechanism for feeding a correction
+back into the model — that was tried and removed (see README). What it tells
+you is where the model is working from thin evidence, so you can weigh its
+output accordingly rather than patching it.
 """
 
 from __future__ import annotations
@@ -63,14 +65,14 @@ def snapshot_roster(elements: list[dict], teams: dict) -> dict:
 
 
 def threatened_incumbents(old: dict, new: dict, elements: list[dict], teams: dict,
-                          squad: set, overrides: dict, xp: dict) -> list[str]:
+                          squad: set, xp: dict) -> list[str]:
     """A signing threatens whoever already plays that position at that club.
 
     This is the gap that let the Konsa signing slip past: he shows up only as
     "new to the game", with nothing connecting him to the Arsenal defender you
-    hold an override on. A new arrival is the single most common reason a
-    minutes assumption goes stale, and it is invisible from the incumbent's own
-    row in the API — his status, news and history are all unchanged.
+    already own. A new arrival is the most common reason the model's minutes
+    estimate for an incumbent goes stale, and it is invisible from that
+    player's own row in the API — his status, news and history are unchanged.
     """
     by_id = {e["id"]: e for e in elements}
     arrivals = [k for k in new if k not in old]
@@ -93,21 +95,15 @@ def threatened_incumbents(old: dict, new: dict, elements: list[dict], teams: dic
         rivals = [e for e in elements
                   if e["element_type"] == pos and e["team"] == team
                   and e["id"] != a["id"]
-                  and (e["id"] in squad or str(e["id"]) in overrides)]
+                  and e["id"] in squad]
         if not rivals:
             continue
         club = teams.get(team, {}).get("short_name", "???")
         lines.append(f"\n  {a['web_name']} ({P.POS[pos]}, {club}) has arrived — "
                      f"recheck your assumptions on:")
         for e in sorted(rivals, key=lambda e: -xp.get(e["id"], 0)):
-            tags = []
-            if e["id"] in squad:
-                tags.append("IN YOUR SQUAD")
-            if str(e["id"]) in overrides:
-                tags.append("HAS AN OVERRIDE — recheck it")
-            tag = ("  [" + ", ".join(tags) + "]") if tags else ""
             lines.append(f"      {e['web_name']:<20} "
-                         f"{xp.get(e['id'], 0):>5.1f} xP{tag}")
+                         f"{xp.get(e['id'], 0):>5.1f} xP  [IN YOUR SQUAD]")
     if lines:
         return ["\nARRIVALS THREATENING INCUMBENTS"] + lines
     return []
@@ -149,7 +145,8 @@ def diff_roster(old: dict, new: dict, teams: dict, xp: dict, squad: set) -> list
             lines.append(f"  {cur['name']:<20} {a} -> {b}   "
                          f"(id {k}){mark}")
         lines.append("  ^ new fixtures apply automatically, but his xG/DefCon "
-                     "rates came from a different role. Consider an override.")
+                     "rates came from a different role — discount his "
+                     "projection until he has minutes at the new club.")
 
     if added:
         big = sorted(added, key=lambda k: -new[k]["cost"])[:12]
@@ -193,7 +190,7 @@ def diff_roster(old: dict, new: dict, teams: dict, xp: dict, squad: set) -> list
     return lines
 
 
-def review_queue(elements, teams, xp, squad, overrides, deep_ids, top_n):
+def review_queue(elements, teams, xp, squad, deep_ids, top_n):
     """Rank players by how much a wrong assumption about them would cost.
 
     Impact is the horizon projection (or squad membership, which forces a
@@ -238,9 +235,6 @@ def review_queue(elements, teams, xp, squad, overrides, deep_ids, top_n):
 
         if not reasons:
             continue
-        if str(pid) in overrides:
-            reasons.append("(override already set)")
-            weight -= 5.0
         if in_squad:
             weight += 3.0
 
@@ -255,36 +249,11 @@ def review_queue(elements, teams, xp, squad, overrides, deep_ids, top_n):
     return rows[:top_n]
 
 
-def stale_overrides(elements, overrides, games_played):
-    """An override that outlives its situation is worse than none."""
-    by_id = {e["id"]: e for e in elements}
-    out = []
-    for key, val in overrides.items():
-        if not key.isdigit():
-            continue
-        e = by_id.get(int(key))
-        if not e:
-            out.append((key, "player no longer in the game — DELETE"))
-            continue
-        starts = P.fnum(e, "starts")
-        mins = P.fnum(e, "minutes")
-        if starts >= 5 or mins >= 450:
-            out.append((f"{e['web_name']} ({key})",
-                        f"{int(starts)} starts / {int(mins)} min this season — "
-                        f"the model can see this now. Consider removing."))
-        elif e.get("status", "a") != "a" and "avail" not in val:
-            out.append((f"{e['web_name']} ({key})",
-                        f"now flagged status '{e.get('status')}' — override may "
-                        f"be asserting minutes he won't get."))
-    return out
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--entry", type=int, help="your FPL team id")
     ap.add_argument("--xp", default="xp.csv", help="projections, for ranking")
-    ap.add_argument("--overrides", default="overrides.json")
     ap.add_argument("--top", type=int, default=15)
     ap.add_argument("--fresh", action="store_true", help="bypass the cache")
     ap.add_argument("--no-save", action="store_true",
@@ -295,7 +264,6 @@ def main():
     boot = P._get("bootstrap-static/", "bootstrap.json", ttl)
     teams = {t["id"]: t for t in boot["teams"]}
     elements = boot["elements"]
-    games_played = sum(1 for ev in boot["events"] if ev.get("finished"))
 
     xp = load_xp(args.xp)
     squad: set[int] = set()
@@ -317,9 +285,6 @@ def main():
             print("! Could not load your squad — squad flags below will be "
                   "missing. Check the entry id.")
 
-    overrides = P.load_overrides(args.overrides) \
-        if os.path.exists(args.overrides) else {}
-
     # which players actually have measured priors
     deep_ids = set()
     for e in elements:
@@ -338,7 +303,7 @@ def main():
             old = json.load(f)
         lines = diff_roster(old, new_roster, teams, xp, squad)
         lines += threatened_incumbents(old, new_roster, elements, teams,
-                                       squad, overrides, xp)
+                                       squad, xp)
         if lines:
             print("\n" + "=" * 66)
             print("ROSTER CHANGES SINCE LAST RUN")
@@ -350,15 +315,7 @@ def main():
         print("\nNo previous roster cached — this run establishes the baseline. "
               "Diffs start next time.")
 
-    stale = stale_overrides(elements, overrides, games_played)
-    if stale:
-        print("\n" + "=" * 66)
-        print("STALE OVERRIDES")
-        print("=" * 66)
-        for who, why in stale:
-            print(f"  {who}: {why}")
-
-    queue = review_queue(elements, teams, xp, squad, overrides, deep_ids, args.top)
+    queue = review_queue(elements, teams, xp, squad, deep_ids, args.top)
     if queue:
         print("\n" + "=" * 66)
         print("REVIEW QUEUE — check the news on these before the deadline")

@@ -63,12 +63,23 @@ AVG_HOME_GOALS = 1.55
 AVG_AWAY_GOALS = 1.25
 SOT_PER_GOAL = 3.2  # shots on target faced per goal conceded, for save volume
 
-# Bonus curve: BPS-per-start mapped to expected bonus points. A player around
-# 18 BPS rarely places top-3; one around 32 usually does. Hand-fit — the
-# backtest records actual bonus so this can be regressed properly later.
-BONUS_FLOOR = 17.0
-BONUS_SLOPE = 0.16
-BONUS_CAP = 2.6
+# Bonus curve: BPS-per-start mapped to expected bonus points.
+#
+# Anchored on what the format can physically produce rather than on any one
+# player. Exactly 6 bonus points (3/2/1) are awarded per match across ~22
+# starters, so the mean over all appearances is ~0.27. Even the highest-BPS
+# players in the league cannot average much above ~1.0-1.2 across a season,
+# because they're competing with 21 others every week and can take at most 3.
+#
+# An earlier version had a cap of 2.6, fitted to make one player's big week
+# look less wrong. That put bonus above goals as the largest component of a
+# premium midfielder's projection — roughly double the physical ceiling.
+#
+# Still hand-fit. `backtest.py` records `bps` and `bonus` per player per
+# gameweek so this can be regressed on real data once there are enough weeks.
+BONUS_FLOOR = 18.0
+BONUS_SLOPE = 0.075
+BONUS_CAP = 1.40
 
 # ---------------------------------------------------------------------------
 # priors: what we believe about a player before we've seen them play.
@@ -88,6 +99,19 @@ PRIOR_MINUTES = 810  # ~9 full matches
 # Deliberately below 38x90: a regular starter who misses a few games should
 # still get essentially full weight.
 FULL_SEASON_MINUTES = 2400.0
+
+# How much a prior is WORTH, as distinct from what it says.
+#
+# A measured season is real evidence and should resist a couple of noisy
+# games. A price-derived guess is a placeholder — it exists only because
+# nothing better does, and it should surrender to actual data quickly. Giving
+# both the same shrinkage constant means a player with no Premier League
+# history is held at his price prior for months while the evidence piles up
+# against it.
+#
+# This is what makes the ~280 players with no prior season tractable without
+# hand-maintaining a correction for each of them.
+NO_PRIOR_STRENGTH = 0.35
 
 PRIOR_EVENTS = 4.0
 EVENT_SHRINK_BAND = (450.0, 1800.0)  # minutes: 5 to 20 matches
@@ -125,68 +149,6 @@ def price_priors(pos: int, price: float, median_price: float) -> dict:
     return out
 
 
-def load_overrides(path: str | None) -> dict:
-    """Manual context the API can't express.
-
-    FPL's `status` and `chance_of_playing_next_round` are blunt and often lag
-    the news. A player back from a long lay-off is flagged available long
-    before he's playing 90 minutes; a rotation risk before a European tie
-    isn't flagged at all. This is the seam for judgement the model can't have.
-
-    Keys are player ids or names (accents optional). Recognised fields:
-        exclude       drop entirely (suspended, sold, long-term out)
-        minutes_mult  scale expected minutes, e.g. 0.5 for a managed return
-        p_start       override start probability outright
-        xg90/xa90/defcon90/bps90   override a rate directly
-        avail         override availability, 0..1
-        note          free text, echoed in output
-    """
-    if not path:
-        return {}
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("players", data)
-
-
-def resolve_overrides(elements: list[dict], overrides: dict) -> dict[int, dict]:
-    """Bind override keys to exactly one player each.
-
-    A name key is a convenience, not an identifier: "Sangare" matches both
-    M.Sangare and I.Sangare, who play for different clubs. Applying an
-    override to the wrong player is silent and worse than not applying it, so
-    an ambiguous key is REFUSED rather than guessed at. Ids are unambiguous
-    and always win.
-    """
-    resolved: dict[int, dict] = {}
-    by_id = {e["id"]: e for e in elements}
-
-    for key, val in overrides.items():
-        if key.isdigit():
-            pid = int(key)
-            if pid in by_id:
-                resolved[pid] = val
-            else:
-                print(f"  ! override key {key!r} is not a valid player id — "
-                      f"skipped")
-            continue
-
-        k = strip_accents(key)
-        exact = [e for e in elements if strip_accents(e["web_name"]) == k]
-        hits = exact or ([e for e in elements
-                          if len(k) >= 4 and k in strip_accents(e["web_name"])]
-                         if len(k) >= 4 else [])
-
-        if len(hits) == 1:
-            resolved.setdefault(hits[0]["id"], val)
-        elif not hits:
-            print(f"  ! override key {key!r} matched no player — skipped")
-        else:
-            names = ", ".join(f"{e['web_name']} (id {e['id']})" for e in hits[:6])
-            print(f"  ! override key {key!r} is AMBIGUOUS — matches {names}. "
-                  f"Skipped; use a player id instead.")
-    return resolved
-
-
 def strip_accents(s: str) -> str:
     s = s.replace("ø", "o").replace("Ø", "O").replace("ß", "ss")
     return "".join(c for c in unicodedata.normalize("NFKD", s)
@@ -206,6 +168,32 @@ def _get(path: str, fname: str, ttl: int = CACHE_TTL):
     with open(cache, "w") as f:
         json.dump(data, f)
     return data
+
+
+def played_gameweeks(fixtures: list) -> set[int]:
+    """Gameweeks that have produced at least one scoreline.
+
+    FPL's `finished` flag — on both events and fixtures — lags by hours or
+    days. Anything that keys off it undercounts, so every consumer here
+    derives "has this been played" from the presence of scores instead.
+    """
+    return {f["event"] for f in fixtures
+            if f.get("event")
+            and f.get("team_h_score") is not None
+            and f.get("team_a_score") is not None}
+
+
+def next_gameweek(boot: dict, fixtures: list) -> int:
+    """The upcoming gameweek. Prefers FPL's own flag, falls back to the first
+    gameweek with no results rather than the first not marked finished."""
+    nxt = next((ev["id"] for ev in boot.get("events", []) if ev.get("is_next")),
+               None)
+    if nxt:
+        return nxt
+    played = played_gameweeks(fixtures)
+    upcoming = [ev["id"] for ev in boot.get("events", [])
+                if ev["id"] not in played]
+    return min(upcoming) if upcoming else 1
 
 
 def fnum(d: dict, key: str, default: float = 0.0) -> float:
@@ -228,12 +216,25 @@ def shrink(events: float, minutes: float, prior_rate: float,
     return (events + prior_events) / ((minutes + k) / 90.0)
 
 
-def event_weight(prior_rate: float, target_events: float = PRIOR_EVENTS) -> float:
-    """Minutes of prior needed to carry `target_events` pseudo-observations."""
+def event_weight(prior_rate: float, target_events: float = PRIOR_EVENTS,
+                 strength: float = 1.0) -> float:
+    """Minutes of prior needed to carry `target_events` pseudo-observations,
+    scaled by how much that prior is worth."""
     if prior_rate <= 0:
-        return EVENT_SHRINK_BAND[1]
+        return EVENT_SHRINK_BAND[1] * strength
     k = target_events / prior_rate * 90.0
-    return min(EVENT_SHRINK_BAND[1], max(EVENT_SHRINK_BAND[0], k))
+    k = min(EVENT_SHRINK_BAND[1], max(EVENT_SHRINK_BAND[0], k))
+    return k * strength
+
+
+def prior_strength(last: dict | None) -> float:
+    """1.0 for a full measured season, NO_PRIOR_STRENGTH for a price guess,
+    interpolated for a partial season."""
+    if not last:
+        return NO_PRIOR_STRENGTH
+    cover = min(1.0, last.get("_minutes", FULL_SEASON_MINUTES)
+                / FULL_SEASON_MINUTES)
+    return NO_PRIOR_STRENGTH + (1.0 - NO_PRIOR_STRENGTH) * cover
 
 
 def player_rates(e: dict, median_price: float = 5.5,
@@ -263,14 +264,14 @@ def player_rates(e: dict, median_price: float = 5.5,
     yellow = fnum(e, "yellow_cards")
     saves = fnum(e, "saves")
 
-    k = prior_minutes
+    strength = prior_strength(last)
+    k = prior_minutes * strength
     # rare events get exposure-scaled shrinkage; high-rate ones don't need it
-    k_xg = event_weight(pri["xg"])
-    k_xa = event_weight(pri["xa"])
     return dict(
-        xg=shrink(xg, mins, pri["xg"], k_xg),
-        xa=shrink(xa, mins, pri["xa"], k_xa),
-        defcon=shrink(defcon, mins, pri["defcon"], event_weight(pri["defcon"])),
+        xg=shrink(xg, mins, pri["xg"], event_weight(pri["xg"], strength=strength)),
+        xa=shrink(xa, mins, pri["xa"], event_weight(pri["xa"], strength=strength)),
+        defcon=shrink(defcon, mins, pri["defcon"],
+                      event_weight(pri["defcon"], strength=strength)),
         bps=shrink(bps, mins, pri["bps"], k),
         yellow=shrink(yellow, mins, pri["yellow"], k),
         saves=shrink(saves, mins, (last or {}).get("saves", 2.8), k)
@@ -357,21 +358,34 @@ def minutes_model(e: dict, games_played: int, last: dict | None = None,
 
     starts = fnum(e, "starts")
     mins = fnum(e, "minutes")
-    g = max(games_played, 1)
+    # A player cannot have started more games than have been played; if the
+    # counts disagree, trust the player's own record rather than producing a
+    # start rate above 1.
+    g = max(games_played, starts, 1)
 
     price = e["now_cost"] / 10.0
+    strength = prior_strength(last)
     if last and last.get("_starts"):
         # last season's start rate, nudged toward the mean for regression
         prior_start = min(0.95, max(0.05, last["_starts"] / 38.0)) * 0.88 + 0.06
     elif e["element_type"] == GKP and gk_rank is not None:
-        # keepers are a depth chart, not a price curve
+        # Keepers are a depth chart, not a price curve — and unlike the price
+        # heuristic this is a real structural signal about role, so it keeps
+        # full weight even with no prior season behind it.
         prior_start = {0: 0.88, 1: 0.10}.get(gk_rank, 0.02)
+        strength = 1.0
     else:
         # price fallback: £4.0m fringe -> ~0.25, £7.0m -> ~0.75, £11m+ -> ~0.92
         prior_start = min(0.93, max(0.15, 0.15 + 0.09 * (price - 4.0)))
 
-    # shrink observed start rate toward that prior; k in *matches*
-    k_games = 4.0
+    # shrink observed start rate toward that prior; k in *matches*, scaled by
+    # how much the prior is worth. A price-based guess about someone with no
+    # Premier League history should not outweigh two actual starts.
+    # Keepers rotate far less than outfielders, so observed starts settle the
+    # question faster — three in a row is close to conclusive. A lighter prior
+    # keeps the depth chart useful pre-season without overriding what actually
+    # happened once the season is underway.
+    k_games = (2.5 if e["element_type"] == GKP else 4.0) * strength
     p_start = (starts + prior_start * k_games) / (g + k_games)
     p_start = min(1.0, p_start) * avail
 
@@ -605,8 +619,7 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
 
 def build(horizon: int, start_gw: int | None = None, deep: int = 0,
           prior_minutes: float = PRIOR_MINUTES,
-          ratings_file: str | None = None,
-          overrides_file: str | None = None) -> tuple[list[dict], int]:
+          ratings_file: str | None = None) -> tuple[list[dict], int]:
     boot = _get("bootstrap-static/", "bootstrap.json")
     fixtures = _get("fixtures/", "fixtures.json")
     teams = {t["id"]: t for t in boot["teams"]}
@@ -623,13 +636,16 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
         strength = team_strength(teams)
 
     if start_gw is None:
-        start_gw = next((ev["id"] for ev in boot["events"] if ev.get("is_next")), None)
-        if start_gw is None:
-            start_gw = next((ev["id"] for ev in boot["events"]
-                             if not ev.get("finished")), 1)
+        start_gw = next_gameweek(boot, fixtures)
     gws = list(range(start_gw, start_gw + horizon))
 
-    games_played = sum(1 for ev in boot["events"] if ev.get("finished"))
+    # FPL's `finished` flag on events lags badly — it can still read false for
+    # a gameweek whose matches all have scorelines. Trusting it undercounts
+    # games played, which makes `starts / games` exceed 1 and drives every
+    # regular starter's p_start toward certainty. Count gameweeks that have
+    # actually produced results instead. (ratings.py hit the same flag and was
+    # fixed the same way.)
+    games_played = len(played_gameweeks(fixtures))
 
     # team -> gw -> list of (lam_for, lam_against); a list handles doubles,
     # an empty list handles blanks
@@ -678,85 +694,22 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
         for i, e in enumerate(keepers):
             gk_rank[e["id"]] = i
 
-    raw_overrides = load_overrides(overrides_file)
-    if raw_overrides:
-        print(f"\nResolving {len(raw_overrides)} override key(s)...")
-    overrides = resolve_overrides(boot["elements"], raw_overrides)
-    applied = []
-
     rows = []
     for e in boot["elements"]:
-        ov = overrides.get(e["id"])
-        if ov and ov.get("exclude"):
-            applied.append(f"{e['web_name']}: EXCLUDED"
-                           + (f" ({ov['note']})" if ov.get("note") else ""))
-            continue
-
         rates = player_rates(e, med_price[e["element_type"]], prior_minutes,
                              last_rates.get(e["id"]))
         mins = minutes_model(e, games_played, last_rates.get(e["id"]),
                              gk_rank.get(e["id"]))
 
-        ramp = list(ov.get("minutes_ramp", [])) if ov else []
-
-        if ov:
-            for key, field in (("xg90", "xg"), ("xa90", "xa"),
-                               ("defcon90", "defcon"), ("bps90", "bps")):
-                if key in ov:
-                    rates[field] = float(ov[key])
-            if "p_start" in ov or "minutes_mult" in ov or "avail" in ov:
-                # Each knob acts on exactly one thing, so they compose without
-                # compounding:
-                #   p_start      -> replaces the start probability
-                #   avail        -> scales the chance of featuring at all
-                #   minutes_mult -> scales minutes PER START (a managed return
-                #                   plays 55 minutes, not 55% of matches)
-                ps = float(ov.get("p_start", mins.p_start))
-                ps = max(0.0, min(1.0, ps * float(ov.get("avail", 1.0))))
-                mis = mins.mins_if_start * float(ov.get("minutes_mult", 1.0))
-                mis = max(10.0, min(90.0, mis))
-                p_cameo = mins.p_cameo * float(ov.get("avail", 1.0))
-                mins = Minutes(
-                    p_appear=min(1.0, ps + p_cameo),
-                    p_60=ps * min(1.0, max(0.35, (mis - 12) / 70.0)),
-                    exp_minutes=ps * mis + p_cameo * mins.cameo_mins,
-                    p_start=ps, mins_if_start=mis,
-                    p_cameo=p_cameo, cameo_mins=mins.cameo_mins)
-            desc = f"{e['web_name']}: E[min] {mins.exp_minutes:.0f}"
-            if ramp:
-                path = ", ".join(
-                    f"{mins.p_start * float(ramp[min(i, len(ramp)-1)]):.2f}"
-                    for i in range(len(gws)))
-                desc += f"  p_start by GW: [{path}]"
-            applied.append(desc + (f" — {ov['note']}" if ov.get("note") else ""))
-        for gi, g in enumerate(gws):
-            # A returning player isn't a fixed probability — he's benched now
-            # and starting in three weeks. minutes_ramp expresses that as a
-            # multiplier per horizon week; the last value carries forward.
-            m_g = mins
-            if ramp:
-                mult = float(ramp[min(gi, len(ramp) - 1)])
-                ps = max(0.0, min(1.0, mins.p_start * mult))
-                mis = mins.mins_if_start
-                pc = mins.p_cameo
-                m_g = Minutes(
-                    p_appear=min(1.0, ps + pc),
-                    p_60=ps * min(1.0, max(0.35, (mis - 12) / 70.0)),
-                    exp_minutes=ps * mis + pc * mins.cameo_mins,
-                    p_start=ps, mins_if_start=mis,
-                    p_cameo=pc, cameo_mins=mins.cameo_mins)
+        for g in gws:
             ep = sum(
-                score_fixture(e, rates, m_g, lf, la, team_avg_for[e["team"]])
+                score_fixture(e, rates, mins, lf, la, team_avg_for[e["team"]])
                 for lf, la in sched[e["team"]][g]
             )
             rows.append({"id": e["id"], "gw": g, "ep": round(ep, 3),
                          "name": e["web_name"], "pos": POS[e["element_type"]],
                          "team": teams[e["team"]]["short_name"],
                          "cost": e["now_cost"] / 10.0})
-    if applied:
-        print(f"\nApplied {len(applied)} manual override(s):")
-        for a in applied:
-            print(f"  {a}")
     return rows, start_gw
 
 
@@ -775,12 +728,10 @@ def main():
                     help="evidence weight; lower trusts this season sooner")
     ap.add_argument("--ratings", help="ratings.json from ratings.py — replaces "
                                       "FPL's coarse tiers with fitted values")
-    ap.add_argument("--overrides", help="overrides.json of manual context the "
-                                        "API can't express (injuries, returns)")
     args = ap.parse_args()
 
     rows, start_gw = build(args.horizon, args.gw, args.deep, args.prior_minutes,
-                           args.ratings, args.overrides)
+                           args.ratings)
 
     with open(args.out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["id", "gw", "ep"],
