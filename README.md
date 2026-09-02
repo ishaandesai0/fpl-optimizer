@@ -174,7 +174,7 @@ discarded.
 | Flag | Purpose |
 |---|---|
 | `--horizon` | gameweeks to project (default 5) |
-| `--deep N` | fetch last-season rates for the N priciest players. **Use 600** — a smaller N corrects expensive players only, biasing mid-price comparisons |
+| `--deep` | fetch last-season rates for **every** player. Pass with no number; `--deep N` caps at the N priciest, which corrects expensive players only and biases mid-price comparisons |
 | `--ratings` | `ratings.json` from `ratings.py`; replaces the coarse tiers |
 | `--prior-minutes` | evidence weight; lower trusts this season sooner |
 | `--top N` | how many players to print as a sanity check |

@@ -121,7 +121,7 @@
  "18": {
   "name": "Martinelli",
   "team": 1,
-  "cost": 64,
+  "cost": 63,
   "status": "a",
   "news": ""
  },
@@ -163,7 +163,7 @@
  "25": {
   "name": "Gyökeres",
   "team": 1,
-  "cost": 74,
+  "cost": 73,
   "status": "a",
   "news": ""
  },
@@ -177,7 +177,7 @@
  "27": {
   "name": "G.Jesus",
   "team": 1,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -359,9 +359,9 @@
  "55": {
   "name": "Watkins",
   "team": 2,
-  "cost": 79,
-  "status": "a",
-  "news": ""
+  "cost": 78,
+  "status": "u",
+  "news": "Has joined Al Hilal permanently"
  },
  "56": {
   "name": "Abraham",
@@ -660,7 +660,7 @@
  "85": {
   "name": "Van den Berg",
   "team": 4,
-  "cost": 50,
+  "cost": 49,
   "status": "i",
   "news": "Groin injury - Unknown return date"
  },
@@ -807,7 +807,7 @@
  "565": {
   "name": "M.Sangaré",
   "team": 4,
-  "cost": 56,
+  "cost": 57,
   "status": "a",
   "news": ""
  },
@@ -849,7 +849,7 @@
  "115": {
   "name": "De Cuyper",
   "team": 5,
-  "cost": 46,
+  "cost": 47,
   "status": "a",
   "news": ""
  },
@@ -1087,7 +1087,7 @@
  "140": {
   "name": "Sánchez",
   "team": 6,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -1241,7 +1241,7 @@
  "165": {
   "name": "João Pedro",
   "team": 6,
-  "cost": 76,
+  "cost": 77,
   "status": "a",
   "news": ""
  },
@@ -1249,8 +1249,8 @@
   "name": "Marc Guiu",
   "team": 6,
   "cost": 50,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined RB Leipzig permanently"
  },
  "169": {
   "name": "Mheuka",
@@ -1297,7 +1297,7 @@
  "578": {
   "name": "Mudryk",
   "team": 6,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -1430,7 +1430,7 @@
  "185": {
   "name": "Sakamoto",
   "team": 7,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -1581,13 +1581,6 @@
   "status": "a",
   "news": ""
  },
- "201": {
-  "name": "Muñoz",
-  "team": 8,
-  "cost": 54,
-  "status": "a",
-  "news": ""
- },
  "202": {
   "name": "Richards",
   "team": 8,
@@ -1626,14 +1619,14 @@
  "207": {
   "name": "Mingueza",
   "team": 8,
-  "cost": 45,
+  "cost": 44,
   "status": "a",
   "news": ""
  },
  "208": {
   "name": "Sarr",
   "team": 8,
-  "cost": 64,
+  "cost": 63,
   "status": "i",
   "news": "Groin injury - Unknown return date"
  },
@@ -1661,7 +1654,7 @@
  "213": {
   "name": "Lerma",
   "team": 8,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -1696,7 +1689,7 @@
  "218": {
   "name": "Doucouré",
   "team": 8,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -1731,7 +1724,7 @@
  "223": {
   "name": "Mateta",
   "team": 8,
-  "cost": 65,
+  "cost": 64,
   "status": "i",
   "news": "Hamstring injury - Expected back 11 Oct"
  },
@@ -1787,14 +1780,14 @@
  "21": {
   "name": "Nørgaard",
   "team": 9,
-  "cost": 50,
+  "cost": 49,
   "status": "i",
   "news": "Groin injury - Unknown return date"
  },
  "209": {
   "name": "Johnson",
   "team": 9,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -1865,8 +1858,8 @@
   "name": "Aznou",
   "team": 9,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined Malaga on loan for the rest of the season"
  },
  "236": {
   "name": "Dewsbury-Hall",
@@ -1970,8 +1963,8 @@
   "name": "McNally",
   "team": 10,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined York City on loan for the rest of the season"
  },
  "253": {
   "name": "Andersen",
@@ -2172,7 +2165,7 @@
  "279": {
   "name": "Ajayi",
   "team": 11,
-  "cost": 40,
+  "cost": 41,
   "status": "a",
   "news": ""
  },
@@ -2501,7 +2494,7 @@
  "314": {
   "name": "Ogbene",
   "team": 12,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -2529,7 +2522,7 @@
  "318": {
   "name": "Philogene",
   "team": 12,
-  "cost": 55,
+  "cost": 54,
   "status": "i",
   "news": "Ankle injury - Unknown return date"
  },
@@ -2571,7 +2564,7 @@
  "324": {
   "name": "Mehmeti",
   "team": 12,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -2634,7 +2627,7 @@
  "260": {
   "name": "Wilson",
   "team": 13,
-  "cost": 65,
+  "cost": 64,
   "status": "a",
   "news": ""
  },
@@ -2642,8 +2635,8 @@
   "name": "Perri",
   "team": 13,
   "cost": 45,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined Torino on loan for the rest of the season"
  },
  "327": {
   "name": "Bijol",
@@ -2760,7 +2753,7 @@
  "345": {
   "name": "Tanaka",
   "team": 13,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -2822,6 +2815,13 @@
  },
  "625": {
   "name": "Cairns",
+  "team": 13,
+  "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "629": {
+  "name": "Zetterer",
   "team": 13,
   "cost": 40,
   "status": "a",
@@ -2963,7 +2963,7 @@
  "369": {
   "name": "Ngumoha",
   "team": 14,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -3013,8 +3013,8 @@
   "name": "Bajcetic",
   "team": 14,
   "cost": 50,
-  "status": "i",
-  "news": "Hamstring injury - Unknown return date"
+  "status": "u",
+  "news": "Has joined Celta Vigo permanently"
  },
  "377": {
   "name": "Munoz",
@@ -3061,14 +3061,21 @@
  "383": {
   "name": "Elliott",
   "team": 14,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
  "579": {
   "name": "Araujo",
   "team": 14,
-  "cost": 55,
+  "cost": 54,
+  "status": "a",
+  "news": ""
+ },
+ "627": {
+  "name": "Barcola",
+  "team": 14,
+  "cost": 80,
   "status": "a",
   "news": ""
  },
@@ -3180,7 +3187,7 @@
  "399": {
   "name": "Cherki",
   "team": 15,
-  "cost": 76,
+  "cost": 77,
   "status": "a",
   "news": ""
  },
@@ -3215,7 +3222,7 @@
  "407": {
   "name": "Echeverri",
   "team": 15,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -3236,7 +3243,7 @@
  "410": {
   "name": "Monga",
   "team": 15,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -3279,6 +3286,13 @@
   "name": "Braithwaite",
   "team": 15,
   "cost": 40,
+  "status": "a",
+  "news": ""
+ },
+ "628": {
+  "name": "Allan",
+  "team": 15,
+  "cost": 60,
   "status": "a",
   "news": ""
  },
@@ -3369,7 +3383,7 @@
  "420": {
   "name": "Yoro",
   "team": 16,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -3482,8 +3496,8 @@
   "name": "Collyer",
   "team": 16,
   "cost": 50,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined West Brom permanently"
  },
  "437": {
   "name": "Bendito Mantato",
@@ -3579,14 +3593,14 @@
  "449": {
   "name": "Hall",
   "team": 17,
-  "cost": 50,
+  "cost": 51,
   "status": "a",
   "news": ""
  },
  "450": {
   "name": "Livramento",
   "team": 17,
-  "cost": 50,
+  "cost": 49,
   "status": "i",
   "news": "Calf injury - Unknown return date"
  },
@@ -3621,14 +3635,14 @@
  "457": {
   "name": "J.Murphy",
   "team": 17,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
  "458": {
   "name": "Joelinton",
   "team": 17,
-  "cost": 55,
+  "cost": 54,
   "status": "i",
   "news": "Unspecified injury - Unknown return date"
  },
@@ -3663,7 +3677,7 @@
  "463": {
   "name": "Woltemade",
   "team": 17,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -3720,6 +3734,13 @@
   "name": "Delap",
   "team": 18,
   "cost": 55,
+  "status": "a",
+  "news": ""
+ },
+ "201": {
+  "name": "Muñoz",
+  "team": 18,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -3811,8 +3832,8 @@
   "name": "Bindon",
   "team": 18,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined Charlton Athletic on loan for the rest of the season"
  },
  "480": {
   "name": "Gibbs-White",
@@ -3838,9 +3859,9 @@
  "484": {
   "name": "Hutchinson",
   "team": 18,
-  "cost": 55,
-  "status": "a",
-  "news": ""
+  "cost": 54,
+  "status": "u",
+  "news": "Has joined AC Milan on loan for the rest of the season"
  },
  "485": {
   "name": "Bakwa",
@@ -3887,7 +3908,7 @@
  "491": {
   "name": "Igor Jesus",
   "team": 18,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -3943,7 +3964,7 @@
  "455": {
   "name": "Tonali",
   "team": 19,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -3978,7 +3999,7 @@
  "498": {
   "name": "Senesi",
   "team": 19,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -4063,8 +4084,8 @@
   "name": "Souza",
   "team": 19,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined FC Porto on loan for the rest of the season"
  },
  "512": {
   "name": "Kudus",
@@ -4167,7 +4188,7 @@
  "526": {
   "name": "Solanke",
   "team": 19,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },
@@ -4335,7 +4356,7 @@
  "549": {
   "name": "Talbi",
   "team": 20,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -4356,7 +4377,7 @@
  "552": {
   "name": "Brobbey",
   "team": 20,
-  "cost": 60,
+  "cost": 59,
   "status": "a",
   "news": ""
  },

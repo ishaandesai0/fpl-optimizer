@@ -672,7 +672,20 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
 
     last_rates: dict[int, dict] = {}
     if deep:
-        pool = sorted(boot["elements"], key=lambda e: -e["now_cost"])[:deep]
+        # deep < 0 means every player. A numeric cap ranks by price, which
+        # makes the correction one-directional: expensive players get their
+        # measured rates while cheap ones keep the price guess, distorting
+        # mid-price comparisons. There is no reason to cap it — the fetch is
+        # cached for a day — so "everyone" is the default.
+        if deep < 0 or deep >= len(boot["elements"]):
+            pool = list(boot["elements"])
+        else:
+            pool = sorted(boot["elements"],
+                          key=lambda e: -e["now_cost"])[:deep]
+            print(f"  ! capping at the {deep} priciest of "
+                  f"{len(boot['elements'])} players — cheaper players keep "
+                  f"the price heuristic, which biases mid-price comparisons. "
+                  f"Use --deep with no number for all.")
         print(f"Fetching last-season rates for {len(pool)} players "
               f"(cached; first run is slow)...")
         for i, e in enumerate(pool, 1):
@@ -721,9 +734,12 @@ def main():
     ap.add_argument("--out", default="xp.csv")
     ap.add_argument("--top", type=int, default=25,
                     help="how many players to print as a sanity check")
-    ap.add_argument("--deep", type=int, default=0, metavar="N",
-                    help="fetch last-season rates for the N priciest players "
-                         "and use them as priors instead of the price heuristic")
+    ap.add_argument("--deep", type=int, nargs="?", const=-1, default=0,
+                    metavar="N",
+                    help="fetch last-season rates and use them as priors "
+                         "instead of the price heuristic. Pass --deep with no "
+                         "number for every player (recommended); --deep N caps "
+                         "at the N priciest, which biases mid-price comparisons")
     ap.add_argument("--prior-minutes", type=float, default=PRIOR_MINUTES,
                     help="evidence weight; lower trusts this season sooner")
     ap.add_argument("--ratings", help="ratings.json from ratings.py — replaces "
@@ -738,8 +754,9 @@ def main():
                            extrasaction="ignore")
         w.writeheader()
         w.writerows(rows)
+    n_players = len({r["id"] for r in rows})
     print(f"Wrote {len(rows)} rows to {args.out} "
-          f"(GW{start_gw}-{start_gw + args.horizon - 1}).")
+          f"(GW{start_gw}-{start_gw + args.horizon - 1}, {n_players} players).")
 
     # sanity check: totals over the horizon
     tot: dict[int, dict] = {}

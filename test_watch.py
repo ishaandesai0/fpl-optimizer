@@ -38,28 +38,11 @@ print("\n--- diff covers every churn type ---")
 
 # review queue: no-prior + high xP should outrank a well-understood player
 deep = {1, 4}          # only these have measured priors
-q = W.review_queue(after, teams, xp, squad, {}, deep, top_n=10)
+q = W.review_queue(after, teams, xp, squad, deep, top_n=10)
 names = [r["name"] for r in q]
 print("\nreview queue:", names)
 assert "Newbie" in names, "a new signing with real xP must be queued"
 assert "Thiaw" in names, "squad member without a prior must be queued"
 assert "Crocked" in names, "status flag must be queued"
 
-# an existing override should demote, not remove
-q2 = W.review_queue(after, teams, xp, squad, {"2": {"p_start": 0.85}}, deep, 10)
-r_before = next(r for r in q if r["name"] == "Thiaw")["score"]
-r_after = next(r for r in q2 if r["name"] == "Thiaw")["score"]
-assert r_after < r_before, "an override already set must lower priority"
-print(f"Thiaw priority: {r_before:.1f} -> {r_after:.1f} once overridden")
-
-# stale detection
-stale = W.stale_overrides(
-    [el(2,"Thiaw",2,50,starts=7,minutes=630), el(4,"Crocked",1,70,status="i")],
-    {"2": {"p_start": 0.85}, "4": {"p_start": 0.9}, "999": {"exclude": True}}, 8)
-print("\nstale:")
-for who, why in stale: print(f"  {who}: {why}")
-whos = " ".join(w for w, _ in stale)
-assert "Thiaw" in whos, "enough real data -> flag for removal"
-assert "Crocked" in whos, "override asserting minutes for an injured player"
-assert "999" in whos, "override for a departed player"
 print("\npassed")

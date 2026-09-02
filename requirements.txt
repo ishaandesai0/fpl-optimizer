@@ -1,0 +1,14 @@
+# FPL pipeline dependencies.
+#
+# Deliberately minimal — no numpy, pandas or scipy. Every statistical routine
+# here (Poisson fitting, Spearman, bootstrap resampling, empirical-Bayes
+# shrinkage) is standard library, which keeps installs fast and makes the
+# maths readable rather than hidden behind a call.
+#
+#   python -m venv .venv
+#   .\.venv\Scripts\Activate.ps1        # Windows
+#   source .venv/bin/activate           # macOS / Linux
+#   pip install -r requirements.txt
+
+requests>=2.31          # FPL API access
+pulp>=2.7               # MILP solver for squad selection; bundles CBC
