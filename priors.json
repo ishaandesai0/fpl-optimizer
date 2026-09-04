@@ -1,0 +1,55 @@
+{
+  "_readme": [
+    "Production from leagues FPL's API doesn't cover.",
+    "",
+    "This is NOT a general override file. It applies ONLY to players with no",
+    "measured Premier League season — projections.py REFUSES to apply an entry",
+    "to anyone who already has PL data, and says so when it does.",
+    "",
+    "Supply a real season as raw counts. The code converts to per-90 and",
+    "applies a league-strength multiplier (see LEAGUE_STRENGTH in",
+    "projections.py). Goals and assists stand in for xG and xA.",
+    "",
+    "Fields:",
+    "  league    ligue1 | la_liga | bundesliga | serie_a | eredivisie |",
+    "            primeira_liga | belgian_pro | super_lig | championship |",
+    "            mls | other",
+    "  minutes   league minutes that season (450 minimum)",
+    "  starts    league starts",
+    "  goals     league goals",
+    "  assists   league assists",
+    "  defcon90  OPTIONAL, only if you have a real figure. DefCon isn't",
+    "            published outside the PL, so leave it out and the positional",
+    "            prior applies.",
+    "  note      free text, echoed when applied",
+    "",
+    "A foreign season is capped at 75% confidence however many minutes it",
+    "covers — different league, different tactics, different opposition.",
+    "",
+    "DELETE an entry once the player has a real Premier League season behind",
+    "him. At that point the code refuses it anyway, but a stale file is still",
+    "noise. Prefer player ids; ambiguous names are refused.",
+    "",
+    "DO NOT invent numbers. An entry with made-up minutes and goals is worse than the price heuristic it replaces, because it looks authoritative. Pull from FBref or Transfermarkt and leave a player out if you can't find his league season."
+  ],
+  "players": {
+    "Barcola": {
+      "league": "ligue1",
+      "season": "2024/25",
+      "minutes": 2600,
+      "starts": 30,
+      "goals": 14,
+      "assists": 10,
+      "note": "Liverpool GBP106m from PSG. 24 goal contributions in 34 Ligue 1 apps 2024/25. Clear minutes path at Anfield vs fighting Dembele/Doue/Kvaratskhelia at PSG."
+    },
+    "646": {
+      "league": "ligue1",
+      "season": "2024/25",
+      "minutes": 1587,
+      "starts": 16,
+      "goals": 5,
+      "assists": 4,
+      "note": "Malick Fofana (SUN MID, id 646 — NOT Wesley Fofana id 145 at Chelsea). Sunderland GBP30m from Lyon. Chiefly left winger. 2025/26 cut short by ankle surgery (754 min), so 2024/25 is the fuller reference season."
+    }
+  }
+}

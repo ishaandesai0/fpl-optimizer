@@ -72,6 +72,9 @@ def main():
     ap.add_argument("player", help="name fragment or FPL element id")
     ap.add_argument("--ratings", help="ratings.json from ratings.py")
     ap.add_argument("--gw", type=int, help="gameweek to decompose (default: next)")
+    ap.add_argument("--priors", help="priors.json — pass the same file you give "
+                                     "projections.py, or this explains a model "
+                                     "you aren't running")
     args = ap.parse_args()
 
     boot = P._get("bootstrap-static/", "bootstrap.json")
@@ -103,12 +106,38 @@ def main():
 
     # --- priors ------------------------------------------------------------
     last = P.last_season_rates(e["id"])
+
+    # Foreign priors only apply where FPL has nothing, same rule as
+    # projections.apply_foreign_priors. Without this the tool reports the
+    # price heuristic while xp.csv holds the translated season — a silent
+    # disagreement between a diagnostic and the model it explains.
+    if args.priors and last is None:
+        raw = P.load_foreign_priors(args.priors)
+        bound = P.resolve_overrides(boot["elements"], raw).get(e["id"])
+        if bound:
+            fr = P.foreign_to_rates(bound)
+            if fr:
+                last = fr
+                print(f"\nFOREIGN PRIOR APPLIED: {bound.get('league','other')} "
+                      f"x{fr['_mult']:.2f}, {bound.get('minutes')} min, "
+                      f"{bound.get('goals')}g {bound.get('assists')}a")
+                if bound.get("note"):
+                    print(f"  note: {bound['note']}")
+    elif args.priors and last is not None:
+        raw = P.load_foreign_priors(args.priors)
+        if P.resolve_overrides(boot["elements"], raw).get(e["id"]):
+            print("\n  ! priors.json has an entry for this player, but he "
+                  "already has a\n    measured Premier League season — it is "
+                  "refused, as in projections.py.")
     prices = sorted(x["now_cost"] / 10.0 for x in boot["elements"]
                     if x["element_type"] == pos)
     med = prices[len(prices) // 2]
 
     print(f"\nPRIOR SOURCE: ", end="")
-    if last:
+    if last and last.get("_foreign"):
+        print(f"foreign league ({last['_league']}, "
+              f"{last.get('_minutes',0):.0f} effective min)")
+    elif last:
         print(f"last season ({last.get('_minutes',0):.0f} min, "
               f"{last.get('_starts',0):.0f} starts)")
     else:

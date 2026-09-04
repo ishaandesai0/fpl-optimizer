@@ -279,6 +279,142 @@ def player_rates(e: dict, median_price: float = 5.5,
     )
 
 
+# Rough scoring-rate translation from other leagues to the Premier League.
+# These are estimates from published league-equivalency work, not fitted here —
+# treat a translated rate as indicative, never as measured.
+LEAGUE_STRENGTH = {
+    "premier_league": 1.00,
+    "la_liga": 0.95,
+    "bundesliga": 0.92,
+    "serie_a": 0.92,
+    "ligue1": 0.88,
+    "eredivisie": 0.75,
+    "primeira_liga": 0.75,
+    "belgian_pro": 0.70,
+    "super_lig": 0.70,
+    "championship": 0.60,
+    "mls": 0.60,
+    "other": 0.70,
+}
+
+# A translated season is real evidence but carries extra uncertainty: different
+# league, different tactical context, different level of opposition. Cap how
+# much confidence it can earn, however many minutes it covers.
+FOREIGN_COVERAGE_CAP = 0.75
+
+
+def load_foreign_priors(path: str | None) -> dict:
+    """Production from a league FPL's API doesn't cover.
+
+    This exists for one specific gap: a player arrives from abroad with real,
+    measured output and the model has literally nothing on him, so it falls
+    back to guessing from his price tag. Supplying his actual goals, assists
+    and minutes is data entry — checkable against a reference — not an opinion
+    about what the model should conclude.
+
+    It is deliberately NOT a general override mechanism. An earlier version of
+    this project allowed arbitrary corrections to any player and it produced
+    four bugs in a week, three of which returned confident wrong answers. The
+    difference: "the model has no data on this player" is verifiable, and
+    `apply_foreign_priors` below refuses to touch anyone who already has a
+    measured Premier League season.
+    """
+    if not path:
+        return {}
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("players", data)
+
+
+def foreign_to_rates(entry: dict) -> dict | None:
+    """Convert a raw foreign season into the same shape as last_season_rates.
+
+    Goals and assists stand in for xG and xA — the model wants underlying
+    rates, but for a player with no Premier League history, actual output from
+    a real season beats a price guess even as a noisy proxy.
+    """
+    mins = float(entry.get("minutes", 0))
+    if mins < 450:
+        return None
+    mult = LEAGUE_STRENGTH.get(entry.get("league", "other"), 0.70)
+    per90 = lambda v: (float(v) / (mins / 90.0)) * mult
+
+    out = {
+        "xg": per90(entry.get("goals", 0)),
+        "xa": per90(entry.get("assists", 0)),
+        # cap the recorded minutes so prior_strength() can't award a foreign
+        # season full confidence
+        "_minutes": min(mins, FULL_SEASON_MINUTES * FOREIGN_COVERAGE_CAP),
+        "_starts": float(entry.get("starts", mins / 85.0)),
+        "_foreign": True,
+        "_league": entry.get("league", "other"),
+        "_mult": mult,
+    }
+    # DefCon isn't published outside the Premier League, so it stays on the
+    # positional/price prior unless supplied explicitly.
+    if entry.get("defcon90"):
+        out["defcon"] = float(entry["defcon90"])
+    if entry.get("bps90"):
+        out["bps"] = float(entry["bps90"])
+    return {k: v for k, v in out.items() if v or k.startswith("_")}
+
+
+def apply_foreign_priors(elements, raw, last_rates) -> list[str]:
+    """Bind foreign priors, REFUSING any player who already has PL data."""
+    if not raw:
+        return []
+    resolved = resolve_overrides(elements, raw)
+    by_id = {e["id"]: e for e in elements}
+    notes = []
+    for pid, entry in resolved.items():
+        e = by_id.get(pid)
+        if not e:
+            continue
+        if pid in last_rates:
+            notes.append(f"  ! {e['web_name']}: REFUSED — already has a "
+                         f"measured Premier League season. Foreign priors are "
+                         f"only for players the model has nothing on.")
+            continue
+        rates = foreign_to_rates(entry)
+        if not rates:
+            notes.append(f"  ! {e['web_name']}: skipped — under 450 minutes")
+            continue
+        last_rates[pid] = rates
+        notes.append(f"  {e['web_name']}: {entry.get('league','other')} "
+                     f"x{rates['_mult']:.2f} -> {rates['xg']:.2f} xG/90, "
+                     f"{rates['xa']:.2f} xA/90"
+                     + (f" — {entry['note']}" if entry.get("note") else ""))
+    return notes
+
+
+def resolve_overrides(elements: list[dict], overrides: dict) -> dict[int, dict]:
+    """Bind keys to exactly one player each; ambiguous names are refused."""
+    resolved: dict[int, dict] = {}
+    by_id = {e["id"]: e for e in elements}
+    for key, val in overrides.items():
+        if key.isdigit():
+            pid = int(key)
+            if pid in by_id:
+                resolved[pid] = val
+            else:
+                print(f"  ! key {key!r} is not a valid player id — skipped")
+            continue
+        k = strip_accents(key)
+        exact = [e for e in elements if strip_accents(e["web_name"]) == k]
+        hits = exact or ([e for e in elements
+                          if len(k) >= 4 and k in strip_accents(e["web_name"])]
+                         if len(k) >= 4 else [])
+        if len(hits) == 1:
+            resolved.setdefault(hits[0]["id"], val)
+        elif not hits:
+            print(f"  ! key {key!r} matched no player — skipped")
+        else:
+            names = ", ".join(f"{e['web_name']} (id {e['id']})" for e in hits[:6])
+            print(f"  ! key {key!r} is AMBIGUOUS — matches {names}. "
+                  f"Skipped; use a player id instead.")
+    return resolved
+
+
 def last_season_rates(element_id: int) -> dict | None:
     """Per-90 rates from the most recent completed season, if FPL has them.
 
@@ -358,10 +494,18 @@ def minutes_model(e: dict, games_played: int, last: dict | None = None,
 
     starts = fnum(e, "starts")
     mins = fnum(e, "minutes")
+
+    # A player who has just arrived has zero starts because he was not at the
+    # club, not because he was left out. Diluting his prior with "0 of 2
+    # games" reads absence as rejection. A foreign prior is the marker that he
+    # arrived from outside the league, so with no minutes yet, the prior
+    # stands on its own until he actually plays.
+    just_arrived = bool(last and last.get("_foreign")) and mins == 0
+
     # A player cannot have started more games than have been played; if the
     # counts disagree, trust the player's own record rather than producing a
     # start rate above 1.
-    g = max(games_played, starts, 1)
+    g = 0.0 if just_arrived else max(games_played, starts, 1)
 
     price = e["now_cost"] / 10.0
     strength = prior_strength(last)
@@ -619,7 +763,8 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
 
 def build(horizon: int, start_gw: int | None = None, deep: int = 0,
           prior_minutes: float = PRIOR_MINUTES,
-          ratings_file: str | None = None) -> tuple[list[dict], int]:
+          ratings_file: str | None = None,
+          priors_file: str | None = None) -> tuple[list[dict], int]:
     boot = _get("bootstrap-static/", "bootstrap.json")
     fixtures = _get("fixtures/", "fixtures.json")
     teams = {t["id"]: t for t in boot["teams"]}
@@ -663,6 +808,8 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
     # schedule rather than the horizon (see team_baseline for why)
     team_avg_for = {t: team_baseline(fixtures, strength, fitted, t) for t in teams}
 
+    raw_priors = load_foreign_priors(priors_file)
+
     # median price per position, so the price prior is self-calibrating
     med_price = {}
     for pos in POS:
@@ -695,6 +842,11 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
             if i % 25 == 0:
                 print(f"  {i}/{len(pool)}")
         print(f"  got real priors for {len(last_rates)} players.")
+
+    if raw_priors:
+        print(f"\nApplying foreign priors ({len(raw_priors)} key(s))...")
+        for line in apply_foreign_priors(boot["elements"], raw_priors, last_rates):
+            print(line)
 
     # goalkeeper depth chart: within each club, rank keepers by price then by
     # ownership, which together identify the first choice almost perfectly
@@ -744,10 +896,13 @@ def main():
                     help="evidence weight; lower trusts this season sooner")
     ap.add_argument("--ratings", help="ratings.json from ratings.py — replaces "
                                       "FPL's coarse tiers with fitted values")
+    ap.add_argument("--priors", help="priors.json of production from leagues "
+                                     "outside the Premier League, for players "
+                                     "the model has no data on at all")
     args = ap.parse_args()
 
     rows, start_gw = build(args.horizon, args.gw, args.deep, args.prior_minutes,
-                           args.ratings)
+                           args.ratings, args.priors)
 
     with open(args.out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["id", "gw", "ep"],
