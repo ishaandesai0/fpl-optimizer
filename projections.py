@@ -63,23 +63,26 @@ AVG_HOME_GOALS = 1.55
 AVG_AWAY_GOALS = 1.25
 SOT_PER_GOAL = 3.2  # shots on target faced per goal conceded, for save volume
 
-# Bonus curve: BPS-per-start mapped to expected bonus points.
+# Bonus curve, FITTED to observed data rather than hand-set.
 #
-# Anchored on what the format can physically produce rather than on any one
-# player. Exactly 6 bonus points (3/2/1) are awarded per match across ~22
-# starters, so the mean over all appearances is ~0.27. Even the highest-BPS
-# players in the league cannot average much above ~1.0-1.2 across a season,
-# because they're competing with 21 others every week and can take at most 3.
+#     E[bonus per start] = BONUS_SCALE * (bps_per_start / 30) ** BONUS_EXP
 #
-# An earlier version had a cap of 2.6, fitted to make one player's big week
-# look less wrong. That put bonus above goals as the largest component of a
-# premium midfielder's projection — roughly double the physical ceiling.
+# Least-squares fit against 226 players with 2+ appearances (GW1-3 2026/27),
+# weighted by bucket size, using PER-PLAYER means: a player's average BPS
+# against the bonus he actually averaged. That is the right target because the
+# model feeds this a shrunk per-90 RATE, not a single match's BPS — and bonus
+# is convex in BPS, so fitting to single-match realizations understates.
 #
-# Still hand-fit. `backtest.py` records `bps` and `bonus` per player per
-# gameweek so this can be regressed on real data once there are enough weeks.
-BONUS_FLOOR = 18.0
-BONUS_SLOPE = 0.075
-BONUS_CAP = 1.40
+# The convexity is why an earlier linear-with-a-floor version fit badly at
+# both ends: it zeroed out the real bonus that low-BPS players do earn (0.06
+# at 9.5 BPS) while capping the top too early.
+#
+# Sanity anchor: 6 bonus points (3/2/1) per match across ~22 starters means
+# the mean over all appearances must land near 0.27. Re-check with
+# `python backtest.py calibrate-bonus` as gameweeks accumulate.
+BONUS_SCALE = 1.08
+BONUS_EXP = 2.40
+BONUS_CAP = 2.50      # no player realistically averages more than this
 
 # ---------------------------------------------------------------------------
 # priors: what we believe about a player before we've seen them play.
@@ -697,12 +700,10 @@ def expected_bonus(bps90: float, mins: "Minutes") -> float:
     gameweeks — `bps` and `bonus` are recorded in the scored output for exactly
     that purpose.
     """
-    if mins.p_start <= 0:
+    if mins.p_start <= 0 or bps90 <= 0:
         return 0.0
     per_start = bps90 * (mins.mins_if_start / 90.0)
-    if per_start < BONUS_FLOOR:
-        return 0.0
-    haul = min(BONUS_CAP, BONUS_SLOPE * (per_start - BONUS_FLOOR))
+    haul = min(BONUS_CAP, BONUS_SCALE * (per_start / 30.0) ** BONUS_EXP)
     return mins.p_start * haul
 
 

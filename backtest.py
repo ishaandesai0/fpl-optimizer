@@ -417,10 +417,16 @@ def report():
                   f"     Roughly {need or 'a few'} more gameweek(s) before the "
                   f"comparison means anything.")
 
-    print(f"\nCalibration bias (all scored players): "
-          f"{metrics(allrows)['bias']:+.3f} — this one IS meaningful at small "
-          f"n,\nsince it averages over every player rather than resting on a "
-          f"rank ordering.")
+    # allrows is PLAYED-only, so this bias is conditioned on having featured.
+    # The model assigns most players p_start < 1, so conditional on playing its
+    # expectation is low BY CONSTRUCTION. Reporting it as overall calibration
+    # invites exactly the wrong correction. The honest figure is the
+    # all-players bias in `score` output, which includes those who didn't play.
+    print(f"\nBias among players who FEATURED: {metrics(allrows)['bias']:+.3f}")
+    print("  A selection effect, not miscalibration: conditioning on players")
+    print("  who played favours those the model gave a low p_start. For real")
+    print("  calibration read the 'all players' BIAS line in `score` output,")
+    print("  which includes everyone who didn't feature.")
 
     print("\nPOOLED CALIBRATION")
     print(f"{'xP BUCKET':<14}{'N':>6}{'MEAN xP':>10}{'MEAN ACTUAL':>13}{'GAP':>8}")
@@ -493,9 +499,48 @@ def calibrate_bonus():
         print(f"{label:<14}{len(sub):>6}{mb:>10.1f}{ma:>9.2f}{pred:>8.2f}")
 
     print("\nMODEL is expected_bonus() at that bucket's mean BPS, assuming a "
-          "start.\nIf ACTUAL sits consistently above or below, adjust "
-          "BONUS_FLOOR / BONUS_SLOPE / BONUS_CAP\nin projections.py. A few "
-          "hundred appearances is enough to fit this properly.")
+          "start.")
+
+    # The table above maps a SINGLE MATCH's BPS to that match's bonus. The
+    # model applies its curve to a shrunk per-90 RATE. Different functions:
+    # bonus is convex in BPS across 20-40, so a player whose RATE is 30 earns
+    # more on average than a single 30-BPS match returns. Fitting to the
+    # realization curve therefore understates. Grouping by PLAYER gives
+    # E[bonus | rate], which is what expected_bonus actually consumes.
+    by_player: dict = {}
+    for fn in files:
+        for r in csv.DictReader(open(os.path.join(HIST_DIR, fn), encoding="utf-8")):
+            if int(r.get("minutes", 0)) < 45 or "bps" not in r:
+                continue
+            p = by_player.setdefault(r["id"], {"bps": [], "bonus": []})
+            p["bps"].append(float(r["bps"]))
+            p["bonus"].append(float(r["bonus"]))
+
+    multi = {k: v for k, v in by_player.items() if len(v["bps"]) >= 2}
+    if len(multi) < 30:
+        print("\nNot enough players with 2+ appearances for the per-player "
+              "view yet.")
+        return
+
+    print(f"\nPER-PLAYER view — {len(multi)} players with 2+ appearances.")
+    print("This is the correct target: a player's mean BPS vs the bonus he "
+          "actually averages.")
+    print(f"{'BPS RATE':<14}{'N':>6}{'MEAN BPS':>10}{'ACTUAL':>9}{'MODEL':>8}")
+    print("-" * 47)
+    M = P.Minutes(1.0, 1.0, 90.0, 1.0, 90.0, 0.0, 18.0)
+    for lo, hi in [(0, 15), (15, 20), (20, 25), (25, 30), (30, 35), (35, 999)]:
+        sub = [v for v in multi.values()
+               if lo <= sum(v["bps"]) / len(v["bps"]) < hi]
+        if not sub:
+            continue
+        mb = sum(sum(v["bps"]) / len(v["bps"]) for v in sub) / len(sub)
+        ma = sum(sum(v["bonus"]) / len(v["bonus"]) for v in sub) / len(sub)
+        pred = P.expected_bonus(mb, M)
+        label = f"{lo}-{hi}" if hi < 999 else f"{lo}+"
+        print(f"{label:<14}{len(sub):>6}{mb:>10.1f}{ma:>9.2f}{pred:>8.2f}")
+
+    print("\nFit BONUS_FLOOR / BONUS_SLOPE / BONUS_CAP to THIS table, not the "
+          "per-match one.")
 
 
 def calibrate_variance():
