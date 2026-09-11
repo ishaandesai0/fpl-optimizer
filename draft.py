@@ -222,17 +222,85 @@ def fetch_picks(entry: int, gw: int):
                      f"Run: python draft_probe.py --entry {entry} --gw {max(gw-1,1)}")
 
 
-def squad_rows(entry: int, gw: int, idmap, xp, draft_boot):
+def resolve_names(elements, tokens):
+    """Turn names or ids into draft elements, refusing ambiguous names.
+
+    Same rule as elsewhere: a name that matches more than one player is
+    refused rather than guessed at — there are two Fofanas and two Richardses
+    in this game, and binding to the wrong one is silent.
+    """
+    out = []
+    by_id = {e["id"]: e for e in elements}
+    for tok in tokens:
+        tok = tok.strip()
+        if not tok:
+            continue
+        if tok.isdigit():
+            e = by_id.get(int(tok))
+            if not e:
+                sys.exit(f"id {tok} is not a player")
+            out.append(e)
+            continue
+        n = P.strip_accents(tok)
+        exact = [e for e in elements if P.strip_accents(e["web_name"]) == n]
+        hits = exact or [e for e in elements
+                         if len(n) >= 4 and n in P.strip_accents(e["web_name"])]
+        if not hits:
+            sys.exit(f"no player matching {tok!r}")
+        if len(hits) > 1:
+            opts = ", ".join(f"{e['web_name']} (id {e['id']})" for e in hits[:8])
+            sys.exit(f"{tok!r} is ambiguous — {opts}. Use an id.")
+        out.append(hits[0])
+    return out
+
+
+def squad_rows(entry: int, gw: int, idmap, xp, draft_boot,
+               add=None, drop=None, squad_file=None):
+    """Your 15, with pending moves applied.
+
+    Draft publishes picks only once a deadline has passed, so between making a
+    claim and the deadline the API still returns last week's squad — the same
+    problem `mysquad.py` solves for classic. --add/--drop patch the fetched
+    squad so lineups and matchups reflect what you actually own.
+    """
     d_teams = {t["id"]: t for t in draft_boot["teams"]}
     by_id = {e["id"]: e for e in draft_boot["elements"]}
+
+    if squad_file:
+        with open(squad_file, encoding="utf-8") as f:
+            raw = json.load(f)
+        ids = raw["squad"] if isinstance(raw, dict) else raw
+        return [make_row(by_id[i], d_teams, idmap, xp) for i in ids
+                if i in by_id]
+
     picks = fetch_picks(entry, gw)
-    rows = []
-    for pk in picks.get("picks", []):
-        e = by_id.get(pk["element"])
-        if not e:
-            continue
-        rows.append(make_row(e, d_teams, idmap, xp))
-    return rows
+    ids = [pk["element"] for pk in picks.get("picks", []) if pk["element"] in by_id]
+
+    outs = resolve_names(draft_boot["elements"],
+                         (drop or "").split(",")) if drop else []
+    ins = resolve_names(draft_boot["elements"],
+                        (add or "").split(",")) if add else []
+    if outs or ins:
+        if len(outs) != len(ins):
+            sys.exit(f"{len(outs)} dropped but {len(ins)} added — a draft "
+                     f"transaction is a swap, so these must match.")
+        for e in outs:
+            if e["id"] not in ids:
+                sys.exit(f"{e['web_name']} isn't in your published squad — "
+                         f"already applied?")
+            ids.remove(e["id"])
+        for e in ins:
+            if e["id"] in ids:
+                sys.exit(f"{e['web_name']} is already in the squad")
+            ids.append(e["id"])
+        for e in outs:
+            print(f"  DROP {e['web_name']}")
+        for e in ins:
+            print(f"  ADD  {e['web_name']}")
+        if len(ids) != 15:
+            print(f"  ! squad is now {len(ids)} players, not 15")
+
+    return [make_row(by_id[i], d_teams, idmap, xp) for i in ids]
 
 
 def make_row(e, d_teams, idmap, xp):
@@ -299,7 +367,7 @@ def dead_slots(mine, horizon_xp):
 
 
 def waivers(entry, gw, idmap, xp, draft_boot, league_id, top,
-            horizon_xp=None, horizon=5):
+            horizon_xp=None, horizon=5, patch=None):
     d_teams = {t["id"]: t for t in draft_boot["teams"]}
     by_id = {e["id"]: e for e in draft_boot["elements"]}
 
@@ -313,7 +381,8 @@ def waivers(entry, gw, idmap, xp, draft_boot, league_id, top,
               f"owned players. Waiver list unavailable.")
         return
 
-    mine = squad_rows(entry, gw, idmap, xp, draft_boot)
+    mine = squad_rows(entry, gw, idmap, xp, draft_boot, **(patch or {}))
+    owned = owned | {p["id"] for p in mine}   # a pending claim isn't a free agent
     free = [make_row(by_id[e], d_teams, idmap, xp) for e in by_id
             if e not in owned and by_id[e].get("status") == "a"]
 
@@ -376,7 +445,7 @@ def waivers(entry, gw, idmap, xp, draft_boot, league_id, top,
 # ---------------------------------------------------------------------------
 # matchup
 # ---------------------------------------------------------------------------
-def matchup(entry, gw, idmap, xp, draft_boot, league_id):
+def matchup(entry, gw, idmap, xp, draft_boot, league_id, patch=None):
     try:
         details = dget(f"league/{league_id}/details",
                        f"league_{league_id}.json", ttl=600)
@@ -410,7 +479,7 @@ def matchup(entry, gw, idmap, xp, draft_boot, league_id):
     opp_entry = le_by_id[opp_le].get("entry_id")
     opp_name = le_by_id[opp_le].get("entry_name", "opponent")
 
-    my_rows = squad_rows(entry, gw, idmap, xp, draft_boot)
+    my_rows = squad_rows(entry, gw, idmap, xp, draft_boot, **(patch or {}))
     my_tot, my_xi = best_xi(my_rows)
     my_var = sum(player_sd(p["xp"], p["pos"]) ** 2 for p in my_xi)
 
@@ -476,6 +545,13 @@ def main():
         s.add_argument("--xp", default="xp.csv")
         s.add_argument("--gw", type=int)
         s.add_argument("--league", type=int, help="league id (auto-detected)")
+        s.add_argument("--add", default="", metavar="NAMES",
+                       help="players claimed since the last deadline "
+                            "(names or ids, comma-separated)")
+        s.add_argument("--drop", default="", metavar="NAMES",
+                       help="players dropped since the last deadline")
+        s.add_argument("--squad", help="JSON file of 15 draft element ids, "
+                                       "instead of fetching")
         if name == "waivers":
             s.add_argument("--top", type=int, default=8)
             s.add_argument("--horizon", type=int, default=5,
@@ -524,8 +600,9 @@ def main():
         except Exception as exc:
             print(f"(couldn't auto-detect league: {exc})")
 
+    patch = dict(add=args.add, drop=args.drop, squad_file=args.squad)
     if args.cmd == "lineup":
-        rows = squad_rows(args.entry, gw, idmap, xp, draft_boot)
+        rows = squad_rows(args.entry, gw, idmap, xp, draft_boot, **patch)
         show_xi(rows)
     elif args.cmd == "waivers":
         if not league_id:
@@ -533,12 +610,12 @@ def main():
                      "(/league/<ID>/standings), or run draft_probe.py.")
         hz = load_xp_horizon(args.xp, gw, args.horizon)
         waivers(args.entry, gw, idmap, xp, draft_boot, league_id, args.top,
-                hz, args.horizon)
+                hz, args.horizon, patch)
     else:
         if not league_id:
             sys.exit("Need --league for matchup. Find it in the Draft URL "
                      "(/league/<ID>/standings), or run draft_probe.py.")
-        matchup(args.entry, gw, idmap, xp, draft_boot, league_id)
+        matchup(args.entry, gw, idmap, xp, draft_boot, league_id, patch)
 
 
 if __name__ == "__main__":

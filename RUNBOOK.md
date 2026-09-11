@@ -2,6 +2,8 @@
 
 Working directory: `C:\Users\ishaa\FPL`
 
+If using a venv, activate first: `.\.venv\Scripts\Activate.ps1`
+
 ---
 
 ## A. Before the deadline
@@ -34,6 +36,21 @@ python draft.py waivers --entry 274930 --xp xp.csv --horizon 5
 python draft.py lineup  --entry 239566 --xp xp.csv
 python draft.py matchup --entry 239566 --xp xp.csv
 python draft.py waivers --entry 239566 --xp xp.csv --horizon 5
+```
+
+**If you've claimed since the last deadline**, Draft's API still returns your
+previous squad — add the pending moves so lineups and matchups reflect what you
+actually own:
+
+```powershell
+python draft.py lineup --entry 274930 --xp xp.csv --add Tavernier --drop Sangare
+python draft.py lineup --entry 239566 --xp xp.csv --add Richards --drop Konsa
+```
+
+Names or ids, comma-separated, and counts must match since a draft transaction
+is a swap. Identical names are refused — use ids (there are two Fofanas). The
+same flags work on `matchup` and `waivers`, and a pending claim is excluded
+from the free-agent pool.
 ```
 
 Snapshot goes at step 4, before you see any recommendation — that keeps the
