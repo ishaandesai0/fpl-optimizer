@@ -204,6 +204,7 @@ def main():
         # numbers here won't reconcile with xp.csv
         frac = exp_min / 90.0
         team_avg = P.team_baseline(fixtures, strength, fitted, e["team"])
+        team_avg_ag = P.team_baseline_against(fixtures, strength, fitted, e["team"])
         mult = lam_for / team_avg
         print(f"  season baseline for {teams[e['team']]['short_name']}: "
               f"{team_avg:.2f} xG/match -> fixture multiplier {mult:.2f}")
@@ -215,7 +216,8 @@ def main():
                             if P.CS_PTS[pos] else 0.0),
             "conceded": (-p_60 * P.expected_conceded_penalty(lam_against)
                          if pos in (P.GKP, P.DEF) else 0.0),
-            "saves": (P.expected_save_points(lam_against, rates["saves"], frac)
+            "saves": (P.expected_save_points(lam_against, rates["saves"], frac,
+                                             team_avg_ag)
                       if pos == P.GKP else 0.0),
             "bonus": P.expected_bonus(rates["bps"], mm),
             "cards": rates["yellow"] * frac * P.YELLOW_PTS,
@@ -239,7 +241,8 @@ def main():
         # The model is score_fixture. The breakdown above is a re-derivation
         # for display, so cross-check it — a diagnostic that silently disagrees
         # with the model it explains is worse than no diagnostic.
-        truth = P.score_fixture(e, rates, mm, lam_for, lam_against, team_avg)
+        truth = P.score_fixture(e, rates, mm, lam_for, lam_against, team_avg,
+                                team_avg_ag)
         print("  " + "-" * 24)
         print(f"  {'TOTAL':<16}{sub:>8.2f}")
         if abs(truth - sub) > 0.02:

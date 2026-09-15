@@ -636,6 +636,23 @@ def fixture_lambdas(strength: dict, home: int, away: int,
     return max(0.15, lh), max(0.15, la)
 
 
+def team_baseline_against(fixtures: list, strength: dict, fitted: dict | None,
+                          team_id: int) -> float:
+    """A team's expected goals CONCEDED against an average opponent, over the
+    whole season. The denominator for a keeper's save-volume adjustment."""
+    lams = []
+    for f in fixtures:
+        if f.get("event") is None:
+            continue
+        if f["team_h"] == team_id:
+            lams.append(fixture_lambdas(strength, f["team_h"], f["team_a"],
+                                        fitted)[1])
+        elif f["team_a"] == team_id:
+            lams.append(fixture_lambdas(strength, f["team_h"], f["team_a"],
+                                        fitted)[0])
+    return sum(lams) / len(lams) if lams else 1.35
+
+
 def team_baseline(fixtures: list, strength: dict, fitted: dict | None,
                   team_id: int) -> float:
     """A team's expected goals against an average opponent, over the WHOLE
@@ -678,10 +695,19 @@ def expected_conceded_penalty(lam: float, cap: int = 12) -> float:
 
 
 def expected_save_points(lam_against: float, saves90: float,
-                         minutes_frac: float, cap: int = 20) -> float:
-    """1 point per 3 saves. Save volume scales with how much the opponent
-    attacks, so a keeper behind a bad defence is worth more, not less."""
-    exp_saves = saves90 * minutes_frac * max(0.4, lam_against / 1.35)
+                         minutes_frac: float, team_avg_against: float = 1.35,
+                         cap: int = 20) -> float:
+    """1 point per 3 saves.
+
+    The fixture adjustment must be relative to the keeper's OWN team, not the
+    league. His saves/90 already encodes how much his side concedes — Raya's
+    1.75/90 is low precisely because Arsenal are good — so dividing by a league
+    average penalises a good defence twice and inverts the fixture signal.
+    Arsenal's season average conceded is ~0.66; a fixture at 0.87 is HARDER
+    than usual and should raise his save count, not cut it by a third.
+    """
+    denom = max(team_avg_against, 0.3)
+    exp_saves = saves90 * minutes_frac * max(0.35, min(3.0, lam_against / denom))
     if exp_saves <= 0:
         return 0.0
     return sum((k // 3) * pois_pmf(k, exp_saves) for k in range(cap))
@@ -727,7 +753,8 @@ def defcon_points(rate90: float, threshold: int, mins: "Minutes") -> float:
 
 
 def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
-                  lam_against: float, team_avg_for: float) -> float:
+                  lam_against: float, team_avg_for: float,
+                  team_avg_against: float = 1.35) -> float:
     pos = e["element_type"]
     p_appear, p_60, exp_minutes = mins.p_appear, mins.p_60, mins.exp_minutes
     if exp_minutes <= 0:
@@ -751,7 +778,8 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
         pts -= p_60 * expected_conceded_penalty(lam_against)
 
     if pos == GKP:
-        pts += expected_save_points(lam_against, rates["saves"], frac)
+        pts += expected_save_points(lam_against, rates["saves"], frac,
+                                    team_avg_against)
 
     # DefCon is a threshold event — model the count over the minutes mixture
     if pos in DEFCON_THRESHOLD:
@@ -808,6 +836,8 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
     # each team's baseline attacking output, measured over the full season
     # schedule rather than the horizon (see team_baseline for why)
     team_avg_for = {t: team_baseline(fixtures, strength, fitted, t) for t in teams}
+    team_avg_against = {t: team_baseline_against(fixtures, strength, fitted, t)
+                        for t in teams}
 
     raw_priors = load_foreign_priors(priors_file)
 
@@ -869,7 +899,8 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
 
         for g in gws:
             ep = sum(
-                score_fixture(e, rates, mins, lf, la, team_avg_for[e["team"]])
+                score_fixture(e, rates, mins, lf, la, team_avg_for[e["team"]],
+                              team_avg_against[e["team"]])
                 for lf, la in sched[e["team"]][g]
             )
             rows.append({"id": e["id"], "gw": g, "ep": round(ep, 3),
