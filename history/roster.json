@@ -66,13 +66,13 @@
   "name": "White",
   "team": 1,
   "cost": 55,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Muscular injury - 75% chance of playing"
  },
  "11": {
   "name": "Mosquera",
   "team": 1,
-  "cost": 54,
+  "cost": 53,
   "status": "d",
   "news": "Muscular injury - 50% chance of playing"
  },
@@ -219,9 +219,9 @@
  "32": {
   "name": "Cash",
   "team": 2,
-  "cost": 45,
-  "status": "d",
-  "news": "Muscular injury - 75% chance of playing"
+  "cost": 44,
+  "status": "a",
+  "news": ""
  },
  "33": {
   "name": "Mings",
@@ -353,8 +353,8 @@
   "name": "Gomes",
   "team": 2,
   "cost": 55,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Calf injury - 75% chance of playing"
  },
  "55": {
   "name": "Watkins",
@@ -429,7 +429,7 @@
  "618": {
   "name": "Goretzka",
   "team": 2,
-  "cost": 60,
+  "cost": 59,
   "status": "i",
   "news": "Knee injury - Expected back 10 Oct"
  },
@@ -667,7 +667,7 @@
  "84": {
   "name": "Collins",
   "team": 4,
-  "cost": 55,
+  "cost": 54,
   "status": "i",
   "news": "Calf injury - Unknown return date"
  },
@@ -730,14 +730,14 @@
  "94": {
   "name": "Schade",
   "team": 4,
-  "cost": 60,
+  "cost": 61,
   "status": "a",
   "news": ""
  },
  "95": {
   "name": "O.Dango",
   "team": 4,
-  "cost": 64,
+  "cost": 63,
   "status": "a",
   "news": ""
  },
@@ -933,7 +933,7 @@
  "124": {
   "name": "Groß",
   "team": 5,
-  "cost": 56,
+  "cost": 57,
   "status": "a",
   "news": ""
  },
@@ -941,13 +941,13 @@
   "name": "Georginio",
   "team": 5,
   "cost": 54,
-  "status": "d",
-  "news": "Unspecified injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "126": {
   "name": "O'Riley",
   "team": 5,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -975,7 +975,7 @@
  "130": {
   "name": "Wieffer",
   "team": 5,
-  "cost": 50,
+  "cost": 49,
   "status": "i",
   "news": "Knee injury - Unknown return date"
  },
@@ -1270,8 +1270,8 @@
   "name": "João Pedro",
   "team": 6,
   "cost": 78,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
  },
  "168": {
   "name": "Marc Guiu",
@@ -1360,7 +1360,7 @@
  "172": {
   "name": "Wilson",
   "team": 7,
-  "cost": 45,
+  "cost": 44,
   "status": "a",
   "news": ""
  },
@@ -1662,8 +1662,8 @@
   "name": "Sarr",
   "team": 8,
   "cost": 62,
-  "status": "i",
-  "news": "Groin injury - Unknown return date"
+  "status": "d",
+  "news": "Groin injury - 50% chance of playing"
  },
  "210": {
   "name": "Wharton",
@@ -1794,7 +1794,7 @@
  "577": {
   "name": "Tomiyasu",
   "team": 8,
-  "cost": 45,
+  "cost": 44,
   "status": "a",
   "news": ""
  },
@@ -1977,8 +1977,8 @@
   "name": "Röhl",
   "team": 9,
   "cost": 49,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
  },
  "247": {
   "name": "Hackney",
@@ -2116,7 +2116,7 @@
  "266": {
   "name": "Cairney",
   "team": 10,
-  "cost": 50,
+  "cost": 49,
   "status": "i",
   "news": "Knee injury - Expected back 10 Oct"
  },
@@ -2312,7 +2312,7 @@
  "286": {
   "name": "Belloumi",
   "team": 11,
-  "cost": 50,
+  "cost": 51,
   "status": "a",
   "news": ""
  },
@@ -3048,8 +3048,8 @@
   "name": "Gomez",
   "team": 14,
   "cost": 49,
-  "status": "d",
-  "news": "Muscular injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "360": {
   "name": "Bradley",
@@ -3306,7 +3306,7 @@
  "393": {
   "name": "Khusanov",
   "team": 15,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -3628,7 +3628,7 @@
  "431": {
   "name": "Amad",
   "team": 16,
-  "cost": 58,
+  "cost": 57,
   "status": "i",
   "news": "Unspecified injury - Unknown return date"
  },
@@ -3677,7 +3677,7 @@
  "438": {
   "name": "Fletcher",
   "team": 16,
-  "cost": 45,
+  "cost": 44,
   "status": "a",
   "news": ""
  },
@@ -3740,7 +3740,7 @@
  "446": {
   "name": "Schär",
   "team": 17,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -3797,8 +3797,8 @@
   "name": "J.Ramsey",
   "team": 17,
   "cost": 49,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Thigh injury - 25% chance of playing"
  },
  "457": {
   "name": "J.Murphy",
@@ -4020,7 +4020,7 @@
  "480": {
   "name": "Gibbs-White",
   "team": 18,
-  "cost": 79,
+  "cost": 80,
   "status": "a",
   "news": ""
  },
