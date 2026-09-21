@@ -63,6 +63,13 @@ AVG_HOME_GOALS = 1.55
 AVG_AWAY_GOALS = 1.25
 SOT_PER_GOAL = 3.2  # shots on target faced per goal conceded, for save volume
 
+# Penalty saves are worth 5 points and the model had no term for them at all.
+# Measured across 100 goalkeeper appearances in GW1-5 2026/27: 2 saves, i.e.
+# 0.02 per appearance, 0.10 points per game. Small but free and correct, and
+# it scales with how much a keeper's side is under pressure.
+PEN_SAVE_RATE = 0.02      # penalty saves per 90 minutes, league average
+PEN_SAVE_POINTS = 5.0
+
 # Bonus curve, FITTED to observed data rather than hand-set.
 #
 #     E[bonus per start] = BONUS_SCALE * (bps_per_start / 30) ** BONUS_EXP
@@ -780,6 +787,11 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
     if pos == GKP:
         pts += expected_save_points(lam_against, rates["saves"], frac,
                                     team_avg_against)
+        # A side that concedes more also concedes more penalties, so scale the
+        # league rate by this fixture relative to the keeper's own baseline —
+        # the same correction the save term uses.
+        pen_mult = max(0.4, min(2.5, lam_against / max(team_avg_against, 0.3)))
+        pts += p_60 * PEN_SAVE_RATE * pen_mult * PEN_SAVE_POINTS
 
     # DefCon is a threshold event — model the count over the minutes mixture
     if pos in DEFCON_THRESHOLD:

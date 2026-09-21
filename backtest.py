@@ -146,6 +146,13 @@ def actual_points(gw: int) -> dict[int, dict]:
             "bonus": s.get("bonus", 0),
             "goals": s.get("goals_scored", 0),
             "assists": s.get("assists", 0),
+            # a keeper's score decomposes into these; without them the
+            # goalkeeper model can only be judged on its total, which says
+            # nothing about WHICH component is short
+            "saves": s.get("saves", 0),
+            "conceded": s.get("goals_conceded", 0),
+            "pen_saves": s.get("penalties_saved", 0),
+            "clean_sheet": s.get("clean_sheets", 0),
         }
     return out
 
@@ -201,7 +208,9 @@ def record(gw: int):
                      "actual": r["points"], "minutes": r["minutes"],
                      "defcon": r["defcon"], "bps": r["bps"],
                      "bonus": r["bonus"], "goals": r["goals"],
-                     "assists": r["assists"]})
+                     "assists": r["assists"], "saves": r["saves"],
+                     "conceded": r["conceded"], "pen_saves": r["pen_saves"],
+                     "clean_sheet": r["clean_sheet"]})
 
     path = os.path.join(HIST_DIR, f"gw{gw:02d}_outcomes.csv")
     with open(path, "w", newline="", encoding="utf-8") as f:
@@ -252,6 +261,10 @@ def score(gw: int, min_price: float = 0.0, partial: bool = False):
             "defcon": real[pid]["defcon"],
             "bps": real[pid]["bps"],
             "bonus": real[pid]["bonus"],
+            "saves": real[pid]["saves"],
+            "conceded": real[pid]["conceded"],
+            "pen_saves": real[pid]["pen_saves"],
+            "clean_sheet": real[pid]["clean_sheet"],
         })
 
     out = os.path.join(HIST_DIR, f"gw{gw:02d}_scored.csv")
@@ -543,6 +556,114 @@ def calibrate_bonus():
           "per-match one.")
 
 
+def calibrate_gk():
+    """Where do goalkeeper points actually come from, and what does the model
+    think?
+
+    GK has been the worst-predicted position all season — Pearson at or below
+    zero in three of five gameweeks, bias around -1.3. A total that's wrong
+    tells you nothing about WHICH term is short, so this decomposes the real
+    points into the components the scoring rules define and puts the model's
+    own average beside each.
+    """
+    files = _gameweek_files()
+    if not files:
+        sys.exit("No gameweek data yet.")
+
+    # _gameweek_files prefers scored files, but those predate the saves
+    # columns. Take whichever file for a gameweek actually carries them.
+    by_gw: dict = {}
+    for fn in sorted(os.listdir(HIST_DIR)):
+        if not (fn.endswith("_scored.csv") or fn.endswith("_outcomes.csv")):
+            continue
+        path = os.path.join(HIST_DIR, fn)
+        with open(path, encoding="utf-8") as fh:
+            header = (fh.readline() or "").split(",")
+        if "saves" not in [h.strip() for h in header]:
+            continue
+        by_gw.setdefault(fn[2:4], path)      # first match wins; both are fine
+    files = list(by_gw.values())
+
+    rows = []
+    for path in files:
+        for r in csv.DictReader(open(path, encoding="utf-8")):
+            if r.get("pos") != "GKP" or int(r.get("minutes", 0)) < 60:
+                continue
+            rows.append(r)
+
+    print(f"Using {len(files)} gameweek file(s) with save data: "
+          f"{', '.join(sorted(by_gw))}")
+
+    if len(rows) < 20:
+        sys.exit("Not enough goalkeeper data with saves recorded.\n"
+                 "Re-run `record --gw N` for each gameweek after updating "
+                 "backtest.py — the older files predate these columns.")
+
+    n = len(rows)
+    f = lambda r, k: float(r.get(k) or 0)
+
+    app = 2.0                                     # every 60+ minute start
+    cs = sum(4.0 if f(r, "clean_sheet") else 0.0 for r in rows) / n
+    conc = sum(-(int(f(r, "conceded")) // 2) for r in rows) / n
+    sav = sum(int(f(r, "saves")) // 3 for r in rows) / n
+    pens = sum(5.0 * f(r, "pen_saves") for r in rows) / n
+    bon = sum(f(r, "bonus") for r in rows) / n
+    actual = sum(f(r, "actual") for r in rows) / n
+
+    print(f"\n{n} goalkeeper appearances of 60+ minutes.\n")
+    print(f"{'COMPONENT':<18}{'ACTUAL/GAME':>13}")
+    print("-" * 31)
+    print(f"{'appearance':<18}{app:>13.2f}")
+    print(f"{'clean sheet':<18}{cs:>13.2f}")
+    print(f"{'saves':<18}{sav:>13.2f}")
+    print(f"{'bonus':<18}{bon:>13.2f}")
+    print(f"{'penalty saves':<18}{pens:>13.2f}")
+    print(f"{'conceded':<18}{conc:>13.2f}")
+    print("-" * 31)
+    print(f"{'SUM':<18}{app + cs + sav + bon + pens + conc:>13.2f}")
+    print(f"{'ACTUAL TOTAL':<18}{actual:>13.2f}")
+
+    raw_saves = sum(f(r, "saves") for r in rows) / n
+    cs_rate = sum(1 for r in rows if f(r, "clean_sheet")) / n
+    print(f"\nRaw rates: {raw_saves:.2f} saves/game, "
+          f"{cs_rate:.0%} clean sheet rate, "
+          f"{sum(f(r,'conceded') for r in rows)/n:.2f} conceded/game")
+    print(f"Penalty saves: {sum(f(r,'pen_saves') for r in rows):.0f} in {n} "
+          f"appearances")
+
+    # what a model with no penalty-save term is structurally missing
+    print(f"\nThe model has NO penalty-save term at all, so it is short "
+          f"{pens:.2f}/game there by construction.")
+    print("Compare `saves` above against what projections.expected_save_points")
+    print("returns for a keeper at the raw rate — if the model is much lower,")
+    print("the floor-of-3 rule is being evaluated at a mean rather than")
+    print("integrated over the distribution of saves.")
+
+    import projections as PJ
+    M = PJ.Minutes(1.0, 1.0, 90.0, 1.0, 90.0, 0.0, 18.0)
+    model_saves = PJ.expected_save_points(1.35, raw_saves, 1.0, 1.35)
+    print(f"\n  model save points at {raw_saves:.2f} saves/90, neutral "
+          f"fixture: {model_saves:.2f}")
+    print(f"  actual save points per appearance:                  {sav:.2f}")
+    if sav > model_saves * 1.25:
+        print("  -> the model is materially under-crediting saves.")
+
+
+def _gameweek_files():
+    """Scored files preferred, outcomes as fallback, one per gameweek."""
+    if not os.path.isdir(HIST_DIR):
+        return []
+    files = sorted(f for f in os.listdir(HIST_DIR)
+                   if f.endswith("_scored.csv") or f.endswith("_outcomes.csv"))
+    seen, keep = set(), []
+    for fn in sorted(files, key=lambda f: (f[2:4], not f.endswith("_scored.csv"))):
+        if fn[2:4] in seen:
+            continue
+        seen.add(fn[2:4])
+        keep.append(fn)
+    return keep
+
+
 def calibrate_variance():
     """Observed spread of gameweek points by position.
 
@@ -609,6 +730,9 @@ def main():
                    help="fit the bonus curve against recorded bps/bonus")
     sub.add_parser("calibrate-variance",
                    help="per-position points variance, for draft.player_sd")
+    sub.add_parser("calibrate-gk",
+                   help="decompose goalkeeper points — the worst-predicted "
+                        "position all season")
 
     args = ap.parse_args()
     if args.cmd == "snapshot":
@@ -621,6 +745,8 @@ def main():
         calibrate_bonus()
     elif args.cmd == "calibrate-variance":
         calibrate_variance()
+    elif args.cmd == "calibrate-gk":
+        calibrate_gk()
     else:
         report()
 

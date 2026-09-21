@@ -66,15 +66,15 @@
   "name": "White",
   "team": 1,
   "cost": 55,
-  "status": "d",
-  "news": "Muscular injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "11": {
   "name": "Mosquera",
   "team": 1,
   "cost": 53,
-  "status": "d",
-  "news": "Muscular injury - 50% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "12": {
   "name": "Saka",
@@ -100,7 +100,7 @@
  "15": {
   "name": "Ødegaard",
   "team": 1,
-  "cost": 67,
+  "cost": 68,
   "status": "a",
   "news": ""
  },
@@ -206,8 +206,8 @@
   "name": "M.Bizot",
   "team": 2,
   "cost": 45,
-  "status": "a",
-  "news": ""
+  "status": "i",
+  "news": "Back injury - Expected back 10 Oct"
  },
  "30": {
   "name": "Digne",
@@ -234,8 +234,8 @@
   "name": "Pau",
   "team": 2,
   "cost": 45,
-  "status": "d",
-  "news": "Hamstring injury - 75% chance of playing"
+  "status": "i",
+  "news": "Hamstring injury - Expected back 10 Oct"
  },
  "35": {
   "name": "Bogarde",
@@ -248,8 +248,8 @@
   "name": "Maatsen",
   "team": 2,
   "cost": 45,
-  "status": "d",
-  "news": "Ankle injury - 25% chance of playing"
+  "status": "i",
+  "news": "Ankle injury - Unknown return date"
  },
  "37": {
   "name": "Lindelöf",
@@ -353,8 +353,8 @@
   "name": "Gomes",
   "team": 2,
   "cost": 55,
-  "status": "d",
-  "news": "Calf injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "55": {
   "name": "Watkins",
@@ -583,7 +583,7 @@
  "76": {
   "name": "Tóth.A",
   "team": 3,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -744,7 +744,7 @@
  "96": {
   "name": "Damsgaard",
   "team": 4,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -753,7 +753,7 @@
   "team": 4,
   "cost": 54,
   "status": "i",
-  "news": "Unspecified injury - Expected back 18 Sep"
+  "news": "Unspecified injury - Expected back 10 Oct"
  },
  "98": {
   "name": "Janelt",
@@ -800,7 +800,7 @@
  "106": {
   "name": "Thiago",
   "team": 4,
-  "cost": 79,
+  "cost": 78,
   "status": "a",
   "news": ""
  },
@@ -870,7 +870,7 @@
  "115": {
   "name": "De Cuyper",
   "team": 5,
-  "cost": 48,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -1088,8 +1088,8 @@
   "name": "Azeez",
   "team": 5,
   "cost": 55,
-  "status": "d",
-  "news": "Hamstring injury - 75% chance of playing"
+  "status": "i",
+  "news": "Hamstring injury - Expected back 10 Oct"
  },
  "658": {
   "name": "Ibrahim",
@@ -1116,8 +1116,8 @@
   "name": "Henderson",
   "team": 6,
   "cost": 49,
-  "status": "i",
-  "news": "Wrist injury - Unknown return date"
+  "status": "d",
+  "news": "Wrist injury - 50% chance of playing"
  },
  "136": {
   "name": "Welbeck",
@@ -1144,8 +1144,8 @@
   "name": "James",
   "team": 6,
   "cost": 54,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
  },
  "143": {
   "name": "Chalobah",
@@ -1207,8 +1207,8 @@
   "name": "Palestra",
   "team": 6,
   "cost": 53,
-  "status": "i",
-  "news": "Thigh injury - Expected back 18 Sep"
+  "status": "d",
+  "news": "Thigh injury - 50% chance of playing"
  },
  "154": {
   "name": "Palmer",
@@ -1242,8 +1242,8 @@
   "name": "Caicedo",
   "team": 6,
   "cost": 53,
-  "status": "i",
-  "news": "Calf injury - Expected back 18 Sep"
+  "status": "d",
+  "news": "Calf injury - 50% chance of playing"
  },
  "161": {
   "name": "Lavia",
@@ -1431,13 +1431,13 @@
   "name": "Amenda",
   "team": 7,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Calf injury - 25% chance of playing"
  },
  "183": {
   "name": "Rudoni",
   "team": 7,
-  "cost": 50,
+  "cost": 49,
   "status": "a",
   "news": ""
  },
@@ -1451,7 +1451,7 @@
  "185": {
   "name": "Sakamoto",
   "team": 7,
-  "cost": 49,
+  "cost": 48,
   "status": "a",
   "news": ""
  },
@@ -1479,7 +1479,7 @@
  "189": {
   "name": "Shepherd",
   "team": 7,
-  "cost": 45,
+  "cost": 44,
   "status": "a",
   "news": ""
  },
@@ -1591,7 +1591,7 @@
  "42": {
   "name": "Guessand",
   "team": 8,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -1662,8 +1662,8 @@
   "name": "Sarr",
   "team": 8,
   "cost": 62,
-  "status": "d",
-  "news": "Groin injury - 50% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "210": {
   "name": "Wharton",
@@ -1767,8 +1767,8 @@
   "name": "Nketiah",
   "team": 8,
   "cost": 55,
-  "status": "d",
-  "news": "Unspecified injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "225": {
   "name": "Uche",
@@ -1963,8 +1963,8 @@
   "name": "Armstrong",
   "team": 9,
   "cost": 50,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Unspecified injury - 75% chance of playing"
  },
  "245": {
   "name": "Dibling",
@@ -1977,8 +1977,8 @@
   "name": "Röhl",
   "team": 9,
   "cost": 49,
-  "status": "d",
-  "news": "Unspecified injury - 75% chance of playing"
+  "status": "i",
+  "news": "Unspecified injury - Expected back 11 Oct"
  },
  "247": {
   "name": "Hackney",
@@ -2061,8 +2061,8 @@
   "name": "Tete",
   "team": 10,
   "cost": 44,
-  "status": "a",
-  "news": ""
+  "status": "i",
+  "news": "Concussion - Expected back 10 Oct"
  },
  "257": {
   "name": "Bassey",
@@ -2418,8 +2418,8 @@
   "name": "Targett",
   "team": 11,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Ankle injury - 75% chance of playing"
  },
  "563": {
   "name": "Morita",
@@ -2460,8 +2460,8 @@
   "name": "Mendy",
   "team": 11,
   "cost": 41,
-  "status": "d",
-  "news": "Concussion - 50% chance of playing"
+  "status": "i",
+  "news": "Concussion - Expected back 11 Oct"
  },
  "589": {
   "name": "Gourna-Douath",
@@ -2585,7 +2585,7 @@
  "308": {
   "name": "Furlong",
   "team": 12,
-  "cost": 40,
+  "cost": 39,
   "status": "a",
   "news": ""
  },
@@ -2634,7 +2634,7 @@
  "315": {
   "name": "Fatawu",
   "team": 12,
-  "cost": 55,
+  "cost": 54,
   "status": "a",
   "news": ""
  },
@@ -2767,9 +2767,9 @@
  "260": {
   "name": "Wilson",
   "team": 13,
-  "cost": 63,
-  "status": "a",
-  "news": ""
+  "cost": 62,
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
  },
  "326": {
   "name": "Perri",
@@ -2795,7 +2795,7 @@
  "330": {
   "name": "Bogle",
   "team": 13,
-  "cost": 45,
+  "cost": 46,
   "status": "a",
   "news": ""
  },
@@ -2887,8 +2887,8 @@
   "name": "Gruev",
   "team": 13,
   "cost": 50,
-  "status": "d",
-  "news": "Knee injury - 25% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "345": {
   "name": "Tanaka",
@@ -3033,7 +3033,7 @@
  "357": {
   "name": "Frimpong",
   "team": 14,
-  "cost": 54,
+  "cost": 53,
   "status": "a",
   "news": ""
  },
@@ -3096,7 +3096,7 @@
  "366": {
   "name": "Wirtz",
   "team": 14,
-  "cost": 74,
+  "cost": 73,
   "status": "a",
   "news": ""
  },
@@ -3341,7 +3341,7 @@
  "398": {
   "name": "Foden",
   "team": 15,
-  "cost": 70,
+  "cost": 69,
   "status": "s",
   "news": "Suspended until 17 Oct"
  },
@@ -3356,8 +3356,8 @@
   "name": "Doku",
   "team": 15,
   "cost": 74,
-  "status": "i",
-  "news": "Calf injury - Expected back 20 Sep"
+  "status": "d",
+  "news": "Calf injury - 75% chance of playing"
  },
  "402": {
   "name": "Rodrigo",
@@ -3411,7 +3411,7 @@
  "411": {
   "name": "Haaland",
   "team": 15,
-  "cost": 155,
+  "cost": 156,
   "status": "a",
   "news": ""
  },
@@ -3475,8 +3475,8 @@
   "name": "Baleba",
   "team": 16,
   "cost": 49,
-  "status": "i",
-  "news": "Ankle injury - Expected back 19 Sep"
+  "status": "d",
+  "news": "Ankle injury - 50% chance of playing"
  },
  "162": {
   "name": "Andrey Santos",
@@ -3574,7 +3574,7 @@
   "team": 16,
   "cost": 44,
   "status": "d",
-  "news": "Unspecified injury - 75% chance of playing"
+  "news": "Unspecified injury - 50% chance of playing"
  },
  "424": {
   "name": "Amass",
@@ -3706,8 +3706,8 @@
   "name": "N.Gonzalez",
   "team": 17,
   "cost": 55,
-  "status": "d",
-  "news": "Concussion - 50% chance of playing"
+  "status": "i",
+  "news": "Concussion - Expected back 12 Oct"
  },
  "442": {
   "name": "Pope",
@@ -3756,7 +3756,7 @@
   "team": 17,
   "cost": 49,
   "status": "i",
-  "news": "Ankle injury - Expected back 19 Sep"
+  "news": "Ankle injury - Expected back 12 Oct"
  },
  "449": {
   "name": "Hall",
@@ -3797,8 +3797,8 @@
   "name": "J.Ramsey",
   "team": 17,
   "cost": 49,
-  "status": "d",
-  "news": "Thigh injury - 25% chance of playing"
+  "status": "i",
+  "news": "Thigh injury - Unknown return date"
  },
  "457": {
   "name": "J.Murphy",
@@ -3888,8 +3888,8 @@
   "name": "Dedić",
   "team": 17,
   "cost": 45,
-  "status": "a",
-  "news": ""
+  "status": "i",
+  "news": "Unspecified injury - Unknown return date"
  },
  "609": {
   "name": "Shahar",
@@ -3980,7 +3980,7 @@
   "team": 18,
   "cost": 45,
   "status": "d",
-  "news": "Hamstring injury - 50% chance of playing"
+  "news": "Hamstring injury - 75% chance of playing"
  },
  "475": {
   "name": "Savona",
@@ -4154,8 +4154,8 @@
   "name": "Tonali",
   "team": 19,
   "cost": 54,
-  "status": "d",
-  "news": "Knock - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "494": {
   "name": "Vicario",
@@ -4195,9 +4195,9 @@
  "499": {
   "name": "Pedro Porro",
   "team": 19,
-  "cost": 55,
-  "status": "d",
-  "news": "Unspecified injury - 75% chance of playing"
+  "cost": 54,
+  "status": "a",
+  "news": ""
  },
  "500": {
   "name": "Romero",
@@ -4321,7 +4321,7 @@
  "519": {
   "name": "Gallagher",
   "team": 19,
-  "cost": 54,
+  "cost": 53,
   "status": "a",
   "news": ""
  },
