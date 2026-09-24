@@ -12,3 +12,4 @@
 
 requests>=2.31          # FPL API access
 pulp>=2.7               # MILP solver for squad selection; bundles CBC
+soccerdata>=1.8          # FBref/Understat scraping for advanced stats
