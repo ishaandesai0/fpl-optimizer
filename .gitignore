@@ -4,3 +4,6 @@
 xp.csv
 ratings.json
 squad.json
+
+downloaded_files/
+cmp.py
