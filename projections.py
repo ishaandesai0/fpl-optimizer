@@ -743,7 +743,36 @@ def expected_bonus(bps90: float, mins: "Minutes") -> float:
 # ---------------------------------------------------------------------------
 # 4. assemble
 # ---------------------------------------------------------------------------
-def defcon_points(rate90: float, threshold: int, mins: "Minutes") -> float:
+# A side expected to dominate spends the match with the ball, so its
+# defenders have less to defend. Measured across 488 defender-gameweeks in
+# GW1-6 2026/27: the most-dominated third averaged 8.00 DefCon/90 against 6.86
+# for the most dominant third, a gap of 1.14 across a mean goal-difference
+# swing of 1.74. That is a slope of about -0.65 actions per goal of expected
+# difference, or roughly -0.09 in relative terms around a league-average rate
+# of 7.4.
+#
+# r = -0.122, CI [-0.199, -0.041] — real but weak, so most DefCon variation
+# remains player-specific and this is a correction rather than a driver. The
+# model previously applied NO fixture adjustment here at all.
+#
+# Defenders only: the same test on midfielders returned CI [-0.106, +0.055],
+# no measurable effect, which is plausible given their higher threshold and
+# greater distance from the ball-winning.
+DEFCON_DOMINANCE_SLOPE = 0.09     # fractional change per goal of expected GD
+DEFCON_MULT_BAND = (0.80, 1.25)   # clamp; the fit is weak, don't extrapolate
+
+
+def defcon_fixture_mult(pos: int, lam_for: float, lam_against: float) -> float:
+    """How much this fixture suppresses or raises defensive volume."""
+    if pos != DEF:
+        return 1.0
+    gd = lam_for - lam_against
+    lo, hi = DEFCON_MULT_BAND
+    return max(lo, min(hi, 1.0 - DEFCON_DOMINANCE_SLOPE * gd))
+
+
+def defcon_points(rate90: float, threshold: int, mins: "Minutes",
+                  fixture_mult: float = 1.0) -> float:
     """E[DefCon points], integrating the threshold over the minutes mixture.
 
     P(count >= threshold) is convex in lambda across the relevant range, so
@@ -753,6 +782,7 @@ def defcon_points(rate90: float, threshold: int, mins: "Minutes") -> float:
     """
     if rate90 <= 0:
         return 0.0
+    rate90 = rate90 * fixture_mult
     p_start_hit = p_at_least(threshold, rate90 * mins.mins_if_start / 90.0)
     p_cameo_hit = p_at_least(threshold, rate90 * mins.cameo_mins / 90.0)
     return (mins.p_start * p_start_hit
@@ -795,7 +825,8 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
 
     # DefCon is a threshold event — model the count over the minutes mixture
     if pos in DEFCON_THRESHOLD:
-        pts += defcon_points(rates["defcon"], DEFCON_THRESHOLD[pos], mins)
+        pts += defcon_points(rates["defcon"], DEFCON_THRESHOLD[pos], mins,
+                             defcon_fixture_mult(pos, lam_for, lam_against))
 
     pts += expected_bonus(rates["bps"], mins)
     pts += rates["yellow"] * frac * YELLOW_PTS

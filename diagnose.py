@@ -224,9 +224,15 @@ def main():
         }
         if pos in P.DEFCON_THRESHOLD:
             thr = P.DEFCON_THRESHOLD[pos]
-            lam_start = rates["defcon"] * mm.mins_if_start / 90.0
+            dmult = P.defcon_fixture_mult(pos, lam_for, lam_against)
+            lam_start = rates["defcon"] * dmult * mm.mins_if_start / 90.0
             p_hit_start = P.p_at_least(thr, lam_start)
-            parts["defcon"] = P.defcon_points(rates["defcon"], thr, mm)
+            parts["defcon"] = P.defcon_points(rates["defcon"], thr, mm, dmult)
+            if abs(dmult - 1.0) > 0.01:
+                why = ("his side should dominate, so less to defend"
+                       if dmult < 1 else
+                       "his side should be under pressure, so more to defend")
+                print(f"  DefCon fixture adjustment: x{dmult:.2f} — {why}")
             print(f"  DefCon: needs {thr}. If he starts, projects "
                   f"{lam_start:.1f} actions -> P(hit) {p_hit_start:.0%}; "
                   f"weighted by p(start) {mm.p_start:.2f} -> "
