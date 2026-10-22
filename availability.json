@@ -1,0 +1,98 @@
+{
+  "_readme": [
+    "Gameweeks a player was UNAVAILABLE for — injured, suspended, or not yet",
+    "signed. The FPL API records none of this historically, so the minutes",
+    "model divides starts by league gameweeks played and reads an injury",
+    "absence as a manager's decision to leave someone out.",
+    "",
+    "This is data entry, not judgement: an absence is checkable against any",
+    "injury record. projections.py REFUSES an entry for a gameweek in which",
+    "the player actually logged minutes, so it cannot be used to inflate",
+    "someone who was simply benched.",
+    "",
+    "It only ever shrinks the denominator — it cannot invent starts. A player",
+    "with one start in three available games still reads as a rotation risk,",
+    "just not as badly as one start in seven.",
+    "",
+    "DELETE an entry once the absence is far enough back that it no longer",
+    "distorts the rate — roughly once he has as many available gameweeks as",
+    "he missed. A stale entry quietly flatters him forever.",
+    "",
+    "Prefer player ids; ambiguous names are refused."
+  ],
+
+  "players": {
+    "431": {
+      "missed": [1, 2, 3, 4, 5],
+      "note": "Amad (MUN) — blank in GW1-5, 2 appearance(s) since. Sold 10.6x faster than usual during the gap, price -0.3 — looks like injury. VERIFY before keeping."
+    },
+    "54": {
+      "missed": [2, 3, 4],
+      "note": "Gomes (AVL) — blank in GW2-4, 3 appearance(s) since. Sold 4.9x faster than usual during the gap, price +0.0 — looks like injury. VERIFY before keeping."
+    },
+    "97": {
+      "missed": [2, 3, 4, 5],
+      "note": "Jensen (BRE) — blank in GW2-5, 2 appearance(s) since. Sold 7.2x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "498": {
+      "missed": [2, 3, 4, 5],
+      "note": "Senesi (TOT) — blank in GW2-5, 1 appearance(s) since. Sold 5.5x faster than usual during the gap, price -0.2 — looks like injury. VERIFY before keeping."
+    },
+    "123": {
+      "missed": [2, 3, 4, 5, 6],
+      "note": "Hinshelwood (BHA) — blank in GW2-6, 1 appearance(s) since. Sold 24.1x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "223": {
+      "missed": [2, 3, 4, 5, 6],
+      "note": "Mateta (CRY) — blank in GW2-6, 1 appearance(s) since. Sold 29.4x faster than usual during the gap, price -0.2 — looks like injury. VERIFY before keeping."
+    },
+    "458": {
+      "missed": [1, 2, 3, 4, 5],
+      "note": "Joelinton (NEW) — blank in GW1-5, 2 appearance(s) since. Sold 4.6x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "53": {
+      "missed": [1, 2, 3],
+      "note": "Manzambi (AVL) — blank in GW1-3, 4 appearance(s) since. Sold 0.8x faster than usual during the gap, price -0.1 — looks like unclear. VERIFY before keeping."
+    },
+    "393": {
+      "missed": [4, 5, 6],
+      "note": "Khusanov (MCI) — blank in GW4-6, 1 appearance(s) since. Sold 1.3x faster than usual during the gap, price -0.1 — looks like unclear. VERIFY before keeping."
+    },
+    "159": {
+      "missed": [3, 4, 5],
+      "note": "Caicedo (CHE) — blank in GW3-5, 2 appearance(s) since. Sold 1.5x faster than usual during the gap, price -0.1 — looks like unclear. VERIFY before keeping."
+    },
+    "406": {
+      "missed": [3, 4, 5, 6],
+      "note": "Kovačić (MCI) — blank in GW3-6, 1 appearance(s) since. Sold 2.4x faster than usual during the gap, price -0.2 — looks like injury. VERIFY before keeping."
+    },
+    "465": {
+      "missed": [2, 3, 4, 5],
+      "note": "Osula (NEW) — blank in GW2-5, 2 appearance(s) since. Sold 12.4x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "125": {
+      "missed": [2, 3, 4],
+      "note": "Georginio (BHA) — blank in GW2-4, 3 appearance(s) since. Sold 3.2x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "241": {
+      "missed": [3, 4, 5],
+      "note": "McNeil (CRY) — blank in GW3-5, 2 appearance(s) since. Sold 2.3x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "318": {
+      "missed": [1, 2, 3],
+      "note": "Philogene (IPS) — blank in GW1-3, 3 appearance(s) since. Sold 3.6x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "20": {
+      "missed": [1, 2, 3, 4],
+      "note": "Dowman (ARS) — blank in GW1-4, 1 appearance(s) since. Sold 1.3x faster than usual during the gap, price -0.2 — looks like injury. VERIFY before keeping."
+    },
+    "618": {
+      "missed": [2, 3, 4, 5, 6],
+      "note": "Goretzka (AVL) — blank in GW2-6, 1 appearance(s) since. Sold 5.9x faster than usual during the gap, price -0.1 — looks like injury. VERIFY before keeping."
+    },
+    "152": {
+      "missed": [1, 2, 3, 4, 5],
+      "note": "Palestra (CHE) — blank in GW1-5, 2 appearance(s) since. Sold 6.6x faster than usual during the gap, price -0.2 — looks like injury. VERIFY before keeping."
+    }
+  }
+}

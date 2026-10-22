@@ -59,8 +59,8 @@
   "name": "Hincapie",
   "team": 1,
   "cost": 52,
-  "status": "i",
-  "news": "Ankle injury - Expected back 24 Oct"
+  "status": "d",
+  "news": "Ankle injury - 75% chance of playing"
  },
  "10": {
   "name": "White",
@@ -80,8 +80,8 @@
   "name": "Saka",
   "team": 1,
   "cost": 96,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Thigh injury - 50% chance of playing"
  },
  "13": {
   "name": "Rice",
@@ -163,7 +163,7 @@
  "25": {
   "name": "Gyökeres",
   "team": 1,
-  "cost": 71,
+  "cost": 70,
   "status": "a",
   "news": ""
  },
@@ -248,8 +248,8 @@
   "name": "Maatsen",
   "team": 2,
   "cost": 44,
-  "status": "d",
-  "news": "Ankle injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "37": {
   "name": "Lindelöf",
@@ -262,8 +262,8 @@
   "name": "A.García",
   "team": 2,
   "cost": 40,
-  "status": "a",
-  "news": ""
+  "status": "u",
+  "news": "Has joined Getafe on loan for the rest of the season"
  },
  "39": {
   "name": "Nedeljkovic",
@@ -332,8 +332,8 @@
   "name": "George Hemmings",
   "team": 2,
   "cost": 45,
-  "status": "d",
-  "news": "Knee injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "52": {
   "name": "Alysson",
@@ -394,7 +394,7 @@
  "596": {
   "name": "Ruggeri",
   "team": 2,
-  "cost": 45,
+  "cost": 44,
   "status": "i",
   "news": "Hamstring injury - Expected back 2 Jan"
  },
@@ -501,7 +501,7 @@
   "team": 3,
   "cost": 49,
   "status": "i",
-  "news": "Thigh injury - Unknown return date"
+  "news": "Thigh injury - Expected back 8 Nov"
  },
  "64": {
   "name": "Smith",
@@ -543,7 +543,7 @@
   "team": 3,
   "cost": 60,
   "status": "i",
-  "news": "Thigh injury - Unknown return date"
+  "news": "Thigh injury - Expected back 8 Nov"
  },
  "70": {
   "name": "Kluivert",
@@ -605,8 +605,8 @@
   "name": "Kroupi.Jr",
   "team": 3,
   "cost": 73,
-  "status": "i",
-  "news": "Foot injury - Expected back 7 Nov"
+  "status": "d",
+  "news": "Foot injury - 50% chance of playing"
  },
  "79": {
   "name": "Evanilson",
@@ -1234,7 +1234,7 @@
  "154": {
   "name": "Palmer",
   "team": 6,
-  "cost": 97,
+  "cost": 98,
   "status": "a",
   "news": ""
  },
@@ -1383,7 +1383,7 @@
   "team": 7,
   "cost": 40,
   "status": "u",
-  "news": "Has joined Leyton Orient on loan for the rest of the season"
+  "news": "not included in squad."
  },
  "172": {
   "name": "Wilson",
@@ -1710,7 +1710,7 @@
  "212": {
   "name": "Hughes",
   "team": 8,
-  "cost": 44,
+  "cost": 43,
   "status": "a",
   "news": ""
  },
@@ -1824,7 +1824,7 @@
   "team": 8,
   "cost": 44,
   "status": "i",
-  "news": "Calf injury - Expected back 25 Oct"
+  "news": "Calf injury - Expected back 8 Nov"
  },
  "588": {
   "name": "Khalaili",
@@ -1851,15 +1851,15 @@
   "name": "Chilwell",
   "team": 8,
   "cost": 44,
-  "status": "i",
-  "news": "Unspecified injury - Unknown return date"
+  "status": "a",
+  "news": ""
  },
  "644": {
   "name": "Timber",
   "team": 8,
   "cost": 50,
-  "status": "a",
-  "news": ""
+  "status": "d",
+  "news": "Hamstring injury - 75% chance of playing"
  },
  "647": {
   "name": "Osorio",
@@ -2172,7 +2172,7 @@
  "271": {
   "name": "Muniz",
   "team": 10,
-  "cost": 54,
+  "cost": 53,
   "status": "a",
   "news": ""
  },
@@ -2193,7 +2193,7 @@
  "570": {
   "name": "Palacios",
   "team": 10,
-  "cost": 54,
+  "cost": 53,
   "status": "a",
   "news": ""
  },
@@ -2495,15 +2495,15 @@
   "name": "Gourna-Douath",
   "team": 11,
   "cost": 49,
-  "status": "i",
-  "news": "Calf injury - Expected back 25 Oct"
+  "status": "d",
+  "news": "Calf injury - 50% chance of playing"
  },
  "617": {
   "name": "Cho",
   "team": 11,
   "cost": 50,
-  "status": "i",
-  "news": "Unspecified injury - Expected back 25 Oct"
+  "status": "d",
+  "news": "Unspecified injury - 50% chance of playing"
  },
  "632": {
   "name": "Ansah",
@@ -2517,7 +2517,7 @@
   "team": 11,
   "cost": 50,
   "status": "d",
-  "news": "Achilles injury - 50% chance of playing"
+  "news": "Achilles injury - 75% chance of playing"
  },
  "638": {
   "name": "Norton-Cuffy",
@@ -2551,8 +2551,8 @@
   "name": "Lukić",
   "team": 12,
   "cost": 49,
-  "status": "d",
-  "news": "Groin injury - 75% chance of playing"
+  "status": "i",
+  "news": "Groin injury - Expected back 23 Oct"
  },
  "300": {
   "name": "Walton",
@@ -2879,7 +2879,7 @@
  "338": {
   "name": "Ampadu",
   "team": 13,
-  "cost": 54,
+  "cost": 53,
   "status": "a",
   "news": ""
  },
@@ -2928,14 +2928,14 @@
  "346": {
   "name": "Calvert-Lewin",
   "team": 13,
-  "cost": 60,
+  "cost": 61,
   "status": "a",
   "news": ""
  },
  "347": {
   "name": "Nmecha",
   "team": 13,
-  "cost": 54,
+  "cost": 53,
   "status": "a",
   "news": ""
  },
@@ -3096,7 +3096,7 @@
  "362": {
   "name": "Jacquet",
   "team": 14,
-  "cost": 50,
+  "cost": 51,
   "status": "a",
   "news": ""
  },
@@ -3180,7 +3180,7 @@
  "374": {
   "name": "Endo",
   "team": 14,
-  "cost": 49,
+  "cost": 48,
   "status": "a",
   "news": ""
  },
@@ -3538,8 +3538,8 @@
   "name": "Heaton",
   "team": 16,
   "cost": 40,
-  "status": "i",
-  "news": "Hamstring injury - Unknown return date"
+  "status": "a",
+  "news": ""
  },
  "415": {
   "name": "Dorgu",
@@ -3565,7 +3565,7 @@
  "418": {
   "name": "Maguire",
   "team": 16,
-  "cost": 48,
+  "cost": 47,
   "status": "a",
   "news": ""
  },
@@ -3628,7 +3628,7 @@
  "427": {
   "name": "Mbeumo",
   "team": 16,
-  "cost": 78,
+  "cost": 79,
   "status": "a",
   "news": ""
  },
@@ -3714,7 +3714,7 @@
   "team": 16,
   "cost": 69,
   "status": "i",
-  "news": "Shin injury - Expected back 31 Oct"
+  "news": "Shin injury - Unknown return date"
  },
  "440": {
   "name": "Zirkzee",
@@ -3798,7 +3798,7 @@
   "team": 17,
   "cost": 49,
   "status": "i",
-  "news": "Unspecified injury - Expected back 2 Nov"
+  "news": "Knee injury - Expected back 7 Nov"
  },
  "451": {
   "name": "A.Murphy",
@@ -4077,13 +4077,13 @@
   "name": "Gibbs-White",
   "team": 18,
   "cost": 79,
-  "status": "d",
-  "news": "Muscular injury - 75% chance of playing"
+  "status": "a",
+  "news": ""
  },
  "482": {
   "name": "Hudson-Odoi",
   "team": 18,
-  "cost": 58,
+  "cost": 57,
   "status": "a",
   "news": ""
  },

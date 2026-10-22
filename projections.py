@@ -313,6 +313,55 @@ LEAGUE_STRENGTH = {
 FOREIGN_COVERAGE_CAP = 0.75
 
 
+def load_availability(path: str | None) -> dict:
+    """Gameweeks a player was unavailable for, which the API does not record.
+
+    The minutes model divides starts by the number of league gameweeks
+    PLAYED, not the number the player was available for. A player injured for
+    four weeks therefore looks identical to one who was fit and left out —
+    both show "1 start in 7". That reads absence as a selection decision, and
+    it is the same error the just-arrived rule fixes for new signings.
+
+    This is data entry, not judgement: "Doku was unavailable for GW1-4" is
+    checkable against any injury record. `apply_availability` refuses an entry
+    for a gameweek in which the player actually logged minutes, so it cannot
+    be used to quietly inflate someone who was simply benched.
+    """
+    if not path or not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("players", data)
+
+
+def apply_availability(elements, raw, played_by_gw) -> tuple[dict, list[str]]:
+    """Return {player_id: games_missed} plus a line per entry for the log."""
+    if not raw:
+        return {}, []
+    resolved = resolve_overrides(elements, raw)
+    by_id = {e["id"]: e for e in elements}
+    out, notes = {}, []
+    for pid, entry in resolved.items():
+        e = by_id.get(pid)
+        if not e:
+            continue
+        missed = [int(g) for g in entry.get("missed", [])]
+        if not missed:
+            continue
+        # refuse any gameweek the player actually featured in
+        played = [g for g in missed if played_by_gw.get((pid, g), 0) > 0]
+        if played:
+            notes.append(f"  ! {e['web_name']}: REFUSED — he played in "
+                         f"GW{', GW'.join(str(g) for g in played)}. "
+                         f"Absence must be absence.")
+            continue
+        out[pid] = len(missed)
+        notes.append(f"  {e['web_name']}: unavailable for "
+                     f"{len(missed)} gameweek(s)"
+                     + (f" — {entry['note']}" if entry.get("note") else ""))
+    return out, notes
+
+
 def load_foreign_priors(path: str | None) -> dict:
     """Production from a league FPL's API doesn't cover.
 
@@ -483,7 +532,7 @@ class Minutes(NamedTuple):
 
 
 def minutes_model(e: dict, games_played: int, last: dict | None = None,
-                  gk_rank: int | None = None) -> Minutes:
+                  gk_rank: int | None = None, games_missed: int = 0) -> Minutes:
     """Return (p_appear, p_60, expected_minutes).
 
     Priority of evidence for the start prior:
@@ -515,7 +564,9 @@ def minutes_model(e: dict, games_played: int, last: dict | None = None,
     # A player cannot have started more games than have been played; if the
     # counts disagree, trust the player's own record rather than producing a
     # start rate above 1.
-    g = 0.0 if just_arrived else max(games_played, starts, 1)
+    # Only count gameweeks he could actually have started in.
+    available = max(0, games_played - max(0, games_missed))
+    g = 0.0 if just_arrived else max(available, starts, 1)
 
     price = e["now_cost"] / 10.0
     strength = prior_strength(last)
@@ -836,7 +887,8 @@ def score_fixture(e: dict, rates: dict, mins: Minutes, lam_for: float,
 def build(horizon: int, start_gw: int | None = None, deep: int = 0,
           prior_minutes: float = PRIOR_MINUTES,
           ratings_file: str | None = None,
-          priors_file: str | None = None) -> tuple[list[dict], int]:
+          priors_file: str | None = None,
+          availability_file: str | None = None) -> tuple[list[dict], int]:
     boot = _get("bootstrap-static/", "bootstrap.json")
     fixtures = _get("fixtures/", "fixtures.json")
     teams = {t["id"]: t for t in boot["teams"]}
@@ -883,6 +935,7 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
                         for t in teams}
 
     raw_priors = load_foreign_priors(priors_file)
+    raw_avail = load_availability(availability_file)
 
     # median price per position, so the price prior is self-calibrating
     med_price = {}
@@ -917,6 +970,28 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
                 print(f"  {i}/{len(pool)}")
         print(f"  got real priors for {len(last_rates)} players.")
 
+    missed_by_id: dict[int, int] = {}
+    if raw_avail:
+        # what each player actually did, so a claimed absence can be checked
+        played_by_gw: dict = {}
+        for e in boot["elements"]:
+            pid = e["id"]
+            if pid not in {int(k) for k in raw_avail if str(k).isdigit()} and \
+               not any(strip_accents(str(k)) in strip_accents(e["web_name"])
+                       for k in raw_avail if not str(k).isdigit()):
+                continue
+            try:
+                for h in _get(f"element-summary/{pid}/",
+                              f"element-{pid}.json").get("history", []):
+                    played_by_gw[(pid, h["round"])] = h.get("minutes", 0)
+            except Exception:
+                pass
+        missed_by_id, notes = apply_availability(boot["elements"], raw_avail,
+                                                 played_by_gw)
+        print(f"\nApplying availability ({len(raw_avail)} key(s))...")
+        for line in notes:
+            print(line)
+
     if raw_priors:
         print(f"\nApplying foreign priors ({len(raw_priors)} key(s))...")
         for line in apply_foreign_priors(boot["elements"], raw_priors, last_rates):
@@ -938,7 +1013,8 @@ def build(horizon: int, start_gw: int | None = None, deep: int = 0,
         rates = player_rates(e, med_price[e["element_type"]], prior_minutes,
                              last_rates.get(e["id"]))
         mins = minutes_model(e, games_played, last_rates.get(e["id"]),
-                             gk_rank.get(e["id"]))
+                             gk_rank.get(e["id"]),
+                             missed_by_id.get(e["id"], 0))
 
         for g in gws:
             ep = sum(
@@ -971,13 +1047,17 @@ def main():
                     help="evidence weight; lower trusts this season sooner")
     ap.add_argument("--ratings", help="ratings.json from ratings.py — replaces "
                                       "FPL's coarse tiers with fitted values")
+    ap.add_argument("--availability", help="availability.json — gameweeks a "
+                                           "player was unavailable for, so "
+                                           "absence is not read as being "
+                                           "dropped")
     ap.add_argument("--priors", help="priors.json of production from leagues "
                                      "outside the Premier League, for players "
                                      "the model has no data on at all")
     args = ap.parse_args()
 
     rows, start_gw = build(args.horizon, args.gw, args.deep, args.prior_minutes,
-                           args.ratings, args.priors)
+                           args.ratings, args.priors, args.availability)
 
     with open(args.out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["id", "gw", "ep"],

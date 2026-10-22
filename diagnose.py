@@ -72,6 +72,8 @@ def main():
     ap.add_argument("player", help="name fragment or FPL element id")
     ap.add_argument("--ratings", help="ratings.json from ratings.py")
     ap.add_argument("--gw", type=int, help="gameweek to decompose (default: next)")
+    ap.add_argument("--availability", help="availability.json — pass the same "
+                                           "file you give projections.py")
     ap.add_argument("--priors", help="priors.json — pass the same file you give "
                                      "projections.py, or this explains a model "
                                      "you aren't running")
@@ -164,7 +166,19 @@ def main():
         print(f"\nGK depth chart rank at club: {gk_rank} "
               f"({'first choice' if gk_rank == 0 else 'backup'})")
 
-    mm = P.minutes_model(e, games_played, last, gk_rank)
+    missed = 0
+    if args.availability:
+        raw_av = P.load_availability(args.availability)
+        bound = P.resolve_overrides(boot["elements"], raw_av).get(e["id"])
+        if bound and bound.get("missed"):
+            missed = len(bound["missed"])
+            print(f"\nAVAILABILITY: unavailable for {missed} gameweek(s) — "
+                  f"only {max(0, games_played - missed)} of {games_played} "
+                  f"gameweeks counted against his start rate")
+            if bound.get("note"):
+                print(f"  note: {bound['note']}")
+
+    mm = P.minutes_model(e, games_played, last, gk_rank, missed)
     p_app, p_60, exp_min = mm.p_appear, mm.p_60, mm.exp_minutes
     if P.fnum(e, "minutes") > 45 and P.fnum(e, "bps") == 0:
         print("\n  ! bps is 0 despite real minutes — likely a stale field in "
