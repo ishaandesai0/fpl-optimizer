@@ -91,6 +91,7 @@ def spearman(x: list[float], y: list[float]) -> float:
 def snapshot(gw: int, xp_file: str):
     """Freeze this week's projections plus FPL's own ep_next as a baseline."""
     os.makedirs(HIST_DIR, exist_ok=True)
+    fp = P.model_fingerprint()
     boot = P._get("bootstrap-static/", "bootstrap.json")
 
     mine: dict[int, float] = {}
@@ -113,6 +114,8 @@ def snapshot(gw: int, xp_file: str):
             "ep_next": P.fnum(e, "ep_next"),
             "selected": P.fnum(e, "selected_by_percent"),
             "status": e.get("status", "a"),
+            # which model produced this projection — the record spans several
+            "model": fp,
         })
 
     path = os.path.join(HIST_DIR, f"gw{gw:02d}_snapshot.csv")
@@ -121,6 +124,7 @@ def snapshot(gw: int, xp_file: str):
         w.writeheader()
         w.writerows(rows)
     live = sum(1 for r in rows if r["xp"] > 0)
+    print(f"  model {fp}: {P.model_constants_text()}")
     print(f"Snapshotted GW{gw}: {len(rows)} players ({live} with non-zero xP) "
           f"-> {path}")
     print("Run `backtest.py score --gw %d` once the gameweek finishes." % gw)
@@ -378,15 +382,36 @@ def bootstrap_gap(rows: list[dict], trials: int = 2000, seed: int = 0):
             gaps[int(0.975 * len(gaps))])
 
 
-def report():
+def _model_of(gw: int) -> str | None:
+    """The fingerprint stamped on a gameweek's snapshot, if any."""
+    for suffix in ("scored", "snapshot"):
+        path = os.path.join(HIST_DIR, f"gw{gw:02d}_{suffix}.csv")
+        if not os.path.exists(path):
+            continue
+        with open(path, encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                if r.get("model"):
+                    return r["model"]
+    return None
+
+
+def report(model: str | None = None, current_only: bool = False):
     files = sorted(f for f in os.listdir(HIST_DIR) if f.endswith("_scored.csv")) \
         if os.path.isdir(HIST_DIR) else []
     if not files:
         sys.exit("No scored gameweeks yet.")
 
+    want = model
+    if current_only:
+        want = P.model_fingerprint()
+        print(f"Filtering to the current model, {want}.\n")
+    elif model:
+        print(f"Filtering to model {model}.\n")
+
+    skipped = []
     allrows = []
     hdr = (f"{'GAMEWEEK':<22}{'N':>6}{'PEARSON':>9}{'SPEARMAN':>10}"
-           f"{'MAE':>8}{'RMSE':>8}{'BIAS':>8}")
+           f"{'MAE':>8}{'RMSE':>8}{'BIAS':>8}{'MODEL':>10}")
     print(hdr)
     print("-" * len(hdr))
     for fn in files:
@@ -397,12 +422,25 @@ def report():
                                           encoding="utf-8"))]
         played = [r for r in rows if r["minutes"] > 0]
         gw = fn[2:4]
-        print(line(f"GW{gw}", metrics(played)))
+        stamp = next((r["model"] for r in rows if r.get("model")), None)
+        if want and stamp != want:
+            skipped.append((gw, stamp or "unstamped"))
+            continue
+        print(line(f"GW{gw}", metrics(played)) +
+              f"{(stamp or '—'):>10}")
         allrows += played
 
+    if not allrows:
+        sys.exit(f"\nNo gameweeks match. Skipped: "
+                 f"{', '.join(f'GW{g} ({m})' for g, m in skipped)}")
+    if skipped:
+        print(f"\n  excluded {len(skipped)} gameweek(s) from other models: "
+              f"{', '.join(f'GW{g}={m}' for g, m in skipped)}")
+
+    n_weeks = len(files) - len(skipped)
     print("-" * len(hdr))
     print(line("POOLED", metrics(allrows)))
-    top = sorted(allrows, key=lambda r: -r["xp"])[:60 * len(files)]
+    top = sorted(allrows, key=lambda r: -r["xp"])[:60 * max(n_weeks, 1)]
     print(line("POOLED top-60/wk", metrics(top)))
     print(line("  [baseline ep_next]", metrics(top, "ep_next")))
 
@@ -415,7 +453,7 @@ def report():
     if ci:
         lo, mid, hi = ci
         print(f"  95% CI [{lo:+.3f}, {hi:+.3f}] from {len(top)} appearances "
-              f"across {len(files)} gameweek(s)")
+              f"across {n_weeks} gameweek(s)")
         if lo > 0:
             print("  -> The edge is distinguishable from noise. The model is "
                   "beating the free baseline.")
@@ -423,7 +461,7 @@ def report():
             print("  -> The baseline is beating the model. Something is "
                   "wrong; check calibration and the biggest misses.")
         else:
-            need = max(0, 5 - len(files))
+            need = max(0, 5 - n_weeks)
             print(f"  -> Interval spans zero: this is NOT yet evidence of an "
                   f"edge either way.\n     A model with no edge at all "
                   f"produces gaps this size by chance at this sample size.\n"
@@ -718,7 +756,14 @@ def main():
     c.add_argument("--partial", action="store_true",
                    help="score only the fixtures that have finished")
 
-    sub.add_parser("report", help="pooled results across all scored gameweeks")
+    rp = sub.add_parser("report",
+                        help="pooled results across all scored gameweeks")
+    rp.add_argument("--model", help="only gameweeks stamped with this model "
+                                    "fingerprint")
+    rp.add_argument("--current-only", action="store_true",
+                    help="only gameweeks produced by the model as it stands "
+                         "now — the record spans several versions, and "
+                         "pooling them answers the wrong question")
     rec = sub.add_parser("record",
                          help="save a gameweek's outcomes with no projection "
                               "attached — for calibration, never for scoring")
@@ -746,7 +791,8 @@ def main():
     elif args.cmd == "calibrate-gk":
         calibrate_gk()
     else:
-        report()
+        report(getattr(args, "model", None),
+               getattr(args, "current_only", False))
 
 
 if __name__ == "__main__":

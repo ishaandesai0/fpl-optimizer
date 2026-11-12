@@ -165,19 +165,52 @@ def strip_accents(s: str) -> str:
                    if not unicodedata.combining(c)).lower()
 
 
-def _get(path: str, fname: str, ttl: int = CACHE_TTL):
+# A --deep run makes one request per player, so a single timeout in ~670 calls
+# used to abort the whole thing. Retry transient failures; fail fast on real
+# ones, since retrying a 404 just wastes time.
+RETRIES = 3
+BACKOFF = 1.6        # seconds, doubling
+
+
+def _get(path: str, fname: str, ttl: int = CACHE_TTL, retries: int = RETRIES):
     os.makedirs(CACHE_DIR, exist_ok=True)
     cache = os.path.join(CACHE_DIR, fname)
     if os.path.exists(cache) and time.time() - os.path.getmtime(cache) < ttl:
         with open(cache) as f:
             return json.load(f)
-    r = requests.get(f"{API}/{path}", timeout=20,
-                     headers={"User-Agent": "Mozilla/5.0"})
-    r.raise_for_status()
-    data = r.json()
-    with open(cache, "w") as f:
-        json.dump(data, f)
-    return data
+
+    last = None
+    for attempt in range(retries):
+        try:
+            r = requests.get(f"{API}/{path}", timeout=20,
+                             headers={"User-Agent": "Mozilla/5.0"})
+            # 4xx other than 429 will not improve on a retry
+            if 400 <= r.status_code < 500 and r.status_code != 429:
+                r.raise_for_status()
+            if r.status_code >= 500 or r.status_code == 429:
+                raise requests.HTTPError(f"HTTP {r.status_code}")
+            data = r.json()
+            with open(cache, "w") as f:
+                json.dump(data, f)
+            return data
+        except requests.HTTPError:
+            raise                      # a real error; do not mask it
+        except Exception as e:
+            last = e
+            if attempt == retries - 1:
+                break
+            wait = BACKOFF * (2 ** attempt)
+            print(f"  ! {type(e).__name__} on {path} "
+                  f"(attempt {attempt + 1}/{retries}), retrying in "
+                  f"{wait:.0f}s")
+            time.sleep(wait)
+
+    # Everything fetched so far is cached, so a stale copy beats losing the run
+    if os.path.exists(cache):
+        print(f"  ! {path} unreachable — falling back to the cached copy")
+        with open(cache) as f:
+            return json.load(f)
+    raise RuntimeError(f"{path} failed after {retries} attempts: {last}")
 
 
 def played_gameweeks(fixtures: list) -> set[int]:
@@ -320,6 +353,57 @@ FOREIGN_COVERAGE_CAP = 0.75
 DEFAULT_PRIORS = "priors.json"
 DEFAULT_AVAILABILITY = "availability.json"
 DEFAULT_RATINGS = "ratings.json"
+
+
+# ---------------------------------------------------------------------------
+# Model fingerprint
+#
+# The backtest record spans several model versions — the DefCon fixture
+# adjustment landed at GW7, penalty saves and the availability correction
+# later. Pooling across those answers "how has some mixture of models done?"
+# rather than "how is the current model doing?", which is the question that
+# matters. Stamping a fingerprint into each snapshot makes the record
+# segmentable after the fact.
+#
+# Hashing the tuned constants rather than the whole file means a comment or a
+# docstring edit does not invalidate the record, while any change to the
+# scoring maths does.
+MODEL_CONSTANTS = {
+    "PRIOR_MINUTES": lambda: PRIOR_MINUTES,
+    "NO_PRIOR_STRENGTH": lambda: NO_PRIOR_STRENGTH,
+    "FULL_SEASON_MINUTES": lambda: FULL_SEASON_MINUTES,
+    "BONUS_SCALE": lambda: BONUS_SCALE,
+    "BONUS_EXP": lambda: BONUS_EXP,
+    "BONUS_CAP": lambda: BONUS_CAP,
+    "DEFCON_DOMINANCE_SLOPE": lambda: DEFCON_DOMINANCE_SLOPE,
+    "DEFCON_MULT_BAND": lambda: DEFCON_MULT_BAND,
+    "PEN_SAVE_RATE": lambda: PEN_SAVE_RATE,
+    "SOT_PER_GOAL": lambda: SOT_PER_GOAL,
+    "FOREIGN_COVERAGE_CAP": lambda: FOREIGN_COVERAGE_CAP,
+}
+
+
+def model_fingerprint() -> str:
+    """Eight hex characters identifying this model configuration."""
+    import hashlib
+    parts = []
+    for name, get in sorted(MODEL_CONSTANTS.items()):
+        try:
+            parts.append(f"{name}={get()!r}")
+        except NameError:
+            parts.append(f"{name}=absent")
+    return hashlib.sha256("|".join(parts).encode()).hexdigest()[:8]
+
+
+def model_constants_text() -> str:
+    """The constants behind the fingerprint, for the log."""
+    out = []
+    for name, get in sorted(MODEL_CONSTANTS.items()):
+        try:
+            out.append(f"{name}={get()!r}")
+        except NameError:
+            continue
+    return ", ".join(out)
 
 
 def resolve_data_file(explicit, default, disable, label):
