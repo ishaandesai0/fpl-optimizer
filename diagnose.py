@@ -70,14 +70,38 @@ def find(elements: list[dict], needle: str) -> dict | None:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("player", help="name fragment or FPL element id")
-    ap.add_argument("--ratings", help="ratings.json from ratings.py")
+    ap.add_argument("--ratings",
+                    help=f"ratings.json from ratings.py "
+                         f"(default: {P.DEFAULT_RATINGS} if present)")
     ap.add_argument("--gw", type=int, help="gameweek to decompose (default: next)")
-    ap.add_argument("--availability", help="availability.json — pass the same "
-                                           "file you give projections.py")
+    ap.add_argument("--availability",
+                    help=f"gameweeks a player was unavailable for "
+                         f"(default: {P.DEFAULT_AVAILABILITY} if present)")
+    ap.add_argument("--no-availability", action="store_true",
+                    help="ignore availability.json even if it exists")
+    ap.add_argument("--no-priors", action="store_true",
+                    help="ignore priors.json even if it exists")
+    ap.add_argument("--prior-minutes", type=float, default=P.PRIOR_MINUTES,
+                    help="shrinkage strength; must match projections.py or "
+                         "the two disagree")
     ap.add_argument("--priors", help="priors.json — pass the same file you give "
                                      "projections.py, or this explains a model "
                                      "you aren't running")
     args = ap.parse_args()
+
+    # Resolve the same way projections.py does. These two tools disagreeing
+    # about one player has been a bug four times; defaulting both to the same
+    # filenames removes the whole class.
+    args.priors, p_note = P.resolve_data_file(
+        args.priors, P.DEFAULT_PRIORS, args.no_priors, "priors")
+    args.availability, a_note = P.resolve_data_file(
+        args.availability, P.DEFAULT_AVAILABILITY, args.no_availability,
+        "availability")
+    args.ratings, r_note = P.resolve_data_file(
+        args.ratings, P.DEFAULT_RATINGS, False, "ratings")
+    for n in (r_note, p_note, a_note):
+        if n:
+            print(n.strip())
 
     boot = P._get("bootstrap-static/", "bootstrap.json")
     fixtures = P._get("fixtures/", "fixtures.json")
@@ -148,7 +172,7 @@ def main():
         print("    with a strong real rate will be underrated for weeks.")
 
     price_pri = P.price_priors(pos, e["now_cost"] / 10.0, med)
-    rates = P.player_rates(e, med, P.PRIOR_MINUTES, last)
+    rates = P.player_rates(e, med, args.prior_minutes, last)
     print(f"\n{'RATE (per 90)':<18}{'PRICE PRIOR':>13}{'LAST SEASON':>13}{'POSTERIOR':>12}")
     print("-" * 56)
     for k in ("xg", "xa", "defcon", "bps", "yellow"):

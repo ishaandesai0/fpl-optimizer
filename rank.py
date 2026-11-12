@@ -110,10 +110,7 @@ def main():
               f"{r['gw']:>6.2f}{r['total']:>7.1f}{r['per']:>8.2f}"
               f"{r['value']:>7.2f}{r['own']:>7.1f}")
 
-    print("\nTOTAL is the horizon figure — the one to build on. A high GW with a")
-    print("low TOTAL is a single favourable fixture, not a player worth owning.")
-    print("xP/£m matters in classic and not at all in draft.")
-    print("! = flagged; check the news before claiming.")
+    print("\n! = flagged.")
 
 
 if __name__ == "__main__":

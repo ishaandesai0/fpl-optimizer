@@ -85,11 +85,7 @@ def main():
             flag = "  <- blank/double" if r["n"] != args.next else ""
             print(f"{r['team']:<6}{r['n']:>5}{r['for']:>9.2f}"
                   f"{r['agn']:>9.2f}{r['net']:>8.2f}{flag}")
-        print("\nxG AGN is where cheap defenders and keepers pay off.")
-        print("xG FOR is where attacking assets do.")
-        print("A team can look great in one gameweek and poor across six — "
-              "this is the\ncorrective to reading a single fixture's "
-              "projection.")
+        print()
         return
 
     if args.team:
@@ -139,11 +135,11 @@ def main():
             print(f"{short[fx['team_h']]:>6}{' v ':3}{short[fx['team_a']]:<6}"
                   f"{lh:>8.2f}{la:>8.2f}"
                   f"{math.exp(-la):>7.0%}{math.exp(-lh):>7.0%}")
-        print("\nCS H/A is the clean-sheet probability for that side.")
+
     else:
         for fx in this:
             print(f"{short[fx['team_h']]:>6} v {short[fx['team_a']]}")
-        print("\nPass --ratings ratings.json for expected goals and clean-sheet odds.")
+        print("\n--ratings ratings.json adds xG and clean-sheet odds.")
 
 
 if __name__ == "__main__":

@@ -1,20 +1,39 @@
 {
   "_readme": [
     "Midweek fixtures the FPL API cannot see: Champions League, Europa,",
-    "Conference, and domestic cups. Add a row per matchday with the clubs",
-    "involved, using FPL short names (ARS, MCI, LIV, ...).",
+    "Conference, and domestic cups.",
     "",
-    "Dates are the kickoff date in YYYY-MM-DD. Teams in the same round",
-    "often play on different days, so give each day its own row.",
+    "Rows marked \"src\": \"auto\" come from eurofetch.py and are replaced on",
+    "each run. Rows WITHOUT that marker are yours and are never touched.",
     "",
-    "You only need rounds close to an upcoming deadline \u2014 there is no",
-    "value in filling in the whole season ahead of time, and a stale",
-    "entry is worse than a missing one because it reads as fact."
+    "The free football-data.org tier covers the Champions League only, so",
+    "Europa (BOU, SUN, CRY) and Conference (BHA) are hand-entered. Those are",
+    "Thursdays, normally the day after the Champions League round.",
+    "",
+    "Add Carabao Cup rounds too — cup rotation is heavier than European.",
+    "",
+    "A stale entry is worse than a missing one because it reads as fact."
   ],
   "midweek": [
-    {"date": "2026-10-20", "comp": "UCL", "teams": ["LIV", "MCI"]},
-    {"date": "2026-10-21", "comp": "UCL", "teams": ["ARS", "MUN", "AVL"]},
+    {"date": "2026-09-08", "comp": "CL",   "teams": ["AVL", "MCI"], "src": "auto"},
+    {"date": "2026-09-09", "comp": "CL",   "teams": ["ARS", "LIV"], "src": "auto"},
+    {"date": "2026-09-10", "comp": "CL",   "teams": ["MUN"], "src": "auto"},
+    {"date": "2026-10-13", "comp": "CL",   "teams": ["ARS", "MUN"], "src": "auto"},
+    {"date": "2026-10-14", "comp": "CL",   "teams": ["AVL", "LIV", "MCI"], "src": "auto"},
+    {"date": "2026-10-20", "comp": "CL",   "teams": ["LIV", "MCI"], "src": "auto"},
+    {"date": "2026-10-21", "comp": "CL",   "teams": ["ARS", "AVL", "MUN"], "src": "auto"},
+    {"date": "2026-10-22", "comp": "UEL",  "teams": ["BOU", "SUN", "CRY"]},
     {"date": "2026-10-22", "comp": "UECL", "teams": ["BHA"]},
-    {"date": "2026-10-22", "comp": "UEL", "teams": ["BOU", "SUN", "CRY"]}
+    {"date": "2026-11-03", "comp": "CL",   "teams": ["AVL", "MUN"], "src": "auto"},
+    {"date": "2026-11-04", "comp": "CL",   "teams": ["ARS", "LIV", "MCI"], "src": "auto"},
+    {"date": "2026-11-05", "comp": "UEL",  "teams": ["BOU", "SUN", "CRY"]},
+    {"date": "2026-11-05", "comp": "UECL", "teams": ["BHA"]},
+    {"date": "2026-11-24", "comp": "CL",   "teams": ["ARS", "AVL", "MCI"], "src": "auto"},
+    {"date": "2026-11-25", "comp": "CL",   "teams": ["LIV", "MUN"], "src": "auto"},
+    {"date": "2026-12-08", "comp": "CL",   "teams": ["AVL", "MCI", "MUN"], "src": "auto"},
+    {"date": "2026-12-09", "comp": "CL",   "teams": ["ARS", "LIV"], "src": "auto"},
+    {"date": "2027-01-19", "comp": "CL",   "teams": ["AVL", "LIV"], "src": "auto"},
+    {"date": "2027-01-20", "comp": "CL",   "teams": ["ARS", "MCI", "MUN"], "src": "auto"},
+    {"date": "2027-01-27", "comp": "CL",   "teams": ["ARS", "AVL", "LIV", "MCI", "MUN"], "src": "auto"}
   ]
 }

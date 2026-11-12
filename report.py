@@ -229,10 +229,7 @@ def main():
                 f"<td class='num'>{r['gw']:.2f}</td>"
                 f"<td class='num'>{r['tot']:.1f}</td></tr>")
         parts.append("</table>")
-        parts.append('<div class="note">Dimmed rows are the bench. '
-                     'The XI shown maximises GW projection across legal '
-                     'formations — it is the same rule fpl_opt uses, so it '
-                     'should agree with it.</div>')
+        parts.append('<div class="note">Dimmed rows are the bench.</div>')
         parts.append("</div></div>")
 
         flagged = [r for r in rows if r["e"].get("status", "a") != "a"]
@@ -278,8 +275,8 @@ def main():
                 "</tr>")
         parts.append("</table></div>")
     parts.append("</div>")
-    parts.append('<div class="note">Δ is the price change since the season '
-                 'started, in £m. Players you own are highlighted.</div>')
+    parts.append('<div class="note">Δ = price change this season. '
+                 'Yours are highlighted.</div>')
 
     # ---- fixture runs ----------------------------------------------------
     if fitted:
@@ -313,10 +310,8 @@ def main():
                          f"<td class='num'>{f_/max(a_,.01):.2f}</td>"
                          f"<td class='num dim'>{n}</td></tr>")
         parts.append("</table>")
-        parts.append('<div class="note">Sorted by expected goals conceded — '
-                     'the top of this table is where cheap defenders and '
-                     'keepers pay off. A game count below the horizon means a '
-                     'blank gameweek.</div>')
+        parts.append('<div class="note">A game count below the horizon '
+                     'means a blank gameweek.</div>')
         parts.append("</div>")
 
     doc = (f"<!doctype html><html><head><meta charset='utf-8'>"

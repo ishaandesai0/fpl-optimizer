@@ -190,19 +190,10 @@ def main():
               f"{f['ratio']:>8.1f}x{f['dv']:>7.1f}{f['shape']:>9}"
               f"{f['xp']:>7.1f}")
 
-    print("\n  ok = already in availability.json     • = uncorrected")
-    print("\nTRF-OUT is how much faster managers sold him during the gap than")
-    print("when he was playing. Δ£ is the price move across it. An announced")
-    print("injury shows both; a quiet benching shows neither — that is the")
-    print("only way the data distinguishes them, and it is evidence rather")
-    print("than proof. 'bench?' rows are the ones most likely to be a healthy")
-    print("player left out, and correcting those would flatter him wrongly.")
-    print("\nNAIVE is starts divided by gameweeks played, which is what the")
-    print("model currently uses. FIXED divides by gameweeks he was available")
-    print("for. The bigger the gap, the more the model is reading an injury")
-    print("as a manager's decision.")
-    print("\nA correction only shrinks the denominator — it cannot invent")
-    print("starts, so a player who genuinely is not trusted stays low.")
+    print("\n  ok = in availability.json   • = uncorrected")
+    print("TRF-OUT: how much faster he was sold during the gap. Evidence, not proof —")
+    print("'bench?' rows are probably a fit player left out. Do not correct those.")
+
 
     if args.template:
         todo = [f for f in shown if not f["have"] and f["shape"] != "bench?"]
@@ -225,10 +216,7 @@ def main():
         print("SCAFFOLD — paste into availability.json under \"players\"")
         print("=" * 62)
         print(json.dumps(scaffold, indent=2, ensure_ascii=False))
-        print("\nCHECK EACH ONE before keeping it. A run of zeros is strong")
-        print("evidence of absence but not proof — a player can be dropped for")
-        print("a month. projections.py refuses any gameweek he actually")
-        print("played in, but it cannot tell injury from exile.")
+        print("\nVERIFY each one — a run of zeros can also be a month on the bench.")
 
 
 if __name__ == "__main__":

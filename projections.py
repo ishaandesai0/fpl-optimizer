@@ -313,6 +313,27 @@ LEAGUE_STRENGTH = {
 FOREIGN_COVERAGE_CAP = 0.75
 
 
+# Data files the model reads. These default to their conventional names so a
+# forgotten flag cannot silently change a projection — that bug has bitten
+# four times, each time surfacing as two tools disagreeing about one player.
+# Pass --no-priors / --no-availability to run without one deliberately.
+DEFAULT_PRIORS = "priors.json"
+DEFAULT_AVAILABILITY = "availability.json"
+DEFAULT_RATINGS = "ratings.json"
+
+
+def resolve_data_file(explicit, default, disable, label):
+    """Which file to use, and a line for the log saying why."""
+    if disable:
+        return None, f"  {label}: DISABLED by flag"
+    path = explicit or default
+    if not os.path.exists(path):
+        if explicit:
+            return None, f"  {label}: {path} NOT FOUND"
+        return None, None          # no default present; silence is fine
+    return path, f"  {label}: {path}{'' if explicit else ' (default)'}"
+
+
 def load_availability(path: str | None) -> dict:
     """Gameweeks a player was unavailable for, which the API does not record.
 
@@ -1047,17 +1068,33 @@ def main():
                     help="evidence weight; lower trusts this season sooner")
     ap.add_argument("--ratings", help="ratings.json from ratings.py — replaces "
                                       "FPL's coarse tiers with fitted values")
-    ap.add_argument("--availability", help="availability.json — gameweeks a "
-                                           "player was unavailable for, so "
-                                           "absence is not read as being "
-                                           "dropped")
+    ap.add_argument("--availability",
+                    help=f"gameweeks a player was unavailable for "
+                         f"(default: {DEFAULT_AVAILABILITY} if present)")
+    ap.add_argument("--no-availability", action="store_true",
+                    help="ignore availability.json even if it exists")
+    ap.add_argument("--no-priors", action="store_true",
+                    help="ignore priors.json even if it exists")
     ap.add_argument("--priors", help="priors.json of production from leagues "
                                      "outside the Premier League, for players "
                                      "the model has no data on at all")
     args = ap.parse_args()
 
+    priors_path, p_note = resolve_data_file(
+        args.priors, DEFAULT_PRIORS, args.no_priors, "priors")
+    avail_path, a_note = resolve_data_file(
+        args.availability, DEFAULT_AVAILABILITY, args.no_availability,
+        "availability")
+    ratings_path, r_note = resolve_data_file(
+        args.ratings, DEFAULT_RATINGS, False, "ratings")
+    notes = [n for n in (r_note, p_note, a_note) if n]
+    if notes:
+        print("Data files:")
+        for n in notes:
+            print(n)
+
     rows, start_gw = build(args.horizon, args.gw, args.deep, args.prior_minutes,
-                           args.ratings, args.priors, args.availability)
+                           ratings_path, priors_path, avail_path)
 
     with open(args.out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["id", "gw", "ep"],

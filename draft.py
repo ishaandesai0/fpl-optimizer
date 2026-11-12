@@ -395,8 +395,7 @@ def waivers(entry, gw, idmap, xp, draft_boot, league_id, top,
         print(f"\nDEAD SQUAD SLOTS — returning nothing, replace them free")
         for p, why in dead:
             print(f"  {p['name']:<20}{P.POS[p['pos']]:>5}  {why}")
-        print("  ^ these don't show in the ranking below: a benched player "
-              "doesn't affect your XI, so swapping him scores zero gain.")
+        print("  ^ not in the ranking below — a benched player scores zero gain.")
 
     # What a claim is worth is its effect on the ELEVEN YOU FIELD, not on the
     # worst player in your squad. Upgrading a bench defender who never starts
@@ -433,13 +432,7 @@ def waivers(entry, gw, idmap, xp, draft_boot, league_id, top,
               f"{hz.get(cand['cid'], 0.0):>9.1f}   {drop['name']:<17}"
               f"{gain:>+8.2f}{hz_gain:>+9.1f}")
 
-    print("\nGW GAIN is the improvement to your starting XI this week.")
-    print("HZ GAIN is the decayed difference over the horizon — the one that "
-          "matters, since\nyou keep the player you claim and the player you "
-          "drop is gone for good.")
-    print("Transactions are free, so the only real cost is handing a usable "
-          "asset to a rival.\nA player you'd regret seeing on someone else's "
-          "team is worth more than his xP says.")
+    print("\nHZ GAIN is the one that matters. Transactions are free.")
 
 
 # ---------------------------------------------------------------------------

@@ -93,6 +93,10 @@
     "152": {
       "missed": [1, 2, 3, 4, 5],
       "note": "Palestra (CHE) — blank in GW1-5, 2 appearance(s) since. Sold 6.6x faster than usual during the gap, price -0.2 — looks like injury. VERIFY before keeping."
+    },
+    "400": {
+      "missed": [1, 2, 3, 4],
+      "note": "Doku (MCI) — injured GW1-4. Started GW7-9 (76, 90, 90 min)."
     }
   }
 }

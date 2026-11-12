@@ -436,10 +436,8 @@ def report():
     # invites exactly the wrong correction. The honest figure is the
     # all-players bias in `score` output, which includes those who didn't play.
     print(f"\nBias among players who FEATURED: {metrics(allrows)['bias']:+.3f}")
-    print("  A selection effect, not miscalibration: conditioning on players")
-    print("  who played favours those the model gave a low p_start. For real")
-    print("  calibration read the 'all players' BIAS line in `score` output,")
-    print("  which includes everyone who didn't feature.")
+    print("  Selection effect, not miscalibration — see the 'all players' "
+          "BIAS line.")
 
     print("\nPOOLED CALIBRATION")
     print(f"{'xP BUCKET':<14}{'N':>6}{'MEAN xP':>10}{'MEAN ACTUAL':>13}{'GAP':>8}")

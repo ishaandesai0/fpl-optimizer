@@ -131,8 +131,8 @@ def main():
             rest[tid] = best
 
     if not rest:
-        print(f"No midweek fixtures on record before GW{gw} kickoffs.")
-        print(f"If clubs did play, add them to {args.european}.")
+        print(f"No midweek fixtures on record before GW{gw}. "
+              f"Add them to {args.european} if there were.")
         return
 
     # which players do we care about
@@ -185,11 +185,7 @@ def main():
                 print(f"{e['web_name']:<20}{short[e['team']]:>5}{gap:>6}"
                       f"{xp.get(pid, 0):>8.2f}")
 
-    print("\nThe model does not know about any of this — these players carry "
-          "the\nsame p_start as anyone else. Three days or fewer is where "
-          "managers\nrotate, and a 90-minute midweek shift matters more than "
-          "a bench role.")
-    print("Check the team news an hour before kickoff for anyone flagged.")
+    print("\nThe model cannot see any of this. Check team news before kickoff.")
 
 
 if __name__ == "__main__":

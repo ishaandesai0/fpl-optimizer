@@ -194,10 +194,7 @@ def main():
               f"{r['shots90']:>7.2f}{r['key_passes90']:>7.2f}"
               f"{r['minutes']:>6}")
 
-    print("\nnp_xg90 is the one that matters: FPL's own expected_goals includes")
-    print("penalties, so a player whose only goal was a spot-kick has been")
-    print("carrying an inflated rate. Compare these against diagnose.py's xg")
-    print("posterior for the same player.")
+
 
 
 if __name__ == "__main__":
