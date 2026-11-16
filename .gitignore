@@ -7,3 +7,5 @@ squad.json
 
 downloaded_files/
 cmp.py
+.env
+*.env
